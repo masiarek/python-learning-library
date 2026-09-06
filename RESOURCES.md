@@ -26,7 +26,7 @@ Subscription material, and good. Cited here as sources rather than summarized:
 
 - [Unicode & Character Encodings in Python: A Painless Guide ↗](https://realpython.com/python-encodings-guide/) — Brad Solomon. The broad tour, Python-centric. Overlaps chapter 1 here and goes wider on number systems and string literals.
 - [How to Sort Unicode Strings Alphabetically in Python ↗](https://realpython.com/python-sort-unicode-strings/) — Bartosz Zaczyński. The article that prompted [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md); it goes further than that page does, into transliteration, natural sort order and multi-key sorting.
-- [Build a Word Count Command-Line App ↗](https://realpython.com/courses/python-project-word-count/) — the course whose non-ASCII lesson prompted [Counting characters](01_Text_and_Bytes/counting_characters/README.md).
+- [Python Project: Build a Word Count Command-Line App ↗](https://realpython.com/courses/word-count-app-project/) — Bartosz Zaczyński. The course whose non-ASCII lesson prompted [Counting characters](01_Text_and_Bytes/counting_characters/README.md).
 
 ## macOS specifics
 
