@@ -1,0 +1,53 @@
+1. FOUR ANSWERS TO 'HOW LONG IS THIS?'
+     sample              len()  utf-8  utf-16  graphemes
+                        points  bytes   units    (human)
+     ----------------------------------------------------
+     plain ASCII             4      4       4          4
+     NFC - one char          4      5       4          4
+     NFD - two chars         5      6       5          4
+     Polish                  6     10       6          6
+     emoji                   1      4       2          1
+     flag                    2      8       4          2
+     family                  5     18       8          1
+
+     Read the 'family' row: one thing on your screen, five code points,
+     eighteen UTF-8 bytes. Every column is a legitimate answer to a
+     different question, and len() only ever answers one of them.
+
+2. THE TRAP THAT LOOKS LIKE A BUG
+     nfc = 'café'   len = 4
+     nfd = 'café'   len = 5
+     they print identically:      café == café
+     nfc == nfd                   False
+     after normalize('NFC', ...)  True
+
+     Two strings that look the same, print the same, and compare False.
+     Normalize before comparing text that came from somewhere else.
+
+3. WHAT wc COUNTS, AND WHICH len() MATCHES IT
+     text  = 'Zażółć gęślą jaźń\n'
+     bytes = 27   <- wc -c   len(text.encode('utf-8'))
+     chars = 18   <- wc -m   len(text)
+     words = 3    <- wc -w   len(text.split())
+     lines = 1    <- wc -l   counts NEWLINES, not lines
+
+     wc -c and wc -m differ by 9 here, and a wc that only reads bytes
+     cannot tell you the second number at all.
+
+4. THE LINE COUNT IS A NEWLINE COUNT
+     with trailing \n   'a\nb\n'   count('\n') = 2   but there are 2 lines
+     without            'a\nb'     count('\n') = 1   but there are 2 lines
+
+     Without a trailing newline both wc -l and count(chr(10)) say 1 where a
+     person says 2 -- they agree because they are the same rule. splitlines()
+     is the one that answers the question a person actually asked.
+
+5. str.split() IS NOT A WORD DEFINITION
+     'one  two'                 ->  2 ['one', 'two']
+     'hyphen-ated'              ->  1 ['hyphen-ated']
+     "don't"                    ->  1 ["don't"]
+     'łódź\xa0łódź'             ->  2 ['łódź', 'łódź']
+
+     The last one holds a NO-BREAK SPACE (U+00A0). str.split() treats it
+     as whitespace, so Python says two words; a tool splitting on ASCII
+     space alone would say one. 'Word' is a policy, not a fact.

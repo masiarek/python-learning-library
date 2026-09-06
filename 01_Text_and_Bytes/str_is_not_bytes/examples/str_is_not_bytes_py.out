@@ -1,0 +1,38 @@
+1. TWO TYPES, ONE WORD
+     'Łódź'                   str    len = 4
+     b'\xc5\x81\xc3\xb3d\xc5\xba' bytes  len = 7
+
+     Same word. Different length. len() is not one question.
+
+2. WHAT len() COUNTS
+     str   -> code points
+     bytes -> bytes
+
+     Ł  U+0141  2 byte(s)  C5 81
+     ó  U+00F3  2 byte(s)  C3 B3
+     d  U+0064  1 byte(s)  64
+     ź  U+017A  2 byte(s)  C5 BA
+
+3. INDEXING GIVES YOU DIFFERENT THINGS
+     TEXT[0] = 'Ł'        a one-character str
+     DATA[0] = 197        an int -- the number 0-255
+     DATA[0:1] = b'\xc5'  slicing bytes gives bytes
+
+     Iterating bytes gives ints, not one-byte bytes. This is the
+     single most surprising line in the whole type.
+
+4. THE BOUNDARY PYTHON REFUSES TO CROSS
+     "a" + b"b"                                   -> TypeError: can only concatenate str (not "bytes") to str
+     "Łódź" == b"\xc5\x81\xc3\xb3d\xc5\xba"       -> False
+     b"x".startswith("x")                         -> TypeError: startswith first arg must be bytes or a tuple of bytes, not str
+
+     The middle one is the trap: it does not raise, it just says False.
+     A str is never equal to a bytes, however identical they look.
+
+5. THE ONLY TWO DOORS BETWEEN THEM
+     TEXT.encode('utf-8')  -> b'\xc5\x81\xc3\xb3d\xc5\xba'
+     DATA.decode('utf-8')  -> 'Łódź'
+     round trip is exact:     True
+
+     .encode() is only on str. .decode() is only on bytes. The method
+     you can reach tells you which type you are holding.

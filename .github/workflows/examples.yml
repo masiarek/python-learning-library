@@ -1,0 +1,39 @@
+# Every example must run and print exactly what its recorded .out file says — and
+# every lesson page's generated output block must match that run.
+#
+# The examples here are stdlib-only Python, run with the python3 on the runner.
+# The runner also supports .sh / .rs / .c examples for the occasional page that
+# compares Python against another language; those follow the sibling libraries'
+# rules (bash with tools both platforms ship, bare rustc, cc -std=c11).
+#
+# It runs on BOTH Ubuntu and macOS on purpose. "Stdlib-only" is not the same as
+# "platform-independent" — locale defaults, filesystem encodings and line endings
+# all differ, and those are exactly this library's first chapter. An answer key
+# that only matches one platform is a machine-dependent example, the one kind no
+# local run can catch.
+
+name: examples
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Show toolchain
+        run: |
+          python3 --version
+          bash --version | head -1
+      - name: Run every example and check it against its answer key
+        run: python3 tools/run_examples.py --check
+      - name: Check that every external link is marked as external
+        run: python3 tools/check_link_style.py

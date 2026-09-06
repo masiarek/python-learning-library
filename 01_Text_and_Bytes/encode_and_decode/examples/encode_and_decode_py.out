@@ -1,0 +1,53 @@
+1. THE TWO DIRECTIONS
+     str  --encode()-->  bytes      leaving Python
+     bytes --decode()-->  str       entering Python
+
+     'Zażółć'.encode('utf-8')   = b'Za\xc5\xbc\xc3\xb3\xc5\x82\xc4\x87'
+     b'Za\xc5\xbc\xc3\xb3\xc5\x82\xc4\x87'.decode('utf-8') = 'Zażółć'
+
+2. THE SAME TEXT IN FOUR ENCODINGS
+   Not four representations of one thing -- four different files.
+
+     utf-8      10 bytes  5A 61 C5 BC C3 B3 C5 82 C4 87
+     utf-16-le  12 bytes  5A 00 61 00 7C 01 F3 00 42 01 07 01
+     utf-32-le  24 bytes  5A 00 00 00 61 00 00 00 7C 01 00 00 F3 00 00 00 42 01 00 00 07 01 00 00
+     cp1250      6 bytes  5A 61 BF F3 B3 E6
+
+3. WHAT A TABLE CANNOT HOLD
+   cp1250 is the Windows Central European table. It has Polish.
+   latin-1 does not, and says so rather than guessing:
+
+     cp1250     ok    b'Za\xbf\xf3\xb3\xe6'
+     latin-1    raises UnicodeEncodeError on 'ż' at index 2
+
+4. THE errors= POLICIES, AND WHAT EACH ONE COSTS
+   Encoding 'Zażółć' to latin-1, which cannot represent it:
+
+     strict               raises -- the default, and the only one that loses nothing
+     ignore               b'Za\xf3'
+     replace              b'Za?\xf3??'
+     xmlcharrefreplace    b'Za&#380;\xf3&#322;&#263;'
+     backslashreplace     b'Za\\u017c\xf3\\u0142\\u0107'
+     namereplace          b'Za\\N{LATIN SMALL LETTER Z WITH DOT ABOVE}\xf3\\N{LATIN SMALL LETTER L WITH STROKE}\\N{LATIN SMALL LETTER C WITH ACUTE}'
+
+5. THE ASYMMETRY WORTH KNOWING
+   'replace' on the way OUT writes '?'. On the way IN it writes U+FFFD.
+   Neither is reversible: the original is gone, and the file now says so.
+
+     b'Za\xff\xfe\xc3\xb3'
+       .decode('utf-8', 'replace')          -> 'Za��ó'
+       .decode('utf-8', 'ignore')           -> 'Zaó'
+       .decode('utf-8', 'backslashreplace') -> 'Za\\xff\\xfeó'
+       .decode('latin-1')                   -> 'ZaÿþÃ³'
+
+     latin-1 never raises: every byte 00-FF is a character in it. That
+     makes it useful as a byte-preserving codec and lethal as a guess.
+
+6. THE ONE POLICY THAT IS REVERSIBLE
+   surrogateescape hides undecodable bytes in a private range and puts
+   them back byte-for-byte on the way out. This is how Python survives
+   a filename that is not valid UTF-8.
+
+     decoded  -> 'Za\udcff\udcfeó'
+     re-encoded -> b'Za\xff\xfe\xc3\xb3'
+     identical to the original: True

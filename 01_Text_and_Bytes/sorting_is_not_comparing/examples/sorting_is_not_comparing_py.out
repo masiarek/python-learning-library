@@ -1,0 +1,73 @@
+1. WHAT PYTHON DOES BY DEFAULT
+   sorted() compares code points, left to right.
+
+     Adamczyk
+     Cieślak
+     Lewandowski
+     Nowak
+     Sikora
+     Zawadzki
+     Ćwikła
+     Łukasiewicz
+     Śliwa
+     Żeromski
+
+2. WHY -- the code point is the whole explanation
+     ord('L') =    76   ord('Ł') =   321   so 'Ł' > 'L' is True
+     ord('Z') =    90   ord('Ż') =   379   so 'Ż' > 'Z' is True
+     ord('S') =    83   ord('Ś') =   346   so 'Ś' > 'S' is True
+     ord('C') =    67   ord('Ć') =   262   so 'Ć' > 'C' is True
+
+     Every Polish letter with a diacritic sits above U+00FF, and every
+     unaccented Latin letter sits below U+007B. So they ALL sort last.
+
+3. WHAT POLISH ACTUALLY WANTS
+   Ł belongs between L and M, not after Z.
+
+     Adamczyk
+     Cieślak
+     Ćwikła
+     Lewandowski
+     Łukasiewicz
+     Nowak
+     Sikora
+     Śliwa
+     Zawadzki
+     Żeromski
+
+4. THE SORT KEY IS THE IDEA
+   sorted(key=...) never compares the words -- it compares what the key
+   returns. Here is what the key makes of two of them:
+
+     Lewandowski    'l' 'e' 'w' 'a'      -> [14, 6, 27, 0] ...
+     Łukasiewicz    'ł' 'u' 'k' 'a'      -> [15, 26, 13, 0] ...
+
+     'l' is rank 14 and 'ł' is rank 15, so Lewandowski comes first --
+     decided by the second element, exactly as tuple comparison works.
+
+5. THE STDLIB ANSWER, AND WHY THIS PROGRAM CANNOT SHOW IT WORKING
+   locale.strxfrm() asks the C library for a collation key. The C library
+   knows the real rules -- but only for a locale that is INSTALLED, and
+   this program runs under LC_ALL=C so that its output is the same on
+   every machine. Under the C locale there are no rules to know:
+
+     sorted(key=locale.strxfrm) == sorted()   True
+     first three: ['Adamczyk', 'Cieślak', 'Lewandowski']
+
+     That True is the whole warning. Under the C locale strxfrm gives
+     back code-point order -- the wrong answer, silently, with the
+     correct API. A container, a cron job and a CI runner all default
+     to C or C.UTF-8, which is how 'it sorted fine on my laptop'
+     becomes a bug report from Warsaw. Check what you are running
+     under before trusting the call: locale -a | grep -i pl
+
+6. A THIRD ANSWER THAT IS ALMOST RIGHT
+   Stripping the diacritics sorts 'close enough' for a search box,
+   and is wrong for a phone book -- it cannot tell ź from ż.
+
+     Łukasiewicz    -> 'łukasiewicz'
+     Żeromski       -> 'zeromski'
+     Źróbek         -> 'zrobek'
+
+     Note Ł survives: it is U+0141, a letter in its own right, with no
+     combining mark to strip. NFD does not decompose it.
