@@ -96,7 +96,7 @@ A **hand-written key** — rewriting each word as the positions of its letters i
 
 **Stripping the diacritics** is the one that feels clever and is usually wrong. It is fine for a search box, where you want `zeromski` to find `Żeromski`. It is wrong for anything ordered, because it cannot distinguish `ź` from `ż` — and note from the run that it does not even strip `Ł`, which is `U+0141`, a letter in its own right with no combining mark to remove. NFD decomposes `ż` into `z` plus a mark; it leaves `Ł` alone.
 
-**For the real thing, the answer is a library.** The Unicode Collation Algorithm ([UTS #10 ↗](https://unicode.org/reports/tr10/) ↗) is what `strxfrm` approximates and what [PyICU ↗](https://pypi.org/project/PyICU/) ↗ implements properly, with per-locale tailoring you can select without touching global state. This library is stdlib-only by rule, so PyICU does not appear in an example here — but "use ICU" is the correct advice for a product, and pretending otherwise would be the sort of omission [CONTRIBUTING](../../CONTRIBUTING.md) forbids.
+**For the real thing, the answer is a library.** The Unicode Collation Algorithm ([UTS #10 ↗](https://unicode.org/reports/tr10/)) is what `strxfrm` approximates and what [PyICU ↗](https://pypi.org/project/PyICU/) implements properly, with per-locale tailoring you can select without touching global state. This library is stdlib-only by rule, so PyICU does not appear in an example here — but "use ICU" is the correct advice for a product, and pretending otherwise would be the sort of omission [CONTRIBUTING](../../CONTRIBUTING.md) forbids.
 
 ## If you are coming from ABAP
 

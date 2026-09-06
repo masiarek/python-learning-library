@@ -68,7 +68,7 @@ Python has the same split, just spelled differently — `len(raw)` against `len(
 ```
 <!-- /output -->
 
-**Read the `family` row first.** One thing on the screen, 5 code points, 18 UTF-8 bytes, and `len()` says 5. Nothing in the standard library will tell you it is one character, because segmenting text into what a *reader* would call characters is [UAX #29 ↗](https://unicode.org/reports/tr29/) ↗ and needs a table Python does not ship. If your program slices a string to fit a column, this is where it cuts a family in half.
+**Read the `family` row first.** One thing on the screen, 5 code points, 18 UTF-8 bytes, and `len()` says 5. Nothing in the standard library will tell you it is one character, because segmenting text into what a *reader* would call characters is [UAX #29 ↗](https://unicode.org/reports/tr29/) and needs a table Python does not ship. If your program slices a string to fit a column, this is where it cuts a family in half.
 
 **The NFC/NFD pair is the trap that looks like a bug.** Two strings that render identically, print identically, and compare `False`. It reaches you through real doors: macOS filesystems hand back NFD, most Linux tools and most databases hand back NFC, so a filename compared against a database row can miss for a reason invisible on screen. Normalize before comparing anything that came from outside your process.
 
@@ -80,7 +80,7 @@ Python has the same split, just spelled differently — `len(raw)` against `len(
 
 Rust asks the same question and gets the same numbers, with one difference worth knowing: **`len()` means something else there.** Python's counts code points; Rust's counts bytes, because it is O(1) and Rust would rather be honest about the cost than fast and vague about the meaning. `Zażółć` is `6` in Python and `10` in Rust, from a method with the same name — so a loop translated between them keeps working on ASCII and changes meaning at the first Polish letter.
 
-The sibling library has that page: [Meet the `char` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) ↗ works through the same three counts, the same `e` + combining-accent pair that renders as one character and compares unequal, and where Rust's `std` stops — it ships UTF-8 correctness but not the Unicode character database, so normalization and grapheme segmentation are crates rather than methods. It is not repeated here.
+The sibling library has two pages on this. [Meet the `char` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) is the same three counts, and the same `e` + combining-accent pair that renders as one character and compares unequal. [Four lengths ↗](https://masiarek.github.io/rust-learning-library/14_Strings/four_lengths/index.html) adds the column this page does not have — **UTF-16 code units**, which is what JavaScript, Java, C# and SQL Server mean by "length" — then works through which system means which count, and the byte limit that panics mid-letter. Neither is repeated here: Rust's `std` ships UTF-8 correctness but not the Unicode character database, so normalization and grapheme segmentation are crates there rather than methods.
 
 ## If you are coming from ABAP
 
@@ -96,4 +96,4 @@ The sibling library has that page: [Meet the `char` ↗](https://masiarek.github
 
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — where the first two answers come from
 - [Normalization](../normalization/README.md) — the NFC/NFD pair, in full
-- [A code point is not a character ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/a_code_point_is_not_a_character/index.html) ↗ — the grapheme-cluster question, language-agnostic
+- [A code point is not a character ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/a_code_point_is_not_a_character/index.html) — the grapheme-cluster question, language-agnostic

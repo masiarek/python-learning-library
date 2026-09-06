@@ -65,11 +65,11 @@ Three things in that run are worth pausing on.
 
 `str` is `string` and `bytes` is `xstring`, and the mapping is closer than you might expect: ABAP also refuses to compare them directly, and also makes you name a code page to convert (`cl_abap_conv_codepage=>create_out( )` and friends). What ABAP leaves to habit and Python enforces is the *default*: an ABAP program that never thinks about code pages inherits the system's, whereas Python 3 has no default conversion at all — you cannot accidentally get one. (Not machine-checked — CI cannot run ABAP. Verify any specific code-page number against the system rather than trusting a page.)
 
-Coming from C, the difference is starker still: `char *` is `bytes` with no `str` anywhere in the language, which is why [the Unicode-aware C in this repo's sibling ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/utf8_by_hand/index.html) ↗ has to do by hand what `.decode()` does in one call.
+Coming from C, the difference is starker still: `char *` is `bytes` with no `str` anywhere in the language, which is why [the Unicode-aware C in this repo's sibling ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/utf8_by_hand/index.html) has to do by hand what `.decode()` does in one call.
 
 ## Try it
 
-1. Predict `len("😀")` and `len("😀".encode("utf-8"))` before you run them. Then try `"😀"[0]` — does it give you the emoji or half of it? (Python's answer differs from JavaScript's here, and the reason is in [UTF-16 and surrogates ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/utf16_and_surrogates/index.html) ↗.)
+1. Predict `len("😀")` and `len("😀".encode("utf-8"))` before you run them. Then try `"😀"[0]` — does it give you the emoji or half of it? (Python's answer differs from JavaScript's here, and the reason is in [UTF-16 and surrogates ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/utf16_and_surrogates/index.html).)
 2. Read a file two ways — `open(path)` and `open(path, "rb")` — and compare the `len()` of each result. When are they equal?
 3. Find the bug: `if user_input == b"quit":` where `user_input` came from `input()`. What happens, and why is there no traceback?
 

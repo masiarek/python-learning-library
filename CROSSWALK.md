@@ -12,7 +12,7 @@ A cell in the Python column links into this library. A cell in another column li
 
 | The idea | Python | Rust | C | ABAP |
 |---|---|---|---|---|
-| Text vs. raw bytes as separate types | [`str` / `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md) | [`String` / `Vec<u8>` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/anatomy_of_a_string/index.html) ↗ | no distinction — `char *` is both | `string` / `xstring` |
+| Text vs. raw bytes as separate types | [`str` / `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md) | [`String` / `Vec<u8>` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/anatomy_of_a_string/index.html) | no distinction — `char *` is both | `string` / `xstring` |
 | Converting between them | [`.encode()` / `.decode()`](01_Text_and_Bytes/encode_and_decode/README.md) | `String::from_utf8` / `.as_bytes()` | hand-rolled, or `iconv` | `cl_abap_conv_codepage` |
 | What happens on invalid input | `UnicodeDecodeError`, or an `errors=` policy | `from_utf8` returns `Result`; `from_utf8_lossy` substitutes | undefined — nothing checks | exception, or a replacement char |
 | The "never fails" escape hatch | `errors="surrogateescape"` | none in std — the type will not hold it | — | — |
@@ -25,7 +25,8 @@ The sharpest difference is the third row. Rust makes invalid UTF-8 *unrepresenta
 | The idea | Python | Rust | ABAP |
 |---|---|---|---|
 | Length in bytes | `len(s.encode("utf-8"))` | `s.len()` — bytes, always | `xstrlen( )` |
-| Length in code points | [`len(s)`](01_Text_and_Bytes/counting_characters/README.md) | [`s.chars().count()` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) ↗ | — (`strlen( )` counts UTF-16 units) |
+| Length in UTF-16 units | `len(s.encode("utf-16-le")) // 2` | [`s.encode_utf16().count()` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/four_lengths/index.html) | `strlen( )` — this is ABAP's default |
+| Length in code points | [`len(s)`](01_Text_and_Bytes/counting_characters/README.md) | [`s.chars().count()` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) | — (`strlen( )` counts UTF-16 units) |
 | Length a reader would agree with | not in the stdlib | not in std — needs a crate | — |
 | Indexing by position | `s[0]` gives a 1-char `str` | [`s[0]` does not compile](https://masiarek.github.io/rust-learning-library/14_Strings/string_slices/index.html) ↗ | `s(0)` gives a code unit |
 
@@ -35,7 +36,7 @@ Rust's refusal to index a string by integer is the design decision that most ann
 
 | The idea | Python | Rust | ABAP |
 |---|---|---|---|
-| Default sort order | [code point](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | [code point (`Ord` on `str`) ↗](https://masiarek.github.io/rust-learning-library/14_Strings/comparing_strings/index.html) ↗ | UTF-16 code unit |
+| Default sort order | [code point](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | [code point (`Ord` on `str`) ↗](https://masiarek.github.io/rust-learning-library/14_Strings/comparing_strings/index.html) | UTF-16 code unit |
 | Alphabetical for a real language | `locale.strxfrm`, or ICU | needs a crate | collation-aware compare, or a sort key column |
 | Same-looking strings comparing unequal | [normalization](01_Text_and_Bytes/normalization/README.md) | same problem, same fix | same problem |
 | Case-insensitive comparison | `str.casefold()` | `str::to_lowercase` (locale-independent) | `TRANSLATE ... TO UPPER CASE` |
@@ -44,7 +45,7 @@ All three languages get this equally wrong by default, and for the same reason: 
 
 ## Where each library goes deeper
 
-- **[Encodings library ↗](https://masiarek.github.io/encodings-learning-library/) ↗** — the subject itself: what a code point is, how UTF-8 encodes one, byte order and the BOM, overlong sequences, mojibake, and the terminal tools (`od`, `xxd`, `iconv`) that show you the bytes. Read it when the question is *what is actually in the file*.
-- **[Rust library ↗](https://masiarek.github.io/rust-learning-library/) ↗** — `String` vs `&str`, `char`, slicing by byte, and what the type system buys. Read it when the question is *why won't this compile*.
-- **[ABAP library ↗](https://masiarek.github.io/abap-learning-library/) ↗** — the SAP side, where code pages are configuration rather than a literal.
+- **[Encodings library ↗](https://masiarek.github.io/encodings-learning-library/)** — the subject itself: what a code point is, how UTF-8 encodes one, byte order and the BOM, overlong sequences, mojibake, and the terminal tools (`od`, `xxd`, `iconv`) that show you the bytes. Read it when the question is *what is actually in the file*.
+- **[Rust library ↗](https://masiarek.github.io/rust-learning-library/)** — `String` vs `&str`, `char`, slicing by byte, and what the type system buys. Read it when the question is *why won't this compile*.
+- **[ABAP library ↗](https://masiarek.github.io/abap-learning-library/)** — the SAP side, where code pages are configuration rather than a literal.
 - **This library** — Python's answers, and the places Python's answer is unusual.

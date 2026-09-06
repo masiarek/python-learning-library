@@ -38,5 +38,5 @@ Not yet folders, deliberately — a directory of empty stubs is clutter, and eve
 
 ## Open questions
 
-- **Where the boundary with the [encodings library ↗](https://masiarek.github.io/encodings-learning-library/) ↗ sits.** Its `04_Python` chapter has five stubs that overlap this one. The intended split is that it teaches *encodings* and this teaches *Python*; once chapter 1 here is finished, those stubs should probably point here rather than be written twice. Not yet done.
+- **Where the boundary with the [encodings library ↗](https://masiarek.github.io/encodings-learning-library/) sits.** Its `04_Python` chapter has five stubs that overlap this one. The intended split is that it teaches *encodings* and this teaches *Python*; once chapter 1 here is finished, those stubs should probably point here rather than be written twice. Not yet done.
 - **Whether a lesson may ever name a third-party library.** The rule is stdlib-only *examples*; [sorting](01_Text_and_Bytes/sorting_is_not_comparing/README.md) names PyICU in prose because omitting the correct production answer would be worse. That precedent should stay rare.

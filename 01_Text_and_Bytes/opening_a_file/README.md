@@ -10,10 +10,10 @@
 - Why is `encoding="utf-8"` the right default to type every time, and what is `PYTHONUTF8=1` / UTF-8 mode?
 - What does `newline=` do, and why does the default rewrite `\r\n` on the way in?
 - When is `"rb"` the correct answer instead of an encoding — and how does that change `len()`?
-- [PEP 686 ↗](https://peps.python.org/pep-0686/) ↗ makes UTF-8 mode the default. What breaks, and when?
+- [PEP 686 ↗](https://peps.python.org/pep-0686/) makes UTF-8 mode the default. What breaks, and when?
 - `EncodingWarning` and `-X warn_default_encoding`: how to find every unnamed `open()` in a codebase.
 
 ## See also
 
 - [Encode and decode](../encode_and_decode/README.md)
-- [Locale and `LC_CTYPE` ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/locale_and_lc_ctype/index.html) ↗
+- [Locale and `LC_CTYPE` ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/locale_and_lc_ctype/index.html)

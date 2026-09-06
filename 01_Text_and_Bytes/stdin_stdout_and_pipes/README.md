@@ -15,4 +15,4 @@
 ## See also
 
 - [Encode and decode](../encode_and_decode/README.md)
-- [`printf` writes bytes ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/printf_writes_bytes/index.html) ↗
+- [`printf` writes bytes ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/printf_writes_bytes/index.html)

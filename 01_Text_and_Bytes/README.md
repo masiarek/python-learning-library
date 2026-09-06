@@ -19,4 +19,4 @@ This is the chapter to read first — not because text is the most important par
 
 ## Where this sits relative to the other libraries
 
-The [encodings library ↗](https://masiarek.github.io/encodings-learning-library/) ↗ teaches encodings *as a subject*, using four languages to illustrate. This chapter teaches **Python's answer** to that subject — the type boundary, the codec registry, the `errors=` policies, the locale coupling. Where a page here needs the language-agnostic groundwork, it links there rather than repeating it. [The crosswalk](../CROSSWALK.md) is the index of which idea lives where.
+The [encodings library ↗](https://masiarek.github.io/encodings-learning-library/) teaches encodings *as a subject*, using four languages to illustrate. This chapter teaches **Python's answer** to that subject — the type boundary, the codec registry, the `errors=` policies, the locale coupling. Where a page here needs the language-agnostic groundwork, it links there rather than repeating it. [The crosswalk](../CROSSWALK.md) is the index of which idea lives where.

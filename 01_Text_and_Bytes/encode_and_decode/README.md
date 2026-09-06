@@ -87,11 +87,11 @@ The two verbs are `cl_abap_conv_codepage=>create_out( )->convert( )` and `create
 ## Try it
 
 1. Encode `"€"` to `cp1252`, `latin-1` and `ascii`. Two of the three raise. Read `exc.reason` on each.
-2. Take a UTF-8 file, decode it as `latin-1`, re-encode it as UTF-8, and compare to the original. This is mojibake, manufactured deliberately — and the round trip *back* is the subject of [mojibake round trip ↗](https://masiarek.github.io/encodings-learning-library/07_Real_Data/mojibake_round_trip/index.html) ↗.
+2. Take a UTF-8 file, decode it as `latin-1`, re-encode it as UTF-8, and compare to the original. This is mojibake, manufactured deliberately — and the round trip *back* is the subject of [mojibake round trip ↗](https://masiarek.github.io/encodings-learning-library/07_Real_Data/mojibake_round_trip/index.html).
 3. Write bytes that are invalid UTF-8 to a file, read it with `errors="surrogateescape"`, write it back out, and diff. Then do the same with `errors="replace"` and diff again.
 
 ## See also
 
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — the two types this moves between
 - [Opening a file](../opening_a_file/README.md) — where `encoding=` gets decided for you if you don't
-- [Encode and decode are verbs ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/encode_and_decode_are_verbs/index.html) ↗ — the language-agnostic version in the encodings library
+- [Encode and decode are verbs ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/encode_and_decode_are_verbs/index.html) — the language-agnostic version in the encodings library
