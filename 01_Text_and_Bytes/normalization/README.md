@@ -7,7 +7,7 @@
 **One line:** `café` and `café` can be two different strings that render identically, and `unicodedata.normalize()` is what you run before comparing anything that came from outside your process.
 
 - What are NFC, NFD, NFKC and NFKD, and which one do you actually want? (NFC for storage and comparison; NFKC only when you accept that `ﬁ` becomes `fi` and `²` becomes `2`.)
-- Why does macOS hand back NFD from the filesystem while nearly everything else uses NFC?
+- Why did HFS+ hand back NFD while nearly everything else uses NFC — and why is APFS's answer (preserve the bytes, match either spelling) not the same fix? (Measured in [Filenames are not text](../filenames_are_not_text/README.md).)
 - What is `str.casefold()` and why is it not `str.lower()`? (`ß` → `ss`, and the length changes.)
 - The comparison recipe: normalize, then casefold, then compare — in that order, and why the order matters.
 - Where does this bite in real data — a filename against a database row, a deduplication pass, a login form.

@@ -15,7 +15,7 @@ This is the chapter to read first — not because text is the most important par
 | 5 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
 | 6 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
 | 7 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
-| 8 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | stub |
+| 8 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
 
 ## Where this sits relative to the other libraries
 

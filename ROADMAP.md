@@ -15,7 +15,7 @@ Status of every page, and the order things are planned in. A **stub** has a perm
 | [Normalization](01_Text_and_Bytes/normalization/README.md) | **stub** | |
 | [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | written | |
 | [Standard in, standard out, and pipes](01_Text_and_Bytes/stdin_stdout_and_pipes/README.md) | **stub** | the example has to run under a pipe to show the effect |
-| [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md) | **stub** | 301; needs a temp dir, which the determinism rule complicates |
+| [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md) | written, 2026-09-06 | the example touches no disk on purpose; APFS refuses invalid UTF-8 and is normalization-*insensitive*, not normalizing — both measured against Linux, both in a dated table rather than an answer key |
 
 ## Chapter 2 — Projects and environments
 

@@ -28,6 +28,13 @@ Subscription material, and good. Cited here as sources rather than summarized:
 - [How to Sort Unicode Strings Alphabetically in Python ↗](https://realpython.com/python-sort-unicode-strings/) — Bartosz Zaczyński. The article that prompted [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md); it goes further than that page does, into transliteration, natural sort order and multi-key sorting.
 - [Build a Word Count Command-Line App ↗](https://realpython.com/courses/python-project-word-count/) — the course whose non-ASCII lesson prompted [Counting characters](01_Text_and_Bytes/counting_characters/README.md).
 
+## macOS specifics
+
+The two pages behind [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md)'s macOS half. Both are about the *terminal*, not about Python, and neither is the source of a number on that page — every measurement there was re-run on 2026-09-06 against Linux, because both pages predate APFS.
+
+- [Display high-bit characters in Terminal on Mac ↗](https://support.apple.com/guide/terminal/display-high-bit-characters-trmlxxx/mac) — Apple. The Terminal profile's text-encoding menu and its "set locale environment variables on startup" checkbox. Read it for what the three settings *are*; the advice to change them is for a world that is no longer the default.
+- [Terminal Primer – Part 3 – Special Characters ↗](https://scriptingosx.com/2017/08/special-characters/) — Armin Briegel. Shell quoting and escaping, not encodings — but it is where the Finder `/` ↔ shell `:` swap is best explained. Written for `bash` in 2017; its `!` and single-quote rules do not hold in `fish`.
+
 ## Talks
 
 - Ned Batchelder, [Pragmatic Unicode ↗](https://nedbatchelder.com/text/unipain.html) — the "unipain" talk. Still the clearest statement of the boundary discipline, and the source of the *encode on the way out, decode on the way in* framing.
