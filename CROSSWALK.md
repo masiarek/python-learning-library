@@ -25,7 +25,7 @@ The sharpest difference is the third row. Rust makes invalid UTF-8 *unrepresenta
 | The idea | Python | Rust | ABAP |
 |---|---|---|---|
 | Length in bytes | `len(s.encode("utf-8"))` | `s.len()` — bytes, always | `xstrlen( )` |
-| Length in code points | [`len(s)`](01_Text_and_Bytes/counting_characters/README.md) | `s.chars().count()` | — (`strlen( )` counts UTF-16 units) |
+| Length in code points | [`len(s)`](01_Text_and_Bytes/counting_characters/README.md) | [`s.chars().count()` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) ↗ | — (`strlen( )` counts UTF-16 units) |
 | Length a reader would agree with | not in the stdlib | not in std — needs a crate | — |
 | Indexing by position | `s[0]` gives a 1-char `str` | [`s[0]` does not compile](https://masiarek.github.io/rust-learning-library/14_Strings/string_slices/index.html) ↗ | `s(0)` gives a code unit |
 
@@ -35,7 +35,7 @@ Rust's refusal to index a string by integer is the design decision that most ann
 
 | The idea | Python | Rust | ABAP |
 |---|---|---|---|
-| Default sort order | [code point](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | code point (`Ord` on `str`) | UTF-16 code unit |
+| Default sort order | [code point](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | [code point (`Ord` on `str`) ↗](https://masiarek.github.io/rust-learning-library/14_Strings/comparing_strings/index.html) ↗ | UTF-16 code unit |
 | Alphabetical for a real language | `locale.strxfrm`, or ICU | needs a crate | collation-aware compare, or a sort key column |
 | Same-looking strings comparing unequal | [normalization](01_Text_and_Bytes/normalization/README.md) | same problem, same fix | same problem |
 | Case-insensitive comparison | `str.casefold()` | `str::to_lowercase` (locale-independent) | `TRANSLATE ... TO UPPER CASE` |
