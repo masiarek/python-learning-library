@@ -19,7 +19,7 @@ A diagnostic, not a test. Each one is a checkpoint, and each has a page.
 3. **Say what encoding `open("data.txt")` uses on your machine, and on a colleague's.** → [Opening a file](../01_Text_and_Bytes/opening_a_file/README.md)
 4. **Sort a list of Polish names correctly, and say what you traded to do it.** → [Sorting is not comparing](../01_Text_and_Bytes/sorting_is_not_comparing/README.md)
 
-If all four are comfortable, chapter 1 is revision — skim the crosswalk instead and wait for chapter 2.
+If all four are comfortable, chapter 1 is revision — skim the crosswalk instead and start at [chapter 2](../02_Projects_and_Environments/README.md), which is about everything around the code rather than in it: the project file, the interpreter, and the packages it can see.
 
 ## How to run anything here
 
@@ -38,5 +38,6 @@ python3 tools/run_examples.py --check
 ## The reading order
 
 1. [Text and bytes](../01_Text_and_Bytes/README.md) — the whole of chapter 1
-2. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
-3. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next
+2. [Projects and environments](../02_Projects_and_Environments/README.md) — the project file, and the interpreter that runs it
+3. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
+4. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next

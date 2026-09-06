@@ -49,6 +49,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "index.md",
         "00_Start_Here",
         "01_Text_and_Bytes",
+        "02_Projects_and_Environments",
         "CROSSWALK.md",
         "GLOSSARY.md",
         "RESOURCES.md",
@@ -66,6 +67,12 @@ NAV_ORDER: dict[str, list[str]] = {
         "sorting_is_not_comparing",
         "stdin_stdout_and_pipes",
         "filenames_are_not_text",
+    ],
+    # The file first: every other page in this chapter is about something the
+    # file names but does not itself do.
+    "02_Projects_and_Environments": [
+        "README.md",
+        "pyproject_toml",
     ],
 }
 

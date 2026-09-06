@@ -1,0 +1,96 @@
+READING pyproject.toml WITH THE STANDARD LIBRARY
+tomllib has shipped with Python since 3.11. No install, no dependency.
+
+1. THE FILE HAS TWO KINDS OF TABLE, AND ONLY ONE IS STANDARDISED
+     [project]            standard, PEP 621 -- every tool reads it the same way
+     [dependency-groups]  standard, PEP 735 -- same, and it is the newest one
+     [tool]               each tool's own room, and nobody else looks inside
+
+     Anything under [tool.X] belongs to X alone: [tool.pytest] is not
+     part of the packaging standard and pytest is the only reader.
+     That is the whole convention -- one file, one room per tool.
+
+2. WHAT THE PROJECT SAYS ABOUT ITSELF
+     name             'star-voting-library'
+     version          '0.1.0'
+     requires-python  '>=3.10,<3.14'
+     dependencies     2 of them:
+                      pref-voting>=1.18
+                      pyyaml>=6.0.3
+
+3. A NESTED TABLE IS JUST A NESTED DICT
+     A dotted header is nothing but nesting: the table [tool.uv.workspace]
+     is three dict lookups, and a key inside it is a fourth.
+
+     data['tool']['uv']['workspace']            ->  {'members': ['engine']}
+     data['tool']['uv']['workspace']['members'] ->  ['engine']
+     data['tool']['uv']['sources']              ->  {'starvote': {'workspace': True, 'editable': True}}
+     data['tool']['pytest']['ini_options']      ->  {'testpaths': ['tests']}
+
+     Those two uv tables are the whole of a WORKSPACE. 'members' says
+     this repository holds other packages, each with its own
+     pyproject.toml, that share one resolved environment. 'sources'
+     says the name starvote resolves to the copy in this repository
+     and not to the one on PyPI -- editable, so an edit is live.
+
+     That is what an editor offers to read when it proposes deriving
+     the project layout from pyproject.toml: the answer is in the
+     file, so it no longer has to guess which folders are packages.
+
+4. THREE THINGS ARE CALLED DEPENDENCIES AND THEY ARE NOT THE SAME
+     [project].dependencies
+       who needs them: a USER of this code, always, on install
+         pref-voting>=1.18
+         pyyaml>=6.0.3
+
+     [project.optional-dependencies]
+       who needs them: a USER who asks -- pip install 'star-voting-library[plotting]'
+         plotting  matplotlib>=3.8
+
+     [dependency-groups]
+       who needs them: a DEVELOPER of this code, and nobody else ever
+         dev       pytest>=8.0, mypy>=2.0.0
+         docs      mkdocs-material>=9.5, mkdocs-same-dir==0.1.3
+
+     Only the third one is invisible to whoever installs the package.
+     pytest is not a dependency of the library; it is a dependency of
+     working on the library, and PEP 735 exists to say so in the file
+     rather than in a requirements-dev.txt nothing validates.
+
+5. THE VALUES ARRIVE AS PYTHON TYPES, AND THE QUOTES DECIDE WHICH
+     v = "1.10"         ->  '1.10'                       str
+     v = 1.10           ->  1.1                          float
+     v = true           ->  True                         bool
+     v = 2026-09-06     ->  datetime.date(2026, 9, 6)    date
+     v = ["a", "b"]     ->  ['a', 'b']                   list
+
+     No bare word is a boolean: TOML has only true and false, lower
+     case. There is nothing here for a Yes or an Off to be coerced
+     into, which is the one thing TOML buys over YAML for a config file.
+
+6. tomllib WANTS BYTES -- THIS IS CHAPTER 1 AGAIN
+     TOML is DEFINED to be UTF-8, so tomllib decodes the bytes itself
+     rather than trusting whatever open() would have guessed.
+
+     tomllib.load(binary_file)  OK -- 3 top-level tables
+     tomllib.loads(str)         OK -- 3 top-level tables
+     tomllib.load(text_file)    TypeError
+                                  File must be opened in binary mode, e.g. use `open('foo.toml', 'rb')`
+     tomllib.loads(bytes)       TypeError
+                                  (message deliberately not shown -- see below)
+
+     load() takes a file opened 'rb'; loads() takes a str. Getting it
+     backwards is a TypeError, not a mojibake bug -- which is the point
+     of refusing to guess.
+
+     The last message is withheld because it is not stable. Up to 3.13
+     the bytes reached str.replace() and CPython reported that; 3.14
+     catches it and says so in tomllib's own words. Same type, same
+     bug, different sentence. AN EXCEPTION MESSAGE IS NOT API: catch
+     the type, and never match on the text.
+
+7. IT ONLY READS
+     There is no tomllib.dump(). Writing TOML is not in the standard
+     library, on purpose: reading config is everyone's problem, and
+     writing it -- preserving comments and layout -- is a hard one.
+     Edit pyproject.toml by hand, or let your tool do it.

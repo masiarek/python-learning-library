@@ -16,10 +16,11 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 
 - **[Start here](00_Start_Here/README.md)** — what this is, and a four-question diagnostic
 - **[Chapter 1 — Text and bytes](01_Text_and_Bytes/README.md)** — the type boundary, encoding, counting, sorting
+- **[Chapter 2 — Projects and environments](02_Projects_and_Environments/README.md)** — the project file, and the interpreter that runs it
 - **[The crosswalk](CROSSWALK.md)** — the same ideas in Rust, C and ABAP, one table per question
 - **[Roadmap](ROADMAP.md)** — what is written, what is a stub, what is next
 
-## The four written lessons
+## The written lessons
 
 | Lesson | The question |
 |---|---|
@@ -27,6 +28,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) | Which direction is which, and what does `errors=` throw away? |
 | [Counting characters](01_Text_and_Bytes/counting_characters/README.md) | How long is this string — and which of the four answers did you want? |
 | [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? |
+| [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) | What is this file, who reads which part, and how do I read it myself? |
 
 ## Run it
 

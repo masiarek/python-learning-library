@@ -17,6 +17,14 @@ Status of every page, and the order things are planned in. A **stub** has a perm
 | [Standard in, standard out, and pipes](01_Text_and_Bytes/stdin_stdout_and_pipes/README.md) | **stub** | the example has to run under a pipe to show the effect |
 | [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md) | **stub** | 301; needs a temp dir, which the determinism rule complicates |
 
+## Chapter 2 — Projects and environments
+
+| Lesson | Status | Notes |
+|---|---|---|
+| [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) | written | the standard tables, the `[tool.X]` rooms, workspaces, and `tomllib` |
+
+Planned, and deliberately not yet folders: the virtual environment, `sys.path` and how an import finds a file, the lockfile, and [PEP 723 ↗](https://peps.python.org/pep-0723/) inline script metadata. See the [chapter page](02_Projects_and_Environments/README.md).
+
 ## Chapters after this one
 
 Not yet folders, deliberately — a directory of empty stubs is clutter, and every folder name is a permanent URL. Named here so the shape is visible:
