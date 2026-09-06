@@ -54,7 +54,9 @@ python3 tools/run_examples.py --check             # write nothing, fail on drift
 
 ## The programs
 
-**Stdlib only.** A reader must be able to run any page with the `python3` already on their machine, and CI has no install step to prove it. A page may *name* a third-party library in prose when leaving it out would give bad advice — [sorting](01_Text_and_Bytes/sorting_is_not_comparing/README.md) names PyICU for exactly that reason — but it may not import one.
+**Stdlib only.** A reader must be able to run any page with the `python3` already on their machine, and CI has no install step to prove it.
+
+**A page may carry a comparison example in another language when the contrast IS the lesson** — [counting characters](01_Text_and_Bytes/counting_characters/README.md) has a Rust view because `len()` counts bytes there and code points here, which is a fact about Python worth seeing from outside. Those follow the sibling libraries' rules: bare `rustc --edition 2024` with no cargo and no crates, `cc -std=c11 -Wall -Wextra` with no libraries. Keep it rare — a second language that says the same thing twice is padding, and every one of them is a toolchain CI has to have. A page may *name* a third-party library in prose when leaving it out would give bad advice — [sorting](01_Text_and_Bytes/sorting_is_not_comparing/README.md) names PyICU for exactly that reason — but it may not import one.
 
 **Deterministic.** No clocks, no randomness, no network, no reading the filesystem, and **nothing that depends on an installed locale**. Every example runs under a fixed environment (`LC_ALL=C`, `PYTHONUTF8=1`). Where the honest answer *is* machine-dependent, print the dependency rather than a value: the sorting lesson prints whether `pl_PL.UTF-8` exists rather than an order that would differ between two computers. CI runs on Ubuntu **and** macOS, which is the only check that catches this class of mistake.
 
