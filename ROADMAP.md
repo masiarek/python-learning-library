@@ -11,6 +11,7 @@ Status of every page, and the order things are planned in. A **stub** has a perm
 | Lesson | Status | Notes |
 |---|---|---|
 | [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md) | written | |
+| [String literals](01_Text_and_Bytes/string_literals/README.md) | written, 2026-09-07 | nine prefixes and the eight combinations that do not exist, five spellings of one code point, `\x` fixed at two digits against greedy octal in the same grammar, and the unrecognised escape that is kept — which is why `'\bfoo\b'` as a regex matches nothing and raises nothing; the Rust and C columns are a dated table, not examples (rustc 1.98.0, clang 21.0.0) — three answers to "where does an escape stop", and Rust's raw string is the *stronger* one |
 | [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) | written | covers the `errors=` policies including `surrogateescape` |
 | [Making a `bytes` object](01_Text_and_Bytes/making_a_bytes_object/README.md) | written, 2026-09-07 | the four-job constructor; the other-language table is dated and measured locally, not an example — CI here is Python-only |
 | [`bytearray` is the mutable one](01_Text_and_Bytes/bytearray_is_mutable/README.md) | written, 2026-09-07 | the mutable half of the binary pair, and why there is no literal; the six-language table was run locally (rustc 1.98.0, go1.25.5, Swift 6.3.3, Node 20.20.2, clang 21.0.0) and is dated, not an example — CI here is Python-only. Java, C# and ABAP are prose |

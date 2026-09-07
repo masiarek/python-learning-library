@@ -1,0 +1,121 @@
+1. NINE PREFIXES, AND THE ONES THAT DO NOT EXIST
+     prefix     type     what it changes
+     --------------------------------------------------------------
+     '' (none)  str      nothing -- this is the plain form
+     'r'        str      backslash sequences are NOT interpreted
+     'b'        bytes    the result is bytes; source must be ASCII
+     'f'        str      braces are expressions, evaluated at run time
+     'u'        str      nothing at all -- a no-op kept for 2-to-3 ports
+     'rb'       bytes    both of the above
+     'rf'       str      raw and f, which do compose
+     'br'       bytes    both, spelled the other way round
+     'fr'       str      the same, other order
+
+     9 valid, 8 rejected: bf bu fb fu ru ub uf ur
+     Read the rejected list as two rules. 'u' combines with nothing --
+     it is a compatibility no-op and was never meant to be useful. And
+     'b' and 'f' cannot meet: an f-string is built at run time out of
+     str pieces, and there is no such thing as an f-bytes literal.
+     Case does not matter: 8 of 8 uppercase spellings compile,
+     B'x' and Rb'x' and BR'x' among them.
+
+2. FIVE LITERAL SPELLINGS OF ONE NUMBER, AND ONE THAT IS NOT PYTHON
+     how                    written                                  value  len
+     ------------------------------------------------------------------------
+     the character itself   'é'                                      é      1
+     hex escape, 2 digits   '\xe9'                                   é      1
+     hex escape, 4 digits   '\u00e9'                                 é      1
+     hex escape, 8 digits   '\U000000e9'                             é      1
+     by name                '\N{LATIN SMALL LETTER E WITH ACUTE}'    é      1
+     built at run time      chr(0xE9)                                é      1
+
+     all six are the same object value: True
+     U+00E9 is a sixth notation and it is NOT Python syntax. It is the
+     Unicode standard's way of NAMING the code point; 0xE9 is an integer
+     literal that happens to equal it; and 'é' is source text. Same
+     number, three jobs -- and only two of the three are code.
+
+3. TWO NUMERIC ESCAPES, TWO DIFFERENT WIDTHS
+     literal          value        len   why
+     ------------------------------------------------------------------
+     '\x41'           'A'          1     exactly two hex digits, always
+     '\xA1A'          '¡A'         2     the A is data -- \x stopped after two
+     '\101'           'A'          1     octal, and 101 octal is 65
+     '\1010'          'A0'         2     octal took three digits, then '0' is data
+     '\10'            '\x08'       1     octal will take one, two or three
+     '\0'             '\x00'       1     NUL -- and it is octal zero, not a special case
+
+     Python has one fixed-width numeric escape and one greedy one, in
+     the same grammar. '\x' can never swallow a following hex digit;
+     '\NNN' can, and does. If you write octal at all, write all three
+     digits -- which is the same advice other languages have to give
+     about their \x, because theirs is the greedy one.
+
+4. AN UNKNOWN ESCAPE IS KEPT, NOT REJECTED -- AND THAT IS THE TRAP
+     source     value        backslash survived?
+     ------------------------------------------------
+     '\\d'      '\\d'        True
+     '\\w'      '\\w'        True
+     '\\s'      '\\s'        True
+     '\\b'      '\x08'       False
+     '\\A'      '\\A'        True
+     '\\Z'      '\\Z'        True
+     '\\n'      '\n'         False
+     '\\t'      '\t'         False
+
+     Five of those eight are regex syntax that arrives at re intact
+     purely because Python did not recognise them. '\b' is the
+     exception, and it is the one every real pattern uses:
+     cooked pattern '\x08foo\x08'  on 'a foo b' -> None
+     raw    pattern '\\bfoo\\b'    on 'a foo b' -> (2, 5)
+
+     The cooked pattern asked for a BACKSPACE character on both sides
+     of 'foo' and found nothing. It did not raise; it just never
+     matches. This is the whole reason regex patterns are written r''
+     -- not style, and not about the backslashes you can see.
+     Since Python 3.12 an unrecognised escape is a SyntaxWarning, and
+     it is documented as becoming an error in a future release. Until
+     then '\d' works and '\b' silently does not.
+
+5. RAW DOES NOT MEAN 'NO BACKSLASH RULES'
+     r'\"'  is '\\"', length 2
+     -- the backslash still escaped the quote, so the string did not
+        end there. It just also stayed in the result.
+     a raw literal ending in ONE backslash -> SyntaxError
+     So a raw string cannot end in an odd number of backslashes, which
+     is why r'C:\Users\' does not compile and every Windows path
+     example ends one character short of where you wanted it.
+     And a code-point escape is not one either: r'\u0041' is '\\u0041', 6 characters.
+
+6. A bytes LITERAL IS ASCII-ONLY, AND HAS A SMALLER ESCAPE SET
+     escape                           in a str       in a bytes
+     --------------------------------------------------------------
+     '\\n'                            '\n'           b'\n'
+     '\\x41'                          'A'            b'A'
+     '\\101'                          'A'            b'A'
+     '\\u0041'                        'A'            b'\\u0041'
+     '\\U00000041'                    'A'            b'\\U00000041'
+     '\\N{LATIN CAPITAL LETTER A}'    'A'            b'\\N{LATIN CAPITAL LETTER A}'
+
+     b'e-acute' written directly -> SyntaxError
+     The three that survive as text are the three that name a CODE
+     POINT, and a byte does not have one. So they are not escapes
+     inside a bytes literal at all -- they stay as a backslash and a
+     letter, and since 3.12 they warn. A bytes literal is ASCII-only
+     no matter what encoding the source file declares, because it is
+     spelling out bytes and the source encoding is not one of them.
+
+7. TWO STRINGS SIDE BY SIDE ARE ONE STRING
+     'spam' 'eggs'  ->  'spameggs', length 8
+     Adjacent literals are concatenated by the COMPILER, so there is
+     no run-time cost and no '+' -- which is how a long literal gets
+     wrapped over several lines inside brackets.
+     a list with one comma missing -> ['spam', 'eggsbeans', 'toast']
+     len(menu) is 3, and nobody typed a concatenation.
+     That is the cost of the feature: a missing comma in a list of
+     strings is not a syntax error, it is a shorter list. Linters look
+     for it precisely because the language cannot.
+
+     (No answer above depends on which Python you ran it under: this
+      grammar has been this shape since 3.6, and the file prints the
+      same bytes on 3.11, 3.12, 3.13 and 3.14.)

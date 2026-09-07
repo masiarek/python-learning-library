@@ -23,6 +23,21 @@ A cell in the Python column links into this library. A cell in another column li
 
 The sharpest difference is the third row. Rust makes invalid UTF-8 *unrepresentable* in a `String`, so the check happens once at the boundary and never again. Python checks at the boundary too but leaves you a way through it (`surrogateescape`), because a filename has to be openable even when it is not text. C checks nowhere. Which of those is right depends entirely on whether your program can refuse its input.
 
+## Writing a literal down
+
+| The idea | Python | Rust | C |
+|---|---|---|---|
+| What the prefix decides | [type, escaping and interpolation — three separate questions](01_Text_and_Bytes/string_literals/README.md) | `b` `r` `c` — type and escaping; no interpolation prefix | `u8` `u` `U` `L` — the element type |
+| How many prefixes | **nine** legal, eight two-letter combinations rejected | `b`, `r`, `br`, and `c` for C strings | four, plus `R"(…)"` in C++11 |
+| A hex escape's width | `\xNN` — exactly two, never greedy | `\xNN` — exactly two, and ≤ `0x7F` in a `str` | `\x…` — **unbounded**, eats every hex digit |
+| Naming a code point | `\uXXXX`, `\UXXXXXXXX`, `\N{NAME}` | `\u{…}` — braced, so width never arises | `\uXXXX`, `\UXXXXXXXX` |
+| Octal | `\NNN` — one to three, greedy | none at all | `\NNN` — one to three, greedy |
+| An escape the language does not know | **kept**, and a `SyntaxWarning` since 3.12 | compile error | warning, then implementation-defined |
+| Adjacent literals | joined by the compiler | syntax error — use `concat!` | joined by the compiler |
+| Non-ASCII in a binary literal | `b'é'` is a `SyntaxError` | `b"é"` is a compile error | fine — it is just bytes |
+
+The row with consequences is the sixth. Python keeping an unknown escape is what lets `'\d'` work in a regex and `'\b'` silently not, since `\b` is a real Python escape; Rust rejecting it means the same mistake cannot compile. The third and fourth rows are three answers to one question — fix the width, delimit it, or let it run — and only the middle one has no failure mode.
+
 ## Showing a value
 
 | The idea | Python | Rust | ABAP |
@@ -114,7 +129,7 @@ This is the one section where the *names* match and the *sets* do not, in both d
 | Parse into a number | `int(s)` / `float(s)` | [`s.parse::<T>()` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/parsing_a_string/index.html) — the type decides the parser | `MOVE`, with silent conversion |
 | Interpolate values in | [f-strings, `format()`, `str.format`](01_Text_and_Bytes/the_format_mini_language/README.md) — one grammar, four doors | [`format!` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/the_format_language/index.html) — the same spec string produces the same bytes; a **macro**, so a runtime template does not compile | string templates, options named rather than punctuated |
 | The older spelling | `'%s' % x` — one operator, one operand, and the only one that works on `bytes` | — | — |
-| A literal with no escapes | `r"..."` | [`r#"..."#` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/raw_strings_and_escapes/index.html) — the hashes let you nest quotes | — |
+| A literal with no escapes | [`r"..."`](01_Text_and_Bytes/string_literals/README.md) — but the backslash still ends the literal, so it cannot end in one | [`r#"..."#` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/raw_strings_and_escapes/index.html) — the hashes let you nest quotes, and `r"C:\Users\"` compiles | — |
 
 Two things run through the whole table. **Rust's versions are lazy and byte-indexed**: `split` hands back an iterator you can stop consuming, and `find` gives a byte offset you must not treat as a character position — which is the same trap as indexing, one method along. And **Rust returns `Option` where Python returns a sentinel or raises**: `find` gives `None` rather than `-1`, `split_once` gives `None` rather than a one-element list, so the failure is in the type instead of in the docs. The Python column here is thin on links on purpose — this library's chapter 1 is about the text *model*, and the method-by-method tour is one of the gaps this page is meant to make visible.
 

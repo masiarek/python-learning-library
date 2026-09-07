@@ -26,6 +26,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | Lesson | The question |
 |---|---|
 | [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md) | Which type am I holding, and why won't Python mix them? |
+| [String literals](01_Text_and_Bytes/string_literals/README.md) | What do the `r`, `b` and `f` prefixes change — and why is `'\d'` two characters? |
 | [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) | Which direction is which, and what does `errors=` throw away? |
 | [Making a `bytes` object](01_Text_and_Bytes/making_a_bytes_object/README.md) | Why is `bytes(5)` five zero bytes and `bytes([5])` one? |
 | [`bytearray` is the mutable one](01_Text_and_Bytes/bytearray_is_mutable/README.md) | Which of the two binary types can I write into, and what does mutability cost? |

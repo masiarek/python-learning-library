@@ -28,6 +28,8 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **format specification** — everything after the colon in a replacement field — `*^+12.3f` — handed as a *string* to the object's own `__format__`, which may define its own meaning for it. The standard one has nine slots in a fixed order. See [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md).
 
+**escape sequence** — a backslash and what follows it inside a literal, resolved by the **compiler**, not at run time. Python has fixed-width `\xNN`, greedy octal `\NNN`, and three code-point escapes that do not exist inside a `bytes` literal. An unrecognised one is kept. See [String literals](01_Text_and_Bytes/string_literals/README.md).
+
 **General_Category** — the one-per-code-point classification (`Lu`, `Ll`, `Lo`, `Mn`, `Nd`, `No`, `Pc`…) that `unicodedata.category()` returns and that `str.isalpha()` tests. Distinct from a *property* like Alphabetic, which is derived from it and wider. See [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md).
 
 **grapheme cluster** — what a reader calls one character, which may be several code points (`👨‍👩‍👧` is five). Not in the standard library. See [Counting characters](01_Text_and_Bytes/counting_characters/README.md).
@@ -49,6 +51,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **pyproject.toml** — the one declarative file describing a Python project: standardised tables (`[project]`, `[build-system]`, `[dependency-groups]`) plus a `[tool.<name>]` room per tool. Replaced the executable `setup.py`. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
 
 **repr** — the representation of an object aimed at a programmer rather than a reader, reached as `repr(x)`, `f'{x!r}'` or `f'{x = }'`, and used automatically for the elements of any container. Rust splits the same idea into the `Debug` and `Display` traits. See [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md).
+
+**raw string** — a literal with the `r` prefix, in which backslash sequences are not interpreted. The backslash still ends the literal, so a raw string cannot end in an odd number of them. See [String literals](01_Text_and_Bytes/string_literals/README.md).
 
 **str** — Python's text type, a sequence of code points. Has `.encode()` and no `.decode()`. See [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md).
 

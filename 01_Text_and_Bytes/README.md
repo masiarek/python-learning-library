@@ -9,21 +9,22 @@ This is the chapter to read first — not because text is the most important par
 | # | Lesson | The question it answers | Status |
 |---|---|---|---|
 | 1 | [`str` is not `bytes`](str_is_not_bytes/README.md) | Which type am I holding, and why won't Python mix them? | written |
-| 2 | [Encode and decode](encode_and_decode/README.md) | Which direction is which, and what does `errors=` throw away? | written |
-| 3 | [Making a `bytes` object](making_a_bytes_object/README.md) | Why is `bytes(5)` five zero bytes and `bytes([5])` one? | written |
-| 4 | [`bytearray` is the mutable one](bytearray_is_mutable/README.md) | Which of the two binary types can I write into, and what does mutability cost? | written |
-| 5 | [Opening a file](opening_a_file/README.md) | What encoding does `open()` use when I don't say? | stub |
-| 6 | [Counting characters](counting_characters/README.md) | How long is this string — and which of the four answers did you want? | written |
-| 7 | [Is it a letter?](is_it_a_letter/README.md) | What do the twelve `is*` predicates actually test? | written |
-| 8 | [`repr` is not `str`](repr_is_not_str/README.md) | Why is a space "printable" and a tab not — and what did `str(b'x')` just do? | written |
-| 9 | [What ends a line](what_ends_a_line/README.md) | Which characters count as a line break — and why do I get three different answers? | written |
-| 10 | [`strip` is a set, not a prefix](strip_is_a_set/README.md) | Why did `lstrip('Arthur: ')` eat three more characters than I asked for? | written |
-| 11 | [The format mini-language](the_format_mini_language/README.md) | Is `f'{x:>8}'` the same grammar as `'{:>8}'.format(x)` — and where does `%` fit? | written |
-| 12 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
-| 13 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
-| 14 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
-| 15 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
-| 16 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
+| 2 | [String literals](string_literals/README.md) | What do the `r`, `b` and `f` prefixes change — and why is `'\d'` two characters? | written |
+| 3 | [Encode and decode](encode_and_decode/README.md) | Which direction is which, and what does `errors=` throw away? | written |
+| 4 | [Making a `bytes` object](making_a_bytes_object/README.md) | Why is `bytes(5)` five zero bytes and `bytes([5])` one? | written |
+| 5 | [`bytearray` is the mutable one](bytearray_is_mutable/README.md) | Which of the two binary types can I write into, and what does mutability cost? | written |
+| 6 | [Opening a file](opening_a_file/README.md) | What encoding does `open()` use when I don't say? | stub |
+| 7 | [Counting characters](counting_characters/README.md) | How long is this string — and which of the four answers did you want? | written |
+| 8 | [Is it a letter?](is_it_a_letter/README.md) | What do the twelve `is*` predicates actually test? | written |
+| 9 | [`repr` is not `str`](repr_is_not_str/README.md) | Why is a space "printable" and a tab not — and what did `str(b'x')` just do? | written |
+| 10 | [What ends a line](what_ends_a_line/README.md) | Which characters count as a line break — and why do I get three different answers? | written |
+| 11 | [`strip` is a set, not a prefix](strip_is_a_set/README.md) | Why did `lstrip('Arthur: ')` eat three more characters than I asked for? | written |
+| 12 | [The format mini-language](the_format_mini_language/README.md) | Is `f'{x:>8}'` the same grammar as `'{:>8}'.format(x)` — and where does `%` fit? | written |
+| 13 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
+| 14 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
+| 15 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
+| 16 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
+| 17 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
 
 ## Where this sits relative to the other libraries
 

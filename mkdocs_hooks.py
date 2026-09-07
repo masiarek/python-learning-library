@@ -62,6 +62,7 @@ NAV_ORDER: dict[str, list[str]] = {
     "01_Text_and_Bytes": [
         "README.md",
         "str_is_not_bytes",
+        "string_literals",
         "encode_and_decode",
         "making_a_bytes_object",
         "bytearray_is_mutable",
