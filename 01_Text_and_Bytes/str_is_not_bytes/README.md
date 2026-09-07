@@ -76,5 +76,6 @@ Coming from C, the difference is starker still: `char *` is `bytes` with no `str
 ## See also
 
 - [Encode and decode](../encode_and_decode/README.md) — the two doors, and what `errors=` throws away
+- [`bytearray` is the mutable one](../bytearray_is_mutable/README.md) — the third binary type, and the one a `readinto` can write into
 - [Counting characters](../counting_characters/README.md) — four answers to "how long is this?"
 - [The crosswalk](../../CROSSWALK.md) — the same idea in Rust, C and ABAP

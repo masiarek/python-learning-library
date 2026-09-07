@@ -1,0 +1,57 @@
+1. THERE IS NO bytearray LITERAL
+     b'AB'                        -> b'AB'                  bytes
+     bytearray(b'AB')             -> bytearray(b'AB')
+     bytearray([65, 66])          -> bytearray(b'AB')
+     bytearray('Łódź', 'utf-8')   -> bytearray(b'\xc5\x81\xc3\xb3d\xc5\xba')
+     bytearray(4)                 -> bytearray(b'\x00\x00\x00\x00')
+     bytearray('Łódź')            TypeError: string argument without an encoding
+
+     Every one of them is a function call. The literal is the bytes;
+     a bytearray is something you wrap around one.
+     bytearray(4) is the trap -- it is a SIZE, not the byte 4.
+
+2. WHAT MUTABLE MEANS: TWO NAMES, ONE BUFFER
+     bytes:      frozen = b'abc'               alias = b'ab'
+     bytearray:  buffer = bytearray(b'abc')    alias = bytearray(b'abc')
+     alias is the same object: True
+
+     += is not one operation. On bytes it rebinds a name and leaves
+     every other name pointing at the old value. On bytearray it edits
+     the object all of those names are looking at.
+
+3. THE FIVE THINGS bytes REFUSES
+     on bytes:
+     data[0] = 65                 TypeError: 'bytes' object does not support item assignment
+     del data[0]                  TypeError: 'bytes' object doesn't support item deletion
+     data[0:2] = b'XYZ'           TypeError: 'bytes' object does not support item assignment
+     data.append(33)              AttributeError: 'bytes' object has no attribute 'append'
+     data.extend(b'de')           AttributeError: 'bytes' object has no attribute 'extend'
+     on bytearray:
+     buf[0] = 65                  -> bytearray(b'Abc')
+     del buf[1]                   -> bytearray(b'Ac')
+     buf[0:2] = b'XYZ'            -> bytearray(b'XYZ')   len 2 -> 3, slice assignment RESIZES
+     buf.append(33); .extend()    -> bytearray(b'XYZ!de')
+
+     One byte on the left of = is an int, never a bytes:
+     buf[0] = b'A'                TypeError: 'bytes' object cannot be interpreted as an integer
+     buf[0] = 256                 ValueError: byte must be in range(0, 256)
+     buf[99] = 1                  IndexError: bytearray index out of range
+
+4. WHAT MUTABILITY COSTS: THE HASH
+     bytearray(b'ab') == b'ab'    -> True
+     b'ab' works as a dict key    -> True
+     hash(bytearray(b'ab'))       TypeError: unhashable type: 'bytearray'
+
+     Equal, and only one of them can be a dict key or a set member.
+     Same bargain as tuple against list: a hash has to keep its word,
+     and a buffer you can edit cannot make that promise.
+
+5. WHY IT EXISTS: SOMETHING ELSE WRITES INTO IT
+     BytesIO(...).readinto(buf)   -> 4 bytes, buf = bytearray(b'WXYZ')
+     struct.pack_into('>I', ...)  -> buf = 00 00 03 e8   (1000)
+     memoryview(buf)[0:2] = b'ab' -> buf = bytearray(b'ab\x03\xe8')   (no copy)
+     memoryview(b'abcd')[0:1]=b'a' TypeError: cannot modify read-only memory
+
+     readinto, recv_into and pack_into all need a buffer the caller owns
+     and the callee may write. That is the job bytearray was added for;
+     being able to edit it yourself is the means, not the point.

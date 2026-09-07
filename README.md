@@ -27,6 +27,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md) | Which type am I holding, and why won't Python mix them? |
 | [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) | Which direction is which, and what does `errors=` throw away? |
 | [Making a `bytes` object](01_Text_and_Bytes/making_a_bytes_object/README.md) | Why is `bytes(5)` five zero bytes and `bytes([5])` one? |
+| [`bytearray` is the mutable one](01_Text_and_Bytes/bytearray_is_mutable/README.md) | Which of the two binary types can I write into, and what does mutability cost? |
 | [Counting characters](01_Text_and_Bytes/counting_characters/README.md) | How long is this string — and which of the four answers did you want? |
 | [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md) | What do `isalpha`, `isdigit` and the other ten actually test? |
 | [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? |

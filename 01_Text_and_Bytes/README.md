@@ -11,13 +11,14 @@ This is the chapter to read first — not because text is the most important par
 | 1 | [`str` is not `bytes`](str_is_not_bytes/README.md) | Which type am I holding, and why won't Python mix them? | written |
 | 2 | [Encode and decode](encode_and_decode/README.md) | Which direction is which, and what does `errors=` throw away? | written |
 | 3 | [Making a `bytes` object](making_a_bytes_object/README.md) | Why is `bytes(5)` five zero bytes and `bytes([5])` one? | written |
-| 4 | [Opening a file](opening_a_file/README.md) | What encoding does `open()` use when I don't say? | stub |
-| 5 | [Counting characters](counting_characters/README.md) | How long is this string — and which of the four answers did you want? | written |
-| 6 | [Is it a letter?](is_it_a_letter/README.md) | What do the twelve `is*` predicates actually test? | written |
-| 7 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
-| 8 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
-| 9 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
-| 10 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
+| 4 | [`bytearray` is the mutable one](bytearray_is_mutable/README.md) | Which of the two binary types can I write into, and what does mutability cost? | written |
+| 5 | [Opening a file](opening_a_file/README.md) | What encoding does `open()` use when I don't say? | stub |
+| 6 | [Counting characters](counting_characters/README.md) | How long is this string — and which of the four answers did you want? | written |
+| 7 | [Is it a letter?](is_it_a_letter/README.md) | What do the twelve `is*` predicates actually test? | written |
+| 8 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
+| 9 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
+| 10 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
+| 11 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
 
 ## Where this sits relative to the other libraries
 

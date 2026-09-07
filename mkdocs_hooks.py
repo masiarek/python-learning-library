@@ -63,6 +63,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "str_is_not_bytes",
         "encode_and_decode",
         "making_a_bytes_object",
+        "bytearray_is_mutable",
         "opening_a_file",
         "counting_characters",
         "is_it_a_letter",

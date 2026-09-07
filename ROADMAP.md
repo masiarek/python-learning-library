@@ -11,6 +11,7 @@ Status of every page, and the order things are planned in. A **stub** has a perm
 | [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md) | written | |
 | [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) | written | covers the `errors=` policies including `surrogateescape` |
 | [Making a `bytes` object](01_Text_and_Bytes/making_a_bytes_object/README.md) | written, 2026-09-07 | the four-job constructor; the other-language table is dated and measured locally, not an example — CI here is Python-only |
+| [`bytearray` is the mutable one](01_Text_and_Bytes/bytearray_is_mutable/README.md) | written, 2026-09-07 | the mutable half of the binary pair, and why there is no literal; the six-language table was run locally (rustc 1.98.0, go1.25.5, Swift 6.3.3, Node 20.20.2, clang 21.0.0) and is dated, not an example — CI here is Python-only. Java, C# and ABAP are prose |
 | [Opening a file](01_Text_and_Bytes/opening_a_file/README.md) | **stub** | next up — needs a locale-independent way to show the default |
 | [Counting characters](01_Text_and_Bytes/counting_characters/README.md) | written | |
 | [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md) | written, 2026-09-06 | the twelve `is*` predicates; the Rust column is a dated table, not an example — `is_alphabetic` is the Alphabetic *property* where `isalpha` is the `L*` *categories* |

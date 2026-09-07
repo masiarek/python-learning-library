@@ -23,6 +23,22 @@ A cell in the Python column links into this library. A cell in another column li
 
 The sharpest difference is the third row. Rust makes invalid UTF-8 *unrepresentable* in a `String`, so the check happens once at the boundary and never again. Python checks at the boundary too but leaves you a way through it (`surrogateescape`), because a filename has to be openable even when it is not text. C checks nowhere. Which of those is right depends entirely on whether your program can refuse its input.
 
+## Mutable and immutable
+
+| The idea | Python | Rust | C | ABAP |
+|---|---|---|---|---|
+| The frozen binary type | `bytes` | `&[u8]` — and `b"abc"` is a `&[u8; 3]` | none; nothing is frozen | `xstring` — a value, copied on assignment |
+| The one you can write into | [`bytearray`](01_Text_and_Bytes/bytearray_is_mutable/README.md) | [`Vec<u8>` ↗](https://masiarek.github.io/rust-learning-library/26_Collections/the_vec/index.html) behind a `mut` binding | `char buf[N]` | the same `xstring` |
+| Where mutability is written down | in the **type** — a Python name has no `mut` | in the **binding**, and in `&` against `&mut` | nowhere | nowhere |
+| A literal you can edit | none — the literal is the `bytes` | none — [`b"abc"` is behind a `&` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/rfc_69_byte_literals/index.html), and the write does not compile | `char *p = "abc"` compiles; writing is **undefined behaviour** | — |
+| A borrowed view, no copy | `memoryview` | `&mut [u8]` | a pointer, unchecked | a field symbol (`ASSIGN`) |
+| Letting a callee fill your buffer | `readinto` / `recv_into` / `pack_into` | `read_exact(&mut buf)` | `read(fd, buf, n)` | — |
+| Two names for one buffer | assignment aliases; the callee can edit yours | only through `&mut`, and only one at a time | any two pointers | not by assignment — `ASSIGN` or `REF TO` |
+| Writing past the end | `IndexError` | panics | corrupts whatever was next | — |
+| What mutability costs | unhashable — no dict key, no set member | nothing at runtime; the borrow checker charges at compile time | nothing, and no safety either | — |
+
+Python is the odd one out in the third row, and the rest of the column follows from it. A Python name cannot be declared mutable or not, so the only place left to record the difference is the object — which is why Python needs *two* types where Rust needs one `Vec<u8>` and a keyword. Rust and Swift put it on the binding; Go and C put it nowhere, and Go gets away with it only because `string` is frozen and `[]byte(s)` is an honest copy. C's version of this row is the bug the other four languages were designed against: writing through `char *p = "abc"` compiles cleanly and dies at runtime.
+
 ## Length and indexing
 
 | The idea | Python | Rust | ABAP |
