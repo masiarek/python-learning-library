@@ -15,6 +15,7 @@ Status of every page, and the order things are planned in. A **stub** has a perm
 | [Opening a file](01_Text_and_Bytes/opening_a_file/README.md) | **stub** | next up — needs a locale-independent way to show the default |
 | [Counting characters](01_Text_and_Bytes/counting_characters/README.md) | written | |
 | [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md) | written, 2026-09-06 | the twelve `is*` predicates; the Rust column is a dated table, not an example — `is_alphabetic` is the Alphabetic *property* where `isalpha` is the `L*` *categories* |
+| [What ends a line](01_Text_and_Bytes/what_ends_a_line/README.md) | written, 2026-09-07 | ten boundaries scanned out of the whole code space, and the Bidi_Class B rule that predicts them; the cross-language ladder is a dated table, not an example — Java and .NET 6+ rows are from their specs, since there is no JDK on this machine |
 | [Normalization](01_Text_and_Bytes/normalization/README.md) | **stub** | |
 | [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | written | |
 | [Standard in, standard out, and pipes](01_Text_and_Bytes/stdin_stdout_and_pipes/README.md) | **stub** | the example has to run under a pipe to show the effect |

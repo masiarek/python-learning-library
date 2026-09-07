@@ -56,7 +56,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "ROADMAP.md",
     ],
     # The type boundary first, then the two doors, then the constructor that
-    # quietly is one of them, then the four places code points mislead you,
+    # quietly is one of them, then the five places code points mislead you,
     # then the two boundaries with the outside world.
     "01_Text_and_Bytes": [
         "README.md",
@@ -67,6 +67,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "opening_a_file",
         "counting_characters",
         "is_it_a_letter",
+        "what_ends_a_line",
         "normalization",
         "sorting_is_not_comparing",
         "stdin_stdout_and_pipes",

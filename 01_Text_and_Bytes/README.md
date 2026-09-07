@@ -15,10 +15,11 @@ This is the chapter to read first — not because text is the most important par
 | 5 | [Opening a file](opening_a_file/README.md) | What encoding does `open()` use when I don't say? | stub |
 | 6 | [Counting characters](counting_characters/README.md) | How long is this string — and which of the four answers did you want? | written |
 | 7 | [Is it a letter?](is_it_a_letter/README.md) | What do the twelve `is*` predicates actually test? | written |
-| 8 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
-| 9 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
-| 10 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
-| 11 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
+| 8 | [What ends a line](what_ends_a_line/README.md) | Which characters count as a line break — and why do I get three different answers? | written |
+| 9 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
+| 10 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
+| 11 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
+| 12 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
 
 ## Where this sits relative to the other libraries
 
