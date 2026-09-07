@@ -116,7 +116,7 @@ On ASCII text with Unix endings they return the same list, which is why the diff
 
 **Universal newlines is a smaller set, and it is the one your file actually uses.** Text mode translates `\r\n` and `\r` into `\n` on the way in ([the glossary entry ↗](https://docs.python.org/3/glossary.html#term-universal-newlines) is the definition), so iterating a file gives you three boundaries, not ten. The gap between the two is the practical bug: `read().splitlines()` and `list(open(...))` are not interchangeable, and the seven characters where they differ are precisely the ones you cannot see. If you want the file's own answer, iterate the file. If you want `splitlines()`'s answer, say so on purpose — and know that you have just opted into splitting on three control characters that a legacy format may be using for something else entirely.
 
-**`re` has the narrowest answer of the three: `\n` and nothing else.** In `MULTILINE` mode `^` matches at the start and after a `\n`; `$` matches before a `\n`; `.` refuses `\n` and accepts every other candidate on the list. So a regex-based line loop over the same text sees two lines where `splitlines()` sees seven. Python's `re` has no `\R` — the "any line break" escape that Perl, Java, Ruby and PCRE all provide — so there is no way to ask `re` for a wider answer without spelling it out yourself. `splitlines()`'s own set, written as a pattern, is `r"\r\n|[\n\v\f\r\x1c\x1d\x1e\x85\u2028\u2029]"` — checked against `splitlines()` over all 1,112,064 code points while writing this page, with no disagreement in either direction.
+**`re` has the narrowest answer of the three: `\n` and nothing else.** In `MULTILINE` mode `^` matches at the start and after a `\n`; `$` matches before a `\n`; `.` refuses `\n` and accepts every other candidate on the list. So a regex-based line loop over the same text sees two lines where `splitlines()` sees seven. Python's `re` has no `\R` — the "any line break" escape that Perl, Ruby, Java and PCRE2 all provide, and which Rust's `regex` crate also refuses ("unrecognized escape sequence") — so there is no way to ask `re` for a wider answer without spelling it out yourself. `splitlines()`'s own set, written as a pattern, is `r"\r\n|[\n\v\f\r\x1c\x1d\x1e\x85\u2028\u2029]"` — checked against `splitlines()` over all 1,112,064 code points while writing this page, with no disagreement in either direction.
 
 **`bytes.splitlines()` knows two, and that is the type boundary again rather than an inconsistency.** Over all 256 byte values it splits on `0x0a` and `0x0d` only (plus the pair). A `bytes` object does not know which encoding produced it, so it cannot know whether `0x85` is a `NEL` or the second byte of something else, and it declines to guess — the same reasoning that makes [the eight `bytes` predicates ASCII-only](../is_it_a_letter/README.md).
 
@@ -128,7 +128,7 @@ On ASCII text with Unix endings they return the same list, which is why the diff
 
 Every language draws its line somewhere on the same ladder, and the rungs are worth knowing because the answer is rarely documented where you are standing. Measured here rather than remembered:
 
-```text title="Measured 2026-09-07 — one probe per language on this machine, put side by side. The two rows marked (docs) were read from the specification, not run."
+```text title="Measured 2026-09-07 — one probe per language on this machine, put side by side. The entries marked (docs) were read from the specification, not run: there is no JDK here, and the .NET on this machine is 5."
   n   boundaries                              who stops there
   --  --------------------------------------  ---------------------------------------------
    1  LF                                      Python re (MULTILINE), .NET Regex (Multiline),
@@ -138,12 +138,15 @@ Every language draws its line somewhere on the same ladder, and the rungs are wo
                                               .NET StringReader.ReadLine, Java String.lines (docs)
    4  LF CR LS PS                             JavaScript — the language's own line terminators
    6  LF CR CRLF NEL LS PS                    Java Pattern in MULTILINE mode (docs)
-   7  LF CR CRLF NEL LS PS FF                 Unicode 5.8 R4; .NET 6+ ReplaceLineEndings (docs)
-   8  ... + VT                                \R in Perl, Java, Ruby, PCRE; Swift .isNewline
+   7  LF CR CRLF NEL LS PS FF                 the Unicode readline recommendation (5.8 R4);
+                                              .NET 6+ ReplaceLineEndings (docs)
+   8  ... + VT                                \R in Perl, Ruby, PCRE2 and Java (docs);
+                                              Swift Character.isNewline
   10  ... + FS GS RS                          Python str.splitlines()
 
   run with: Python 3.14.7, rustc 1.98.0, go1.25.5, node v20.20.2, ruby 2.6.10,
-            perl 5.42.0, Swift 6.3.3, .NET 5.0.5, clang 21.0.0, awk 20200816
+            perl 5.42.0, Swift 6.3.3, .NET 5.0.5, clang 21.0.0, awk 20200816,
+            pcre2grep 10.48
 ```
 
 **Nobody else splits on `FS`, `GS` and `RS`.** Python is alone on the top rung, and the gap is not an oversight by the others — the Unicode standard's own [newline guidelines ↗](https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-5/) (§5.8, Recommendation R4) say a readline function should stop at `LF`, `CR`, `CRLF`, `NEL`, `LS`, `FF` and `PS`, and that list is seven characters with no information separators in it. The `\R` escape adds `VT` for eight. Python adds three more on top of that, from the bidi table rather than from the newline recommendation.
