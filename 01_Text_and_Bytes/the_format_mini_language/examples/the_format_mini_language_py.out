@@ -1,0 +1,126 @@
+1. FOUR DOORS, ONE GRAMMAR
+     the spec:  '*^+12.3f'
+     f-string             f'{value:*^+12.3f}'          ***+3.142***
+     str.format           '{:*^+12.3f}'.format(value)  ***+3.142***
+     format() builtin     format(value, '*^+12.3f')    ***+3.142***
+     __format__ directly  value.__format__('*^+12.3f')  ***+3.142***
+
+     All four are the same call. f-strings and str.format both compile
+     down to format(), which calls the object's own __format__ with the
+     text after the colon -- so the spec is not parsed by the language.
+     It is a string handed to a type, and the type may mean anything by it:
+       f'{temp}'      100C           <- str(), no spec
+       f'{temp:F}'    212.0F         <- this type's OWN spec language
+       f'{temp:>8}'       100C       <- falls back to the standard one
+       f'{temp!r}'    Celsius(100)   <- conversion happens BEFORE __format__
+
+2. THE NINE SLOTS
+     [[fill]align][sign][z][#][0][width][grouping][.precision][type]
+
+     slot                   spec           result
+     ------------------------------------------------------
+     fill + align           '*^12'         *****42*****
+     align only             '<8'           42      |
+     sign: always           '+d'           +42
+     sign: space            ' d'            42|
+     alt form + zero pad    '#010b'        0b11111111
+     width                  '8'                  42|
+     grouping: comma        ',d'           1,234,567
+     grouping: underscore   '_d'           1_234_567
+     grouping in binary     '_b'           1111_1111
+     precision on a float   '.3f'          3.142
+     precision on a str     '.3'           tru
+     type: hex, exp, pct    'x' 'e' '%'    ff 1.234000e+03 25.000000%
+     all of it              '+08,d'        +000,042
+
+     Two that surprise people: '0' before the width is not padding with
+     the fill character, it is a separate flag that means 'pad after the
+     sign' -- which is why '+08,d' puts the zeros between + and 42. And
+     .precision on a str is a TRUNCATION, not a rounding.
+
+3. NUMBERING: AUTOMATIC, MANUAL, AND THE MIX THAT RAISES
+     automatic   '{} and {}'        -> spam and eggs
+     manual      '{0} and {1}'      -> spam and eggs
+     reordered   '{1} and {0}'      -> eggs and spam
+     reused      '{0} and {0}'      -> spam and spam
+     by name     '{x} and {y}'      -> spam and eggs
+     attribute   '{0.deg}'          -> 100
+     item        '{0[1]}'           -> eggs
+     mixed       '{} and {0}'       -> ValueError
+
+     Automatic numbering is a counter, so it can only count forwards.
+     The moment one field names its argument, the counter has nothing
+     sensible to do, and Python refuses rather than guessing. That is
+     the fact the 'you may omit the numbers' changelog note leaves out.
+     Note also the item lookup: '{0[1]}' takes no quotes, so the key is
+     always a string unless it is all digits -- there is no way to write
+     a lookup by the integer 1 versus the string '1'.
+
+4. THE MINUS SIGN THAT IS NOT A NEGATIVE NUMBER
+     value             .1f     z.1f      .0f     z.0f
+     ------------------------------------------------
+     -0.0             -0.0      0.0       -0        0
+     -0.04            -0.0      0.0       -0        0
+     -0.4             -0.4     -0.4       -0        0
+     0.4               0.4      0.4        0        0
+     -1.5             -1.5     -1.5       -2       -2
+     2.5               2.5      2.5        2        2
+     3.5               3.5      3.5        4        4
+
+     Rounding happens before the sign is chosen, so a number that is
+     merely small and negative can print as '-0'. In a table of results
+     that reads as a distinct value, and it is not one. The 'z' option
+     (PEP 682, Python 3.11) coerces a negative zero to a positive one
+     AFTER rounding, which is the only place it can be fixed.
+     -0.0 == 0.0 is True, so no comparison will find this for you.
+     The last two rows are a second surprise from the same column:
+     2.5 formats as 2 and 3.5 as 4. Formatting rounds half to even,
+     like round(), and not the way you were taught at school.
+
+5. GROUPING, AND THE ONE THAT ASKS THE OPERATING SYSTEM
+     under the C locale: thousands_sep='' decimal_point='.' grouping=[]
+     format(1234567, ',d' ) -> 1,234,567
+     format(1234567, '_d' ) -> 1_234_567
+     format(1234567, 'n'  ) -> 1234567
+
+     ',' and '_' are Python's own separators and mean the same thing on
+     every machine. 'n' means 'ask the locale', and under C the locale
+     has nothing to say -- which is why this line is boring on purpose.
+     Set LC_NUMERIC to a locale that groups, and the same call prints
+     1.234.567 or 1 234 567 instead.
+     The documented cost is unusual enough to be worth knowing: when
+     the separators are non-ASCII or longer than one byte, formatting
+     with 'n' TEMPORARILY CHANGES LC_CTYPE for the whole process --
+     and the docs say outright that this affects other threads.
+     A formatting call that mutates global state. Use ',' unless you
+     are deliberately rendering for a human in a known locale.
+
+6. format_map: THE MAPPING IS NOT COPIED
+     template          '{name} was born in {country}'
+     format_map(...)   Guido was born in <country>
+     format(**data)    KeyError: 'country'
+
+     format(**m) unpacks m into a fresh plain dict, so the subclass --
+     and its __missing__ -- is gone before formatting starts. format_map
+     passes the object itself, so the hook survives. That is the whole
+     difference, and it is why the useful version has its own method.
+
+7. % IS A DIFFERENT LANGUAGE, AND IT IS THE ONLY ONE THAT DOES bytes
+     '%s and %s' % (a, b)        spam and eggs
+     '%(x)s' % dict(x=a)         spam
+     '%.3f' % 3.14159            3.142
+     '%r' % a                    'spam'
+     '%s' % (1, 2)               TypeError
+     '%s %s' % ('a',)            TypeError
+     '%s' % (1,)                 1
+
+     % is one operator with one right-hand operand. A tuple on the right
+     is not 'the arguments' -- it is the operand, and it gets unpacked,
+     which is why both arity mistakes above are TypeErrors rather than
+     the two different errors you would get from a function call.
+
+     b'%s|%d' % (b'ab', 7)       b'ab|7'   <- bytes, not str
+     str.format and f-strings do not exist on bytes. PEP 461 put % back
+     on bytes in 3.5 for exactly this: binary protocols with ASCII
+     headers, where the alternative was building the bytes by hand.
+     That is the reason the oldest of the four is not going anywhere.
