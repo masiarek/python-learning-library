@@ -62,6 +62,15 @@ python3 tools/run_examples.py --check             # write nothing, fail on drift
 
 **Deterministic.** No clocks, no randomness, no network, no reading the filesystem, and **nothing that depends on an installed locale**. Every example runs under a fixed environment (`LC_ALL=C`, `PYTHONUTF8=1`). Where the honest answer *is* machine-dependent, print the dependency rather than a value: the sorting lesson prints whether `pl_PL.UTF-8` exists rather than an order that would differ between two computers. CI runs on Ubuntu **and** macOS, which is the only check that catches this class of mistake.
 
+**It must run on the oldest Python the project claims.** `pyproject.toml` says `requires-python = ">=3.11"`, and the `python3` on your machine is almost certainly newer, so "it ran locally" proves nothing about the floor. The trap that made this a rule: a **backslash inside an f-string expression** — `f"{b'a\r\nb'.splitlines()}"` — is a `SyntaxError` before 3.12, because PEP 701 is what put f-strings in the grammar. Two examples landed on the same day in 2026-09 that did not run at all on 3.11, and both CI legs were green, because both runners ship something newer. Hoist the literal into a variable and interpolate the name. CI now has a `floor` job pinned to 3.11 for exactly this; to check before you push:
+
+```bash
+docker run --rm -v "$PWD":/w:ro -w /w -e LC_ALL=C -e LANG=C -e PYTHONUTF8=1 \
+  python:3.11-slim python3 -I <path to your example>
+```
+
+**An exception's message is not API — prefer the type in an answer key.** `type(exc).__name__` is stable; the sentence after it is not. CPython rewords these between releases, and the key is compared byte for byte: 3.14 changed the unhashable-key `TypeError` from *"unhashable type: 'bytearray'"* to *"cannot use 'bytearray' as a dict key (unhashable type: 'bytearray')"*, and the `tomllib` bytes error was reworded in the same release. Some pages do print messages, because the message *is* the lesson — the `str`/`bytes` boundary reads better with Python's own words. That is a deliberate cost, and it comes with an obligation: run the example across `python:3.11/3.12/3.13/3.14-slim` before recording the key, and pick a wording that has been stable across all four.
+
 **Written to be read aloud.** Numbered sections, aligned columns, prose in the print statements. A reader should understand the output without the page and the page without the output.
 
 **A snippet in the prose puts its output in a trailing comment**, on the line that prints it, so the whole thing survives a copy-paste:

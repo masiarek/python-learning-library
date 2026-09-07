@@ -71,7 +71,8 @@ del BUF[1]
 print(f"     {'del buf[1]':<28} -> {BUF!r}")
 was = len(BUF)
 BUF[0:2] = b"XYZ"
-print(f"     {'buf[0:2] = b\'XYZ\'':<28} -> {BUF!r}   len {was} -> {len(BUF)}, slice assignment RESIZES")
+label = "buf[0:2] = b'XYZ'"
+print(f"     {label:<28} -> {BUF!r}   len {was} -> {len(BUF)}, slice assignment RESIZES")
 BUF.append(33)
 BUF.extend(b"de")
 print(f"     {'buf.append(33); .extend()':<28} -> {BUF!r}")

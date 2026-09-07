@@ -11,6 +11,15 @@
 # all differ, and those are exactly this library's first chapter. An answer key
 # that only matches one platform is a machine-dependent example, the one kind no
 # local run can catch.
+#
+# The `floor` job exists because those two legs share a blind spot: both use the
+# runner's own python3, which is years newer than the `requires-python = ">=3.11"`
+# this project promises. On 2026-09-07 two examples landed the same day that did
+# not RUN on 3.11 — a backslash inside an f-string expression, legal only since
+# PEP 701 in 3.12 — and both matrix legs were green. A version floor is a promise
+# in pyproject.toml; nothing was checking it. This job is that check, and it is
+# the only place `actions/setup-python` appears: the OS legs stay unpinned on
+# purpose, because "whatever python3 the reader has" is what they are testing.
 
 name: examples
 
@@ -37,3 +46,18 @@ jobs:
         run: python3 tools/run_examples.py --check
       - name: Check that every external link is marked as external
         run: python3 tools/check_link_style.py
+
+  # The oldest Python this project claims to support. Answer keys are checked on
+  # the matrix above; this leg is here to catch an example that does not run at
+  # all on the floor.
+  floor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Show toolchain
+        run: python3 --version
+      - name: Run every example and check it against its answer key
+        run: python3 tools/run_examples.py --check

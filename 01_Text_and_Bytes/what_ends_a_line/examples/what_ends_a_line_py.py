@@ -88,7 +88,8 @@ byte_boundaries = [i for i in range(256)
                    if len((b"a" + bytes([i]) + b"b").splitlines()) > 1]
 print("     Over all 256 byte values, bytes.splitlines() splits on: "
       + ", ".join(f"0x{i:02X}" for i in byte_boundaries))
-print(f"     b'a\\r\\nb'.splitlines() = {b'a\r\nb'.splitlines()}   (CRLF, still one)")
+crlf = b"a\r\nb"
+print(f"     b'a\\r\\nb'.splitlines() = {crlf.splitlines()}   (CRLF, still one)")
 print()
 print(f"     {'':<5} {'as str':<10} as utf-8 bytes")
 print("     " + "-" * 40)
@@ -111,7 +112,8 @@ for data, codec in [(b"amount\x85date", "latin-1"),
     decoded = data.decode(codec)
     print(f"     {codec:<10} {decoded!r:<20} {len(decoded.splitlines())}")
 print()
-print(f"     The first three read the same bytes: {b'amount\x85date'!r}")
+nel_bytes = b"amount\x85date"
+print(f"     The first three read the same bytes: {nel_bytes!r}")
 print(f"     The fourth is EBCDIC:                {ebcdic!r}")
 print()
 print("     Byte 0x85 is NEXT LINE in latin-1, a horizontal ellipsis in")
