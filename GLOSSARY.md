@@ -4,6 +4,8 @@
 
 Short entries. Each links to the page that explains it properly — a definition here is a pointer, not a substitute.
 
+**bytearray** — the mutable `bytes`: the same numbers 0–255, but you may write into them. It has no literal — `bytearray(b"…")` wraps the `bytes` one — and it is unhashable, so it cannot be a dict key or a set member. See [`bytearray` is the mutable one](01_Text_and_Bytes/bytearray_is_mutable/README.md).
+
 **bytes** — Python's type for a sequence of numbers 0–255. Indexing one gives an `int`, not a one-byte `bytes`. See [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md).
 
 **casefold** — `str.casefold()`, a more aggressive `lower()` intended for caseless comparison; it can change a string's length (`ß` → `ss`). See [Normalization](01_Text_and_Bytes/normalization/README.md).
@@ -29,6 +31,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **isdecimal / isdigit / isnumeric** — three nested predicates, not synonyms: `Nd` only, then anything with a digit value, then anything with a numeric value at all. `int()` accepts the first. See [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md).
 
 **line boundary** — one of the ten characters `str.splitlines()` breaks a string at: `\n`, `\v`, `\f`, `\r`, `\x1c`, `\x1d`, `\x1e`, `\x85` (NEL), `U+2028` and `U+2029`, plus `\r\n` counted once. Wider than the three a file in text mode recognizes and the one `re` does. See [What ends a line](01_Text_and_Bytes/what_ends_a_line/README.md).
+
+**memoryview** — a borrowed window onto another object's buffer, so slicing it copies nothing. Writable when it wraps a `bytearray`, read-only over a `bytes`. Rust's `&mut [u8]`. See [`bytearray` is the mutable one](01_Text_and_Bytes/bytearray_is_mutable/README.md).
 
 **mojibake** — text decoded with the wrong codec, so `ó` reads as `Ã³`. See [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) and the [encodings library's page ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/mojibake/index.html).
 
