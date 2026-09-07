@@ -88,6 +88,23 @@ You reach for these when validating input: a username, a postcode, a column in a
      True by definition and isalpha() is False by decision. Translating
      s.isalpha() into a language that only has per-character predicates
      means writing the emptiness test back in by hand.
+
+7. bytes HAS EIGHT OF THE TWELVE, AND THEY ARE ASCII-ONLY
+     bytes has 8: isalnum isalpha isascii isdigit islower isspace istitle isupper
+     str-only:  isdecimal isidentifier isnumeric isprintable
+
+     text     codec    the bytes                      bytes    str
+     --------------------------------------------------------------
+     'Lodz'   utf-8    b'Lodz'                        True     True
+     'Łódź'   utf-8    b'\xc5\x81\xc3\xb3d\xc5\xba'   False    True
+     'Łódź'   cp1250   b'\xa3\xf3d\x9f'               False    True
+
+     The last column is str.isalpha() on the text those bytes decode to.
+     The four missing ones are the four that need the Unicode table:
+     isdecimal, isnumeric, isprintable, isidentifier. The eight that
+     remain answer only for ASCII, because a bytes object does not know
+     which table produced it -- so a Polish name is 'not alphabetic' in
+     every encoding, and the same call on the str it decodes to is True.
 ```
 <!-- /output -->
 
@@ -100,6 +117,8 @@ You reach for these when validating input: a username, a postcode, a column in a
 **`isalnum()` is the union of four predicates, not two.** A character passes if it is `isalpha` *or* `isdecimal` *or* `isdigit` *or* `isnumeric` — which is why `½` is alphanumeric in Python. For a username rule, `s.isalnum()` accepts Roman numerals, vulgar fractions and Arabic-Indic digits. That is usually not what the ticket said. Write the set you mean.
 
 **`isupper()` is not "every character is uppercase".** It is *"at least one cased character, and no cased character is lowercase or titlecase"*. Uncased characters — digits, punctuation, spaces — are ignored entirely, so `"ABC-DEF"` and `"ABC1"` are both uppercase and `"123"` is not. The one that surprises people is `ǅ` (`U+01C5`): it is `istitle()` and neither `isupper()` nor `islower()`, because Unicode has a third case and Python reports it honestly.
+
+**`bytes` has eight of the twelve, and they answer only for ASCII.** The four it does not have are the four that need the Unicode table — `isdecimal`, `isnumeric`, `isprintable`, `isidentifier` — and the eight that remain are deliberately ASCII-only, because a `bytes` object does not know which table produced it. So `"Łódź".encode().isalpha()` is `False`, in UTF-8 and in cp1250 alike, while the `str` those bytes decode to is `True`. That is the whole type boundary restated as a predicate: the same question, asked of the thing that has an encoding and of the thing that has characters, gives different answers on purpose.
 
 ## The Rust view
 
@@ -148,5 +167,7 @@ There is no predicate family at all. The idiom is a character set and a `CO` (co
 
 - [Counting characters](../counting_characters/README.md) — the same table, asked about length instead of class
 - [Sorting is not comparing](../sorting_is_not_comparing/README.md) — the other place a property lookup stands in for a human rule
+- [`str` is not `bytes`](../str_is_not_bytes/README.md) — why the eight `bytes` predicates can only answer for ASCII
 - [The crosswalk](../../CROSSWALK.md) — which idea lives in which library
+- [Python text in practice ↗](https://masiarek.github.io/encodings-learning-library/10_Best_Practices/python_text_in_practice/index.html) — the same ASCII-only rule running through `re`, where `\w` means one thing against `str` and another against `bytes`
 - [`str.isalpha()` in the Python docs ↗](https://docs.python.org/3/library/stdtypes.html#str.isalpha) — the definition this page is unpacking

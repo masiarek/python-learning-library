@@ -76,3 +76,20 @@
      True by definition and isalpha() is False by decision. Translating
      s.isalpha() into a language that only has per-character predicates
      means writing the emptiness test back in by hand.
+
+7. bytes HAS EIGHT OF THE TWELVE, AND THEY ARE ASCII-ONLY
+     bytes has 8: isalnum isalpha isascii isdigit islower isspace istitle isupper
+     str-only:  isdecimal isidentifier isnumeric isprintable
+
+     text     codec    the bytes                      bytes    str
+     --------------------------------------------------------------
+     'Lodz'   utf-8    b'Lodz'                        True     True
+     'Łódź'   utf-8    b'\xc5\x81\xc3\xb3d\xc5\xba'   False    True
+     'Łódź'   cp1250   b'\xa3\xf3d\x9f'               False    True
+
+     The last column is str.isalpha() on the text those bytes decode to.
+     The four missing ones are the four that need the Unicode table:
+     isdecimal, isnumeric, isprintable, isidentifier. The eight that
+     remain answer only for ASCII, because a bytes object does not know
+     which table produced it -- so a Polish name is 'not alphabetic' in
+     every encoding, and the same call on the str it decodes to is True.

@@ -106,3 +106,24 @@ print("     They agree on every string except the empty one, where all() is")
 print("     True by definition and isalpha() is False by decision. Translating")
 print("     s.isalpha() into a language that only has per-character predicates")
 print("     means writing the emptiness test back in by hand.")
+
+print("\n7. bytes HAS EIGHT OF THE TWELVE, AND THEY ARE ASCII-ONLY")
+byte_preds = [m for m in dir(bytes) if m.startswith("is")]
+print(f"     bytes has {len(byte_preds)}: {' '.join(byte_preds)}")
+print(f"     str-only:  {' '.join(sorted(set(PREDICATES) - set(byte_preds)))}")
+print()
+print(f"     {'text':<8} {'codec':<8} {'the bytes':<30} {'bytes':<8} str")
+print("     " + "-" * 62)
+for text, codec in (("Lodz", "utf-8"), ("Łódź", "utf-8"), ("Łódź", "cp1250")):
+    raw = text.encode(codec)
+    print(
+        f"     {text!r:<8} {codec:<8} {raw!r:<30} "
+        f"{str(raw.isalpha()):<8} {text.isalpha()}"
+    )
+print()
+print("     The last column is str.isalpha() on the text those bytes decode to.")
+print("     The four missing ones are the four that need the Unicode table:")
+print("     isdecimal, isnumeric, isprintable, isidentifier. The eight that")
+print("     remain answer only for ASCII, because a bytes object does not know")
+print("     which table produced it -- so a Polish name is 'not alphabetic' in")
+print("     every encoding, and the same call on the str it decodes to is True.")
