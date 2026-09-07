@@ -1,0 +1,101 @@
+1. TWO FUNCTIONS, TWO QUESTIONS
+     str(x)  -- 'show this to a person'   -> characters, no quotes
+     repr(x) -- 'show this to a Python programmer'
+     ascii(x) is repr(x) with every non-ASCII character escaped.
+
+     object                 repr(x)                ascii(x)
+     --------------------------------------------------------------
+     'a'                    'a'                    'a'
+     'é'                    'é'                    '\xe9'
+     '😸'                    '😸'                    '\U0001f638'
+     '\t'                   '\t'                   '\t'
+     b'Zoot!'               b'Zoot!'               b'Zoot!'
+     Fraction(1, 3)         Fraction(1, 3)         Fraction(1, 3)
+
+     The bytes row is the one to stare at: repr and ascii agree,
+     and str() -- which is not in this table for a reason -- gives
+     the same thing again. Section 5.
+     The cat row does not line up, and that is not a bug in this
+     table: the columns were padded with ljust, which counts code
+     points, and that glyph is one code point two columns wide.
+
+2. WHAT 'PRINTABLE' ASKS, CHECKED OVER ALL 1,114,112 CODE POINTS
+     The docs rule: printable = General_Category in L, M, N, P or S,
+     plus the ASCII space U+0020. Everything else (Z, C) is not.
+     code points where isprintable() disagrees with that rule:  0
+     non-printable code points that are NOT in Z or C:          0
+     separator characters that ARE printable:  U+0020 SPACE
+
+     Three families that are non-printable and never change size:
+       Cc  control             65
+       Cs  surrogate        2,048
+       Co  private use    137,468
+     Cf (format) and Cn (unassigned) are left uncounted on purpose:
+     both move with the Unicode version, and two Pythons on one
+     machine are routinely built against different editions of the
+     table. Print unicodedata.unidata_version to see yours.
+
+3. SO A SPACE IS PRINTABLE AND A TAB IS NOT
+     string                       isprintable()  isspace()
+     ------------------------------------------------------
+     ''                           True           False
+     ' '                          True           True
+     '\t'                         False          True
+     '\n'                         False          True
+     '\u00a0' NO-BREAK SPACE      False          True
+     '\u3000' IDEOGRAPHIC SPACE   False          True
+
+     Printable and whitespace are not opposites. U+0020 is both --
+     it is the single exception written into the rule -- and every
+     other space character in Unicode is whitespace and not printable.
+     The empty string is printable for the same vacuous reason it is
+     not isspace(): no character in it is non-printable.
+
+4. string.printable IS NOT PRINTABLE
+     string.digits           10 characters, 0 not printable
+     string.ascii_letters    52 characters, 0 not printable
+     string.punctuation      32 characters, 0 not printable
+     string.whitespace        6 characters, 5 not printable
+     string.printable        100 characters, 5 not printable
+     the five:               '\t' '\n' '\r' '\x0b' '\x0c'
+     string.printable.isprintable()  ->  False
+
+     Two different words, one spelling. string.printable is the
+     POSIX sense -- 'characters a terminal can handle' -- and it
+     includes the whitespace that moves the cursor. str.isprintable()
+     is the repr() sense, and repr() escapes exactly those five.
+
+5. str(bytes) IS THE QUIET ONE
+     b                      b'Zoot!'     len 5
+     str(b)                 "b'Zoot!'"   len 8   <- the repr, as text
+     str(b, 'utf-8')        'Zoot!'      len 5   <- a decode
+     b.decode()             'Zoot!'      len 5
+
+     Same function, two signatures, and the one with no encoding
+     silently gives you a string with 'b' and two quotes in it.
+     sys.flags.bytes_warning on this run: 0
+     Run the file again as `python3 -b` and that becomes 1, and
+     str(b) raises a BytesWarning. `-bb` makes it an error.
+
+6. !s, !r AND !a IN A FORMAT STRING
+     f'{one_third}'         1/3
+     f'{one_third!s}'       1/3
+     f'{one_third!r}'       Fraction(1, 3)
+     f'{one_third = }'      one_third = Fraction(1, 3)
+     f'{text!a}'            '\xa1ko\u010dka \U0001f638!'
+
+     The default conversion is str(). The debug specifier '=' silently
+     switches it to repr(), which is the whole point of it: you asked
+     to see the value as a programmer, not as a reader.
+
+7. A CONTAINER ALWAYS USES repr() ON ITS ELEMENTS
+     print(value)     ->  a	b
+     print([value])   ->  ['a\tb']
+
+     One tab, printed two ways in the same program. The first line
+     is str(): the tab is in the output and you can only see it by
+     the gap. The second is repr(), because a list has no way to
+     show you where one element ends -- so it escapes.
+     That is why wrapping a value in a list is the cheapest debugging
+     trick in Python, and why 'printable' had to be defined in terms
+     of repr() rather than in terms of ink.
