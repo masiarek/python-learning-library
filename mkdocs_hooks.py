@@ -76,6 +76,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "sorting_is_not_comparing",
         "stdin_stdout_and_pipes",
         "filenames_are_not_text",
+        "what_kind_of_file_is_this",
     ],
     # The file first: every other page in this chapter is about something the
     # file names but does not itself do.

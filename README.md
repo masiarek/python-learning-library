@@ -37,6 +37,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md) | Is `f'{x:>8}'` the same grammar as `'{:>8}'.format(x)` — and where does `%` fit? |
 | [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? |
 | [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md) | What is actually allowed in a filename, and why can't I print one? |
+| [What kind of file is this?](01_Text_and_Bytes/what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked — and why did the stdlib stop answering one of them? |
 | [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) | What is this file, who reads which part, and how do I read it myself? |
 
 ## Run it

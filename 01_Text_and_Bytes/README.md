@@ -23,6 +23,7 @@ This is the chapter to read first — not because text is the most important par
 | 13 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
 | 14 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
 | 15 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
+| 16 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
 
 ## Where this sits relative to the other libraries
 

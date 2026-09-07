@@ -1,0 +1,61 @@
+1. THE FILESYSTEM KNOWS SEVEN KINDS, AND NONE OF THEM IS 'PNG'
+   os.lstat() reads the directory entry. It never opens the file, so
+   it cannot be fooled by the bytes and cannot see them either.
+   liar.txt   S_IFMT = 0o100000  ->  regular file
+   adir       S_IFMT = 0o40000   ->  directory
+   good_link  S_IFMT = 0o120000  ->  symlink
+   The type is those four bits and nothing else. With the permissions
+   pinned to 0o644, st_mode splits exactly two ways:
+     st_mode        0o100644
+     S_IFMT(mode)   0o100000  the type
+     S_IMODE(mode)  0o644     the permissions
+
+2. is_file() FOLLOWS SYMLINKS, AND ANSWERS False FOR SEVERAL REASONS
+   path        is_file()  is_dir()  is_symlink()  exists()
+   liar.txt    True       False     False         True
+   adir        False      True      False         True
+   good_link   True       False     True          True
+   dangling    False      False     True          False
+   absent.txt  False      False     False         False
+   Read the last two rows. 'dangling' is a symlink that is really
+   there, pointing at a name that is not; 'absent.txt' is nothing at
+   all. is_file() says False to both, and exists() says False to both,
+   because both follow the link. Only is_symlink() and os.lstat() can
+   tell them apart - and os.stat('dangling') raises FileNotFoundError
+   about a file whose directory entry you can plainly read.
+
+3. mimetypes ASKS THE NAME AND NOTHING ELSE
+   It is a lookup table over the extension. It never opens the file,
+   so it is wrong in exactly the cases where the name is:
+   liar.txt    guess_type -> text/plain
+   real.png    guess_type -> image/png
+   empty.png   guess_type -> image/png
+   absent.txt  guess_type -> text/plain
+   notes.dat   guess_type -> None
+   Note the last two. 'absent.txt' does not exist and still gets an
+   answer, because nothing was consulted but the string. 'notes.dat'
+   gets None, which means 'no opinion about .dat' - never 'unknown
+   kind of file', and never 'this file is unreadable'.
+
+4. ONLY READING THE BYTES ANSWERS THE QUESTION YOU MEANT
+   path        by inode       by name          by bytes
+   liar.txt    regular file   text/plain       image/png
+   real.png    regular file   image/png        text/plain
+   empty.png   regular file   image/png        empty
+   Three columns, three questions, and on liar.txt three different
+   answers - none of them wrong. They were asked 'how is it stored',
+   'what is it called' and 'what is in it'. Only the third one opened
+   the file, and the standard library no longer ships a module that
+   does it: sniff() above is thirty lines you now write yourself.
+
+5. subprocess ASKS A FIFTH QUESTION: CAN THE KERNEL LAUNCH IT?
+   with_shebang    ran, exit 7
+   no_shebang      refused: OSError, errno 8
+   not_executable  refused: PermissionError, errno 13
+   All three are regular, non-empty files holding shell script text,
+   and file-by-content would call all three the same thing. errno 8 is
+   ENOEXEC: the kernel read offset 0, found no '#!' and no ELF header,
+   and no handler claimed the bytes. errno 13 is EACCES: the bytes were
+   never looked at, because the execute bit was not set.
+   Run no_shebang from a shell instead and it works, because the SHELL
+   catches ENOEXEC and interprets the file itself. subprocess does not.

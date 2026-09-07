@@ -25,6 +25,7 @@ Status of every page, and the order things are planned in. A **stub** has a perm
 | [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | written | |
 | [Standard in, standard out, and pipes](01_Text_and_Bytes/stdin_stdout_and_pipes/README.md) | **stub** | the example has to run under a pipe to show the effect |
 | [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md) | written, 2026-09-06 | the example touches no disk on purpose; APFS refuses invalid UTF-8 and is normalization-*insensitive*, not normalizing — both measured against Linux, both in a dated table rather than an answer key |
+| [What kind of file is this?](01_Text_and_Bytes/what_kind_of_file_is_this/README.md) | written, 2026-09-07 | five APIs, five questions; `imghdr` and `sndhdr` were removed in 3.13 so the byte-reading answer is now hand-rolled. The version split and the `PermissionError` that `pathlib` swallows are dated tables, not keys — the key is byte-identical on macOS 3.14 and python:3.11/3.12/3.13/3.14-slim |
 
 ## Chapter 2 — Projects and environments
 

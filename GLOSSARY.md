@@ -20,6 +20,8 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **collation** — ordering text the way a language's alphabet does, as opposed to by code point. See [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md).
 
+**dangling symlink** — a symlink whose target does not exist. `os.lstat` reads it happily and `Path.is_symlink()` is `True`, while `Path.exists()`, `Path.is_file()` and `os.stat` all behave as though nothing is there — so it is indistinguishable from an absent path unless you ask with `lstat`. See [What kind of file is this?](01_Text_and_Bytes/what_kind_of_file_is_this/README.md).
+
 **dependency group** — a named set of packages a *developer* of the project needs and a user never installs, declared in `[dependency-groups]` ([PEP 735 ↗](https://peps.python.org/pep-0735/)). Not the same as an optional dependency, which a user can ask for. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
 
 **errors policy** — the second argument to `.encode()` / `.decode()`, deciding what happens on a character the codec cannot handle: `strict`, `ignore`, `replace`, `backslashreplace`, `surrogateescape`. See [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md).
@@ -33,6 +35,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **isdecimal / isdigit / isnumeric** — three nested predicates, not synonyms: `Nd` only, then anything with a digit value, then anything with a numeric value at all. `int()` accepts the first. See [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md).
 
 **line boundary** — one of the ten characters `str.splitlines()` breaks a string at: `\n`, `\v`, `\f`, `\r`, `\x1c`, `\x1d`, `\x1e`, `\x85` (NEL), `U+2028` and `U+2029`, plus `\r\n` counted once. Wider than the three a file in text mode recognizes and the one `re` does. See [What ends a line](01_Text_and_Bytes/what_ends_a_line/README.md).
+
+**magic number** — the fixed first bytes that identify a file format, like a PNG's `89 50 4E 47 0D 0A 1A 0A`. Reading them is the only way to learn what a file actually contains; Python's standard library shipped sniffers for this (`imghdr`, `sndhdr`) until they were removed in 3.13. See [What kind of file is this?](01_Text_and_Bytes/what_kind_of_file_is_this/README.md).
 
 **memoryview** — a borrowed window onto another object's buffer, so slicing it copies nothing. Writable when it wraps a `bytearray`, read-only over a `bytes`. Rust's `&mut [u8]`. See [`bytearray` is the mutable one](01_Text_and_Bytes/bytearray_is_mutable/README.md).
 
