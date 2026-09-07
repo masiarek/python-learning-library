@@ -55,12 +55,14 @@ NAV_ORDER: dict[str, list[str]] = {
         "RESOURCES.md",
         "ROADMAP.md",
     ],
-    # The type boundary first, then the two doors, then the four places code
-    # points mislead you, then the two boundaries with the outside world.
+    # The type boundary first, then the two doors, then the constructor that
+    # quietly is one of them, then the four places code points mislead you,
+    # then the two boundaries with the outside world.
     "01_Text_and_Bytes": [
         "README.md",
         "str_is_not_bytes",
         "encode_and_decode",
+        "making_a_bytes_object",
         "opening_a_file",
         "counting_characters",
         "is_it_a_letter",

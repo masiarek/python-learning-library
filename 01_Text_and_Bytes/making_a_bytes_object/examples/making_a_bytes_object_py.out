@@ -1,0 +1,64 @@
+1. ONE NAME, FOUR JOBS
+     bytes()                            -> b''
+     bytes(5)                           -> b'\x00\x00\x00\x00\x00'
+     bytes([5])                         -> b'\x05'
+     bytes('hi', 'utf-8')               -> b'hi'
+
+     Nothing in the call says which job you wanted. The TYPE of the
+     argument chose it, and the four answers have nothing in common:
+     empty, a buffer, one datum, and an encoding.
+
+2. THE TWO THAT LOOK ALIKE
+     bytes(5)                           -> b'\x00\x00\x00\x00\x00'
+     bytes([5])                         -> b'\x05'
+     str(5)                             -> '5'
+     bytes(True)                        -> b'\x00'
+     bytes(-1)                          !! ValueError: negative count
+
+     bytes(5) is FIVE zero bytes -- a buffer of that size. bytes([5])
+     is ONE byte holding 5 -- a value. str(5) is the digit, which is
+     what a reader expects bytes(5) to be. And True is an int, so
+     bytes(True) is one zero byte and never b'\x01'.
+
+3. PYTHON WILL NOT GUESS AN ENCODING
+     bytes('Łódź')                      !! TypeError: string argument without an encoding
+     bytes('Łódź', 'utf-8')             -> b'\xc5\x81\xc3\xb3d\xc5\xba'
+     bytes('Łódź', 'latin-1')           !! UnicodeEncodeError: 'latin-1' codec can't encode character '\u0141' in position 0: ordinal not in range(256)
+     bytes('Łódź', 'ascii', 'replace')  -> b'??d?'
+     'Łódź'.encode()                    -> b'\xc5\x81\xc3\xb3d\xc5\xba'
+
+     The two-argument form is .encode() written backwards, and the
+     third argument is errors=. The bare call is the only one of the
+     four jobs Python refuses outright: there is no default encoding.
+
+4. THE ITERABLE FORM CHECKS EVERY VALUE
+     bytes([72, 105])                   -> b'Hi'
+     bytes(range(5))                    -> b'\x00\x01\x02\x03\x04'
+     bytes(x * 2 for x in [1, 2])       -> b'\x02\x04'
+     bytes([256])                       !! ValueError: bytes must be in range(0, 256)
+     bytes([-1])                        !! ValueError: bytes must be in range(0, 256)
+     bytes([1.0])                       !! TypeError: 'float' object cannot be interpreted as an integer
+
+     Every element has to be an int in range(0, 256). Nothing is
+     truncated, rounded or wrapped -- the call fails instead.
+
+5. HOW THE JOB IS CHOSEN
+     bytes(Bytesish())   __bytes__      -> b'__bytes__ ran'
+     bytes(Indexish())   __index__      -> b'\x00\x00\x00'
+     bytes(Both())       both           -> b'__bytes__ won'
+     bytes(3.0)          neither        !! TypeError: cannot convert 'float' object to bytes
+
+     The ladder: an encoding argument means 'encode this str'; then
+     __bytes__ if the object has one; then __index__ for the zero-fill;
+     then the buffer protocol; then any iterable of ints. A float has
+     none of those, so it is not 'rounded' -- it is refused.
+
+6. THE OTHER DOORS INTO bytes
+     bytes.fromhex('c5 81')             -> b'\xc5\x81'
+     (321).to_bytes(2, 'big')           -> b'\x01A'
+     bytes(bytearray(b'ab'))            -> b'ab'
+     bytes(memoryview(b'mv'))           -> b'mv'
+
+     Three of these say in their names what bytes() says only in the
+     type of its argument. That is the whole argument for preferring
+     them: .encode() cannot be mistaken for an allocation.
