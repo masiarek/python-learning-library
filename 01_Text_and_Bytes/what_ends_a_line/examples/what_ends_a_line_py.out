@@ -1,0 +1,90 @@
+1. EVERY CODE POINT, AND THE TEN THAT SPLIT
+     Scanned 1,112,064 code points. 10 of them end a line:
+
+           code point  bidi  isspace  name
+     ------------------------------------------------------------------
+     LF    U+000A      B     True     LINE FEED
+     VT    U+000B      S     True     LINE TABULATION
+     FF    U+000C      WS    True     FORM FEED
+     CR    U+000D      B     True     CARRIAGE RETURN
+     FS    U+001C      B     True     INFORMATION SEPARATOR FOUR (file)
+     GS    U+001D      B     True     INFORMATION SEPARATOR THREE (group)
+     RS    U+001E      B     True     INFORMATION SEPARATOR TWO (record)
+     NEL   U+0085      B     True     NEXT LINE
+     LS    U+2028      WS    True     LINE SEPARATOR
+     PS    U+2029      B     True     PARAGRAPH SEPARATOR
+
+     Plus one two-character sequence: CR LF counts once, not twice.
+     And one near miss -- U+001F, unit separator, is whitespace to
+     isspace() and a separator to split(), and is not a line boundary.
+
+2. THE SAME TEXT, THREE ANSWERS
+     text = 'a\nb\x0bc\rd\x1ce\x85f\u2028g'
+     Seven pieces, separated by six different candidates: LF VT CR FS NEL LS.
+
+     text.splitlines()        7 lines  ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+     iterating those bytes    3 lines  ['a\n', 'b\x0bc\n', 'd\x1ce\x85f\u2028g']
+     re.findall('^.*', re.M)  2 lines  ['a', 'b\x0bc\rd\x1ce\x85f\u2028g']
+
+     Nothing about the text changed. str.splitlines() knows ten
+     boundaries, universal newlines knows three (LF, CR, CRLF), and
+     re knows exactly one -- \n -- even in MULTILINE mode.
+
+3. WHERE THE TEN COME FROM
+     Bidi_Class B ('paragraph separator') holds 7 code points:
+       U+000A  U+000D  U+001C  U+001D  U+001E  U+0085  U+2029
+     Of those, 0 are missing from splitlines().
+     splitlines() adds 3: U+000B LINE TABULATION, U+000C FORM FEED, U+2028 LINE SEPARATOR
+
+     So the rule is: every character Unicode's bidirectional algorithm
+     calls a paragraph separator, plus vertical tab, form feed and
+     LINE SEPARATOR. FS, GS and RS are in the set because Unicode
+     puts them there -- they were ASCII's file, group and record
+     separators, and Unicode classifies all three as paragraph ends.
+
+4. bytes.splitlines() KNOWS TWO
+     Over all 256 byte values, bytes.splitlines() splits on: 0x0A, 0x0D
+     b'a\r\nb'.splitlines() = [b'a', b'b']   (CRLF, still one)
+
+           as str     as utf-8 bytes
+     ----------------------------------------
+     VT    2          1
+     RS    2          1
+     NEL   2          1
+
+     A bytes object does not know which table produced it, so it
+     answers for ASCII only. Decode first and the answer changes.
+
+5. THE CODEC DECIDES WHETHER THERE IS A LINE THERE
+     codec      decodes to           lines
+     --------------------------------------------
+     latin-1    'amount\x85date'     2
+     cp1252     'amount…date'        1
+     cp437      'amountàdate'        1
+     cp037      'amount\x85date'     2
+
+     The first three read the same bytes: b'amount\x85date'
+     The fourth is EBCDIC:                b'\x81\x94\x96\xa4\x95\xa3\x15\x84\x81\xa3\x85'
+
+     Byte 0x85 is NEXT LINE in latin-1, a horizontal ellipsis in
+     cp1252 and an a-grave in cp437. Same byte, same file, and only
+     the codec you passed to .decode() decides whether your data has
+     two lines or one. The last row is why NEL is in the set at all:
+     byte 0x15 is the mainframe's newline, and cp037 maps it to U+0085.
+
+6. splitlines() IS NOT split('\n')
+     input            splitlines()               split('\n')
+     --------------------------------------------------------------
+     ''               []                         ['']
+     'a'              ['a']                      ['a']
+     'a\n'            ['a']                      ['a', '']
+     'a\n\n'          ['a', '']                  ['a', '', '']
+     'a\r\nb'         ['a', 'b']                 ['a\r', 'b']
+     'a\x0bb'         ['a', 'b']                 ['a\x0bb']
+
+     keepends=True on 'a\r\nb': ['a\r\n', 'b']
+     splitlines() treats a trailing terminator as ending the last
+     line rather than starting an empty one, and returns [] for the
+     empty string where split() returns ['']. That difference is why
+     a file's last line does not arrive twice -- and why reaching for
+     split('\n') to dodge the FS problem adds a phantom empty line.
