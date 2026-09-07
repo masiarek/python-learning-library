@@ -43,6 +43,19 @@ Rust's refusal to index a string by integer is the design decision that most ann
 
 All three languages get this equally wrong by default, and for the same reason: code-point order is the only ordering available without a locale database. This is the one row where "Python's answer" is not really Python's — it is everyone's.
 
+## Classifying a character
+
+| The idea | Python | Rust | ABAP |
+|---|---|---|---|
+| Is it a letter? | [`str.isalpha()`](01_Text_and_Bytes/is_it_a_letter/README.md) — General_Category `L*` | [`char::is_alphabetic` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) — the Alphabetic *property*, which is wider | `CO` against a character set, by hand |
+| Is it a digit you can `int()`? | `str.isdecimal()` — `Nd` | `char::to_digit(10).is_some()` — ASCII only | `CO '0123456789'` |
+| Is it a number of any kind? | `str.isnumeric()` — Numeric_Type, so `一` counts | `char::is_numeric` — `N*` categories, so `一` does not | — |
+| Whitespace | `str.isspace()` — Unicode, plus `\x1c`–`\x1f` | [`char::is_whitespace` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/rfc_1054_str_words/index.html) — `White_Space` only | `cl_abap_char_utilities` constants |
+| Whole-string version | 12 methods on `str`; the ten class predicates also mean "…and not empty" | only three (`is_empty`, `is_ascii`, `is_char_boundary`) — you write `.chars().all(…)` | `CO` is already whole-field |
+| The empty string | `False` for the ten class predicates | `true` — `all()` over nothing | worth checking on your system |
+
+This is the one section where the *names* match and the *sets* do not, in both directions: Rust's `is_alphabetic` accepts combining marks that Python's `isalpha` rejects, and Python's `isnumeric` accepts a CJK ideograph that Rust's `is_numeric` rejects. The measured grid is on [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md). The general form of the hazard — every one of these is a table lookup whose answer depends on which edition of the table your toolchain was built against — is [the table has a version ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/the_table_has_a_version/index.html).
+
 ## Where each library goes deeper
 
 - **[Encodings library ↗](https://masiarek.github.io/encodings-learning-library/)** — the subject itself: what a code point is, how UTF-8 encodes one, byte order and the BOM, overlong sequences, mojibake, and the terminal tools (`od`, `xxd`, `iconv`) that show you the bytes. Read it when the question is *what is actually in the file*.

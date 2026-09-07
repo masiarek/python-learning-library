@@ -27,6 +27,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md) | Which type am I holding, and why won't Python mix them? |
 | [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) | Which direction is which, and what does `errors=` throw away? |
 | [Counting characters](01_Text_and_Bytes/counting_characters/README.md) | How long is this string — and which of the four answers did you want? |
+| [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md) | What do `isalpha`, `isdigit` and the other ten actually test? |
 | [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? |
 | [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md) | What is actually allowed in a filename, and why can't I print one? |
 | [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) | What is this file, who reads which part, and how do I read it myself? |

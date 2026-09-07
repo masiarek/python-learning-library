@@ -55,7 +55,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "RESOURCES.md",
         "ROADMAP.md",
     ],
-    # The type boundary first, then the two doors, then the three places code
+    # The type boundary first, then the two doors, then the four places code
     # points mislead you, then the two boundaries with the outside world.
     "01_Text_and_Bytes": [
         "README.md",
@@ -63,6 +63,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "encode_and_decode",
         "opening_a_file",
         "counting_characters",
+        "is_it_a_letter",
         "normalization",
         "sorting_is_not_comparing",
         "stdin_stdout_and_pipes",

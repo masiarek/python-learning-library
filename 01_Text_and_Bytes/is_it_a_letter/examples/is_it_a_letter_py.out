@@ -1,0 +1,78 @@
+1. TWELVE PREDICATES, AND WHAT THE EMPTY STRING DOES
+     str has 12 methods whose name starts with 'is'.
+     False on '':  isalnum isalpha isdecimal isdigit isidentifier
+                   islower isnumeric isspace istitle isupper
+     True  on '':  isascii isprintable
+
+     The 10 say 'every character is X, and there is at least one'.
+     The 2 say 'no character is NOT X', which is vacuously true when
+     there are no characters. Same suffix, opposite empty-string rule.
+
+2. WHAT isalpha ACTUALLY ASKS
+     code point  cat  alpha  numeric  digit  name
+     ----------------------------------------------------------------------------
+     U+0041      Lu   True   False    False  LATIN CAPITAL LETTER A
+     U+0141      Lu   True   False    False  LATIN CAPITAL LETTER L WITH STROKE
+     U+01C5      Lt   True   False    False  LATIN CAPITAL LETTER D WITH SMALL LETTER Z WITH CARON
+     U+0345      Mn   False  False    False  COMBINING GREEK YPOGEGRAMMENI
+     U+093E      Mc   False  False    False  DEVANAGARI VOWEL SIGN AA
+     U+16EE      Nl   False  True     False  RUNIC ARLAUG SYMBOL
+     U+2167      Nl   False  True     False  ROMAN NUMERAL EIGHT
+     U+00B2      No   False  True     True   SUPERSCRIPT TWO
+     U+00BD      No   False  True     False  VULGAR FRACTION ONE HALF
+     U+0663      Nd   False  True     True   ARABIC-INDIC DIGIT THREE
+     U+4E00      Lo   True   True     False  CJK UNIFIED IDEOGRAPH-4E00
+     U+005F      Pc   False  False    False  LOW LINE
+
+     isalpha() is exactly 'General_Category starts with L'. That is why
+     the two marks are False -- they are Mn and Mc, and a mark is not a
+     letter however alphabetic it looks -- and why U+4E00 is True: a CJK
+     ideograph is Lo, so it is a letter AND it has a numeric value.
+
+3. THREE KINDS OF NUMBER, NESTED
+     code point  isdecimal  isdigit  isnumeric  name
+     --------------------------------------------------------------------
+     U+0033      True       True     True       DIGIT THREE
+     U+0663      True       True     True       ARABIC-INDIC DIGIT THREE
+     U+00B2      False      True     True       SUPERSCRIPT TWO
+     U+00BD      False      False    True       VULGAR FRACTION ONE HALF
+     U+2167      False      False    True       ROMAN NUMERAL EIGHT
+     U+4E00      False      False    True       CJK UNIFIED IDEOGRAPH-4E00
+
+     Checked over every one of the 1,114,112 code points:
+     isdecimal implies isdigit implies isnumeric, violations = 0
+     isdecimal is 'you can build a base-10 number out of it' (Nd).
+     isdigit adds the ones with a digit VALUE but no positional use.
+     isnumeric adds everything with a numeric value at all -- halves,
+     Roman numerals, and the CJK ideograph for 'one'.
+
+4. isalnum IS THE UNION OF FOUR, NOT OF TWO
+     U+0041  isalnum=True   alpha or decimal or digit or numeric = True
+     U+00BD  isalnum=True   alpha or decimal or digit or numeric = True
+     U+005F  isalnum=False  alpha or decimal or digit or numeric = False
+
+     So U+00BD (one half) is 'alphanumeric' in Python. If you are
+     validating a username, isalnum() is almost never the rule you meant.
+
+5. isupper IGNORES EVERY UNCASED CHARACTER
+     'ABC'      isupper=True   islower=False  istitle=False
+     'ABC1'     isupper=True   islower=False  istitle=False
+     '123'      isupper=False  islower=False  istitle=False
+     'ABC-DEF'  isupper=True   islower=False  istitle=False
+     'Ł'        isupper=True   islower=False  istitle=True
+     'ǅ'        isupper=False  islower=False  istitle=True
+
+     'ABC1' is uppercase because the digit has no case to disagree with.
+     '123' is not, because there is no cased character to agree with it.
+     The rule is 'at least one cased character, and no cased character
+     is in the wrong case' -- not 'every character is uppercase'.
+
+6. NONE OF THESE IS all()
+     ''      .isalpha() = False  all(c.isalpha()) = True
+     'abc'   .isalpha() = True   all(c.isalpha()) = True
+     'ab1'   .isalpha() = False  all(c.isalpha()) = False
+
+     They agree on every string except the empty one, where all() is
+     True by definition and isalpha() is False by decision. Translating
+     s.isalpha() into a language that only has per-character predicates
+     means writing the emptiness test back in by hand.
