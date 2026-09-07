@@ -38,9 +38,15 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **normalization** — rewriting text into a canonical form (NFC, NFD, NFKC, NFKD) so that strings which render identically also compare equal. See [Normalization](01_Text_and_Bytes/normalization/README.md).
 
+**printable** — in Python, *not* about ink: `str.isprintable()` is true when `repr()` would not escape the character, which is General_Category `L`, `M`, `N`, `P` or `S` plus the ASCII space. So a space is printable and a tab is not, and `string.printable` — the older, POSIX sense — is not printable. See [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md).
+
 **pyproject.toml** — the one declarative file describing a Python project: standardised tables (`[project]`, `[build-system]`, `[dependency-groups]`) plus a `[tool.<name>]` room per tool. Replaced the executable `setup.py`. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
 
+**repr** — the representation of an object aimed at a programmer rather than a reader, reached as `repr(x)`, `f'{x!r}'` or `f'{x = }'`, and used automatically for the elements of any container. Rust splits the same idea into the `Debug` and `Display` traits. See [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md).
+
 **str** — Python's text type, a sequence of code points. Has `.encode()` and no `.decode()`. See [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md).
+
+**`chars` argument** — the operand of `strip` / `lstrip` / `rstrip`: a **set** of characters to remove, not a prefix, and it repeats. `'Arthur: three!'.lstrip('Arthur: ')` is `'ee!'`. `removeprefix` is the one that takes a prefix. See [`strip` is a set, not a prefix](01_Text_and_Bytes/strip_is_a_set/README.md).
 
 **surrogateescape** — the errors policy that smuggles undecodable bytes through a `str` and restores them exactly on re-encode. How Python opens a filename that is not valid UTF-8. See [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md).
 

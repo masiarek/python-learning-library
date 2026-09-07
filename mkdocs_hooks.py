@@ -70,6 +70,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "is_it_a_letter",
         "repr_is_not_str",
         "what_ends_a_line",
+        "strip_is_a_set",
         "normalization",
         "sorting_is_not_comparing",
         "stdin_stdout_and_pipes",

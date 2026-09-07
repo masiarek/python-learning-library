@@ -33,6 +33,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md) | What do `isalpha`, `isdigit` and the other ten actually test? |
 | [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md) | Why is a space "printable" and a tab not — and what did `str(b'x')` just do? |
 | [What ends a line](01_Text_and_Bytes/what_ends_a_line/README.md) | Which characters count as a line break — and why do I get three different answers? |
+| [`strip` is a set, not a prefix](01_Text_and_Bytes/strip_is_a_set/README.md) | Why did `lstrip('Arthur: ')` eat three more characters than I asked for? |
 | [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? |
 | [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md) | What is actually allowed in a filename, and why can't I print one? |
 | [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) | What is this file, who reads which part, and how do I read it myself? |

@@ -23,6 +23,19 @@ A cell in the Python column links into this library. A cell in another column li
 
 The sharpest difference is the third row. Rust makes invalid UTF-8 *unrepresentable* in a `String`, so the check happens once at the boundary and never again. Python checks at the boundary too but leaves you a way through it (`surrogateescape`), because a filename has to be openable even when it is not text. C checks nowhere. Which of those is right depends entirely on whether your program can refuse its input.
 
+## Showing a value
+
+| The idea | Python | Rust | ABAP |
+|---|---|---|---|
+| Show it to a person | [`str(x)`](01_Text_and_Bytes/repr_is_not_str/README.md), `f'{x}'` | `Display`, `{}` | `WRITE` |
+| Show it to a programmer | [`repr(x)`](01_Text_and_Bytes/repr_is_not_str/README.md), `f'{x!r}'`, `f'{x = }'` | [`Debug`, `{:?}` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/the_format_language/index.html) | the Debugger, plus a hex view |
+| …with non-ASCII escaped | `ascii(x)`, `f'{x!a}'` | `escape_default` | — |
+| What happens with no "person" form | falls back to `repr` — **silently** | will not compile: `Display` is not implemented | — |
+| "Printable" | [`str.isprintable()`](01_Text_and_Bytes/repr_is_not_str/README.md) — what `repr` will not escape | no public predicate; `is_control` is a narrower question | `CO` against a set you wrote |
+| A container's elements | always `repr` | always `Debug` | — |
+
+Row four is the one with consequences. Python's `str()` falling back to `repr()` is what makes `str(b'Zoot!')` return `"b'Zoot!'"` instead of raising, and Rust's refusal to fall back is what makes the equivalent a compile error. Both languages define "printable" as *"what the debug form does not escape"*, and on every sample tested they agree about which characters those are.
+
 ## Mutable and immutable
 
 | The idea | Python | Rust | C | ABAP |
@@ -94,8 +107,9 @@ This is the one section where the *names* match and the *sets* do not, in both d
 | Find a substring | `s.find` / `s.index` — character offset | [`str::find` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_find/index.html) — **byte** offset, and `Option` rather than `-1` | `FIND ... IN`, `sy-fdpos` |
 | Is it in there at all? | `sub in s` | [`str::contains` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_contains/index.html) | `CS` |
 | Replace | `s.replace(a, b)` | [`str::replace` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_replace/index.html), [`replacen` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_replacen/index.html) for a count | `REPLACE ALL OCCURRENCES OF` |
-| Trim the ends | `s.strip()` | [`str::trim` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_trim/index.html) — Unicode; `trim_ascii` is the cheap one | `CONDENSE`, or `SHIFT ... LEFT DELETING` |
-| Prefix and suffix | `s.startswith`, `s.removeprefix` | [`starts_with` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_starts_with/index.html), [`strip_prefix` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_strip_prefix/index.html) — one step, no byte arithmetic | `CP` with a pattern |
+| Trim the ends | [`s.strip()`](01_Text_and_Bytes/strip_is_a_set/README.md) — 29 code points, not four | [`str::trim` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_trim/index.html) — `White_Space`, so it leaves `U+001C`–`U+001F` that Python removes; `trim_ascii` is the cheap one | `CONDENSE`, or `SHIFT ... LEFT DELETING` |
+| Trim a *set* of characters | [`s.lstrip(chars)`](01_Text_and_Bytes/strip_is_a_set/README.md) — the argument is a bag, and it repeats | `trim_start_matches(&[char])` — a `&str` pattern means the **whole string**, so you must spell the set out | `SHIFT … DELETING LEADING` takes a mask |
+| Prefix and suffix | [`s.startswith`, `s.removeprefix`](01_Text_and_Bytes/strip_is_a_set/README.md) — once, and silent when it did not match | [`starts_with` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_starts_with/index.html), [`strip_prefix` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_strip_prefix/index.html) — returns `Option`, so "not there" is a value | `CP` with a pattern |
 | Repeat | `s * 3` | [`str::repeat` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_repeat/index.html) | `DO 3 TIMES`, `CONCATENATE` |
 | Parse into a number | `int(s)` / `float(s)` | [`s.parse::<T>()` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/parsing_a_string/index.html) — the type decides the parser | `MOVE`, with silent conversion |
 | Interpolate values in | f-strings, `format()` | [`format!` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/the_format_language/index.html) — same mini-language, different escapes | string templates, pipe-delimited |
