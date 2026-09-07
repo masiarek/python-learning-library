@@ -54,6 +54,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "GLOSSARY.md",
         "RESOURCES.md",
         "ROADMAP.md",
+        "TODO.md",
     ],
     # The type boundary first, then the two doors, then the constructor that
     # quietly is one of them, then the five places code points mislead you,

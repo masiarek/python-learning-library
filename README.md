@@ -19,6 +19,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 - **[Chapter 2 — Projects and environments](02_Projects_and_Environments/README.md)** — the project file, and the interpreter that runs it
 - **[The crosswalk](CROSSWALK.md)** — the same ideas in Rust, C and ABAP, one table per question
 - **[Roadmap](ROADMAP.md)** — what is written, what is a stub, what is next
+- **[What to write next](TODO.md)** — the questions backlog, ranked, and the five pages worth writing first
 
 ## The written lessons
 

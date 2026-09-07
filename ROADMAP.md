@@ -4,6 +4,8 @@
 
 Status of every page, and the order things are planned in. A **stub** has a permanent URL and an outline but no runnable example yet; see [CONTRIBUTING](CONTRIBUTING.md) for what it takes to graduate one.
 
+**Companion page, added 2026-09-07.** This one tracks the pages that *exist*; [TODO.md](TODO.md) ranks what to write next, built from the questions Adam asked while reading the Python docs — each one routed to the page that answers it, half-answers it, or does not exist yet. Nothing on that page has been through the gates that back a lesson, and it says so at the top.
+
 ## Chapter 1 — Text and bytes
 
 | Lesson | Status | Notes |
