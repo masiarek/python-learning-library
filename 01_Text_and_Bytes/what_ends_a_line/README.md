@@ -141,6 +141,9 @@ Every language draws its line somewhere on the same ladder, and the rungs are wo
    7  LF CR CRLF NEL LS PS FF                 Unicode 5.8 R4; .NET 6+ ReplaceLineEndings (docs)
    8  ... + VT                                \R in Perl, Java, Ruby, PCRE; Swift .isNewline
   10  ... + FS GS RS                          Python str.splitlines()
+
+  run with: Python 3.14.7, rustc 1.98.0, go1.25.5, node v20.20.2, ruby 2.6.10,
+            perl 5.42.0, Swift 6.3.3, .NET 5.0.5, clang 21.0.0, awk 20200816
 ```
 
 **Nobody else splits on `FS`, `GS` and `RS`.** Python is alone on the top rung, and the gap is not an oversight by the others — the Unicode standard's own [newline guidelines ↗](https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-5/) (§5.8, Recommendation R4) say a readline function should stop at `LF`, `CR`, `CRLF`, `NEL`, `LS`, `FF` and `PS`, and that list is seven characters with no information separators in it. The `\R` escape adds `VT` for eight. Python adds three more on top of that, from the bidi table rather than from the newline recommendation.
