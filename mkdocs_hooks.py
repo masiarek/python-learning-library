@@ -58,7 +58,8 @@ NAV_ORDER: dict[str, list[str]] = {
     ],
     # The type boundary first, then the two doors, then the constructor that
     # quietly is one of them, then the five places code points mislead you,
-    # then the two boundaries with the outside world.
+    # then the boundaries with the outside world -- ending with the registry
+    # behind the two doors, which is where data arriving in pieces goes wrong.
     "01_Text_and_Bytes": [
         "README.md",
         "str_is_not_bytes",
@@ -78,6 +79,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "stdin_stdout_and_pipes",
         "filenames_are_not_text",
         "what_kind_of_file_is_this",
+        "the_codecs_registry",
     ],
     # The file first: every other page in this chapter is about something the
     # file names but does not itself do.

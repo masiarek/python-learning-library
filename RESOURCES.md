@@ -15,6 +15,8 @@ External material worth your time, by what it is good for. Everything here is so
 
 - [Unicode HOWTO ↗](https://docs.python.org/3/howto/unicode.html) — the best free single document on this subject. Short, official, current.
 - [`codecs` — standard encodings ↗](https://docs.python.org/3/library/codecs.html#standard-encodings) — the full list of codec names, and the error-handler table.
+- [`codecs` ↗](https://docs.python.org/3/library/codecs.html) — the module itself: the registry, `getincrementaldecoder`, and `register_error`. Behind [The codecs registry](01_Text_and_Bytes/the_codecs_registry/README.md).
+- [PEP 293 ↗](https://peps.python.org/pep-0293/) — codec error handling callbacks, which is what makes the handler list extensible.
 - [`unicodedata` ↗](https://docs.python.org/3/library/unicodedata.html) — `normalize`, `combining`, `category`, `name`.
 - [PEP 383 ↗](https://peps.python.org/pep-0383/) — `surrogateescape`, and the filename problem it was invented for.
 - [PEP 686 ↗](https://peps.python.org/pep-0686/) — making UTF-8 mode the default, and what it changes.

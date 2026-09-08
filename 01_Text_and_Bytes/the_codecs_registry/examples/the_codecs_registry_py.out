@@ -1,0 +1,197 @@
+THE CODECS REGISTRY
+========================================================================
+  str.encode / bytes.decode are two doors into a registry that has
+  more rooms than they can reach. This is a tour of the other rooms.
+
+1. NOT EVERY CODEC IN THE REGISTRY IS A TEXT CODEC
+------------------------------------------------------------------------
+   A CodecInfo carries a flag saying whether .encode()/.decode() may
+   use it. It is the flag, not a missing codec, that decides.
+
+     name asked   canonical    text codec?   direction
+     utf-8        utf-8                yes   str <-> bytes
+     latin-1      iso8859-1            yes   str <-> bytes
+     rot13        rot-13                no   not str <-> bytes
+     base64       base64                no   not str <-> bytes
+     zlib         zlib                  no   not str <-> bytes
+     hex          hex                   no   not str <-> bytes
+
+   So the two methods refuse them -- by name, and the message names
+   the door that does work:
+
+     'abc'.encode('rot13')
+       LookupError: 'rot13' is not a text encoding; use codecs.encode() to handle arbitrary codecs
+     b'YWJj'.decode('base64')
+       LookupError: 'base64' is not a text encoding; use codecs.decode() to handle arbitrary codecs
+
+   Through codecs.encode / codecs.decode the same names work, and
+   each one has its own pair of types:
+
+     codecs.encode('abc', 'rot13')      -> 'nop'
+     codecs.decode('nop', 'rot13')      -> 'abc'
+     codecs.encode(b'abc', 'base64')    -> b'YWJj\n'
+     codecs.encode(b'abc', 'hex')       -> b'616263'
+     codecs.encode('abc', 'base64')     !! TypeError
+
+   rot13 is str->str. base64, hex and zlib are bytes->bytes.
+   Neither shape fits through a door typed str->bytes.
+
+2. A CHUNK BOUNDARY IS NOT A CHARACTER BOUNDARY
+------------------------------------------------------------------------
+   'Zażółć' is 6 characters and 10 UTF-8 bytes:
+
+     5a 61 c5 bc c3 b3 c5 82 c4 87
+
+   Read it in two chunks with the cut at byte 3, which lands in
+   the middle of the two bytes that spell 'ż':
+
+     chunk 0  5a 61 c5
+     chunk 1  bc c3 b3 c5 82 c4 87
+
+   Decoding each chunk on its own -- the obvious loop -- is wrong:
+
+     [c.decode('utf-8') for c in chunks]
+       UnicodeDecodeError, reason: unexpected end of data
+
+   And the usual reflex for that exception makes it worse, because
+   it stops raising and starts lying:
+
+     with errors='replace'  -> 'Za��ółć'
+       characters: 7, expected 6
+       equal to the original text? False
+       no exception was raised. One character became two U+FFFD.
+
+3. A CODEC IS AN OBJECT, AND THE OBJECT REMEMBERS
+------------------------------------------------------------------------
+   codecs.getincrementaldecoder returns a class. An instance of it
+   keeps whatever it could not finish and uses it on the next call.
+
+     fresh decoder, getstate() = (b'', 0)
+     .decode(chunk 0) -> 'Za'      <- 'ż' is NOT here yet
+     getstate()        = (b'\xc5', 0)      <- it is here, held back
+     .decode(chunk 1) -> 'żółć'
+
+     joined -> 'Zażółć'   equal to the original? True
+
+   The state is one incomplete sequence, so the chunk size does not
+   matter at all. One byte at a time is the worst case and it works:
+
+     10 calls of one byte each -> 'Zażółć'
+     equal to the original? True
+
+4. final=True IS THE OTHER HALF OF THE CONTRACT
+------------------------------------------------------------------------
+   Holding bytes back is right in the middle of a stream and wrong at
+   the end of one. The decoder cannot tell which it is in, so you say.
+
+     a truncated stream: 5a 61 c5 bc c3 b3 c5 82 c4
+     .decode(truncated)        -> 'Zażół'
+       no error: a held byte is normal, more input may be coming
+     .decode(b'', final=True)  !! UnicodeDecodeError
+       reason: unexpected end of data
+
+   Forget final=True and a truncated file decodes clean, one
+   character short, with nothing anywhere reporting it.
+
+5. THE ENCODER IS STATEFUL TOO, AND ITS BUG IS SILENT
+------------------------------------------------------------------------
+   The same split on the way out has no exception to warn you at all.
+   utf-16 begins with a byte order mark. One per stream -- but the
+   one-shot encoder does not know it is in a stream.
+
+     join of per-part .encode()  ff fe 5a 00 61 00 ff fe 7c 01 f3 00 42 01 07 01
+     incremental encoder         ff fe 5a 00 61 00 7c 01 f3 00 42 01 07 01
+     one-shot, whole string      ff fe 5a 00 61 00 7c 01 f3 00 42 01 07 01
+
+     incremental == one-shot?  True
+     naive       == one-shot?  False
+
+   The naive one is 2 bytes longer -- exactly one more mark --
+   and it decodes without error. What it decodes to is the problem:
+
+     'Za\ufeffżółć'
+       index 2 is U+FEFF ZERO WIDTH NO-BREAK SPACE
+     equal to the original text? False
+     A second BOM in mid-stream is not a BOM. It is a zero-width
+     character in your data, and it prints as nothing.
+
+6. THE SAME SHAPE IS NOT THE SAME PROMISE
+------------------------------------------------------------------------
+   Every codec in the registry offers the incremental interface, non-
+   text ones included. Offering it and honouring it are different.
+
+     base64 of b'abcdefgh' in one call  b'YWJjZGVmZ2g=\n'
+     the same bytes as 5 + 3          b'YWJjZGU=\nZmdo\n'
+     identical?                       False
+     does it round-trip?              False
+
+     Each chunk was padded as if it were the end of the stream, so
+     the result is malformed base64. What a decoder then does with
+     it is not even stable across Python versions: 3.11 and 3.12
+     return b'abcde' and report success, dropping three bytes;
+     3.13 and later raise binascii.Error. Only the line above is
+     true on all of them, which is why it is the one printed.
+
+     zlib, same treatment: identical? True
+     does it round-trip?              True
+
+   zlib streams. base64 does not. The type signature is identical.
+
+7. THE NINTH ERROR HANDLER IS THE ONE YOU WRITE
+------------------------------------------------------------------------
+   Python ships eight named policies. The list is a registry too, and
+   PEP 293 made it open. A handler is a function of one argument.
+
+     built in: 8
+       strict               strict_errors
+       ignore               ignore_errors
+       replace              replace_errors
+       xmlcharrefreplace    xmlcharrefreplace_errors
+       backslashreplace     backslashreplace_errors
+       namereplace          namereplace_errors
+       surrogateescape      surrogateescape
+       surrogatepass        surrogatepass
+
+   Ten lines, and it is now a name like any other:
+
+     codecs.lookup_error('audit') -> audit
+
+     b'caf\xe9 \xff au lait'.decode('utf-8', 'audit')
+       -> 'caf<e9> <ff> au lait'
+     'Zażółć'.encode('latin-1', 'audit')
+       -> b'Za[U+017C]\xf3[U+0142+U+0107]'
+
+   One name, both directions, and the argument is a different
+   exception class each way. A handler that assumes one of them
+   raises AttributeError the first time it meets the other.
+
+     the log the built-in handlers cannot give you:
+       decode  at  3  b'\xe9'
+       decode  at  5  b'\xff'
+       encode  at  2  'ż'
+       encode  at  4  'łć'
+
+8. TWO THINGS THE CONTRACT REQUIRES THAT NOTHING ANNOUNCES
+------------------------------------------------------------------------
+   A handler returns (replacement, resume position). Both halves have
+   a rule, and neither is checked until it is broken.
+
+   First: it is called once per RUN, not once per character.
+
+     'Zażółć'.encode('latin-1', 'counted') -> b'Za?\xf3?'
+     unencodable characters: 3, handler calls: 2
+       [2:3] 'ż'
+       [4:6] 'łć'
+     Returning one character for a run of two shortens the string,
+     which is how a 'replacement' loses a character count.
+
+   Second: the position must move forward, or nothing ends.
+
+     a handler returning exc.start instead of exc.end:
+       RuntimeError: handler called 4 times on one bad byte
+     Uncaught, that is not an exception. It is a hang.
+
+========================================================================
+Two methods reach the text codecs, one shot at a time, with the eight
+policies. Everything else in the registry -- the non-text codecs, the
+stateful objects, the ninth handler -- is reached through the module.

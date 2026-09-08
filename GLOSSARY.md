@@ -16,13 +16,15 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **`bytes()` the call** — not a conversion but four constructors sharing a name: empty, encode-a-`str`, allocate-*n*-zero-bytes, build-from-ints. The argument's type picks. See [Making a `bytes` object](01_Text_and_Bytes/making_a_bytes_object/README.md).
 
-**codec** — the named conversion between `str` and `bytes` — `utf-8`, `cp1250`, `latin-1`. Python's registry holds around a hundred. See [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md).
+**codec** — an entry in Python's codec registry. Usually a named conversion between `str` and `bytes` — `utf-8`, `cp1250`, `latin-1` — but the registry also holds `str`→`str` and `bytes`→`bytes` transforms (`rot13`, `base64`, `zlib`) that `.encode()`/`.decode()` refuse. See [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) and [The codecs registry](01_Text_and_Bytes/the_codecs_registry/README.md).
 
 **collation** — ordering text the way a language's alphabet does, as opposed to by code point. See [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md).
 
 **dangling symlink** — a symlink whose target does not exist. `os.lstat` reads it happily and `Path.is_symlink()` is `True`, while `Path.exists()`, `Path.is_file()` and `os.stat` all behave as though nothing is there — so it is indistinguishable from an absent path unless you ask with `lstat`. See [What kind of file is this?](01_Text_and_Bytes/what_kind_of_file_is_this/README.md).
 
 **dependency group** — a named set of packages a *developer* of the project needs and a user never installs, declared in `[dependency-groups]` ([PEP 735 ↗](https://peps.python.org/pep-0735/)). Not the same as an optional dependency, which a user can ask for. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
+
+**error handler** — the function behind an `errors=` name, taking the exception and returning `(replacement, where to resume)`. Python ships eight; the registry is open, so a ninth is about ten lines ([PEP 293 ↗](https://peps.python.org/pep-0293/)). One name serves both directions, and it is called once per *run* of bad input, not once per character. See [The codecs registry](01_Text_and_Bytes/the_codecs_registry/README.md).
 
 **errors policy** — the second argument to `.encode()` / `.decode()`, deciding what happens on a character the codec cannot handle: `strict`, `ignore`, `replace`, `backslashreplace`, `surrogateescape`. See [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md).
 
@@ -33,6 +35,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **General_Category** — the one-per-code-point classification (`Lu`, `Ll`, `Lo`, `Mn`, `Nd`, `No`, `Pc`…) that `unicodedata.category()` returns and that `str.isalpha()` tests. Distinct from a *property* like Alphabetic, which is derived from it and wider. See [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md).
 
 **grapheme cluster** — what a reader calls one character, which may be several code points (`👨‍👩‍👧` is five). Not in the standard library. See [Counting characters](01_Text_and_Bytes/counting_characters/README.md).
+
+**incremental decoder** — a codec as an *object* rather than a call: it holds the bytes of an unfinished character between calls, which is the only correct way to decode a stream arriving in arbitrary chunks. `codecs.getincrementaldecoder(name)()`; the last call needs `final=True` or a truncated stream reads as clean. See [The codecs registry](01_Text_and_Bytes/the_codecs_registry/README.md).
 
 **isdecimal / isdigit / isnumeric** — three nested predicates, not synonyms: `Nd` only, then anything with a digit value, then anything with a numeric value at all. `int()` accepts the first. See [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md).
 
