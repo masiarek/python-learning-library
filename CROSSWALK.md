@@ -92,9 +92,16 @@ Python is the odd one out in the third row, and the rest of the column follows f
 | Length in code points | [`len(s)`](01_Text_and_Bytes/counting_characters/README.md) | [`s.chars().count()` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) | — (`strlen( )` counts UTF-16 units) |
 | Length a reader would agree with | not in the stdlib | not in std — needs a crate | — |
 | Indexing by position | `s[0]` gives a 1-char `str` | [`s[0]` does not compile ↗](https://masiarek.github.io/rust-learning-library/14_Strings/string_slices/index.html) | `s(0)` gives a code unit |
+| Taking a sub-range | [`s[3:8]`](01_Text_and_Bytes/slicing_is_not_indexing/README.md) — start and **stop**, in code points | [`&s[3..8]` ↗](https://masiarek.github.io/encodings-learning-library/05_Rust/slicing_by_byte/index.html) — start and end, in **bytes** | `s+3(5)` — offset and **length**, in code units |
+| An out-of-range bound | [clamped to the length; never raises](01_Text_and_Bytes/slicing_is_not_indexing/README.md) | [panics ↗](https://masiarek.github.io/encodings-learning-library/05_Rust/slicing_by_byte/index.html) — or `get()` returns `None` | raises |
+| A cut inside a character | impossible — the unit is a code point | [panics: not a char boundary ↗](https://masiarek.github.io/encodings-learning-library/05_Rust/slicing_by_byte/index.html) | possible above the BMP — half a surrogate pair |
+| Counting back from the end | [`s[-5:]`](01_Text_and_Bytes/slicing_is_not_indexing/README.md) — and `s[:-0]` is `''` | no negative index — `&s[s.len() - 5..]` | no negative offset — arithmetic on `strlen( )` |
+| Reversing | [`s[::-1]` — code points, so it breaks a combining mark](01_Text_and_Bytes/slicing_is_not_indexing/README.md) | `.chars().rev().collect()` — code points, same flaw | no notation; loop and concatenate |
 | Walking it one unit at a time | `for c in s` — code points | [`.chars()` / `.bytes()` / `.char_indices()` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/walking_a_string/index.html) | offset arithmetic on code units |
 
 Rust's refusal to index a string by integer is the design decision that most annoys newcomers and most reliably prevents the bug: `s[0..1]` on a multi-byte character *panics* rather than returning half a character. Python returns a whole code point, which is right more often than C and still not the same as a character. ABAP returns a UTF-16 code unit, so an emoji is two.
+
+The three sub-range rows are the sharpest disagreement in the table, because all three languages write something that *looks* like the same operation and none of them mean it. Python's second number is a stop, ABAP's is a length, and Rust's pair is a byte range — so `s[3:8]`, `s+3(5)` and `&s[3..8]` select the same five characters only while the text is ASCII. Then the contracts differ too: Python **clamps** an out-of-range bound and hands back a short string, ABAP **raises**, Rust **panics** — which puts Python's slice on the opposite side of the line from both, and is why `s[100:200]` on a five-character string is a silent bug here and a loud one there.
 
 ## Ordering and comparison
 

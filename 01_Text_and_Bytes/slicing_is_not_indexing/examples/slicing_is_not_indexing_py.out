@@ -1,0 +1,230 @@
+1. THE INVARIANT, TESTED RATHER THAN ASSERTED
+     s = 'Monty'   len 5
+
+     For every n, cutting the string in two at n and gluing it back
+     together returns the original. Including n past both ends.
+
+         n   s[:n]     s[n:]     joined    == s
+     ----------------------------------------------------
+        -9   ''        'Monty'   'Monty'   True  <- past the start
+        -8   ''        'Monty'   'Monty'   True  <- past the start
+        -7   ''        'Monty'   'Monty'   True  <- past the start
+        -6   ''        'Monty'   'Monty'   True  <- past the start
+        -5   ''        'Monty'   'Monty'   True  <- past the start
+        -4   'M'       'onty'    'Monty'   True
+        -3   'Mo'      'nty'     'Monty'   True
+        -2   'Mon'     'ty'      'Monty'   True
+        -1   'Mont'    'y'       'Monty'   True
+         0   ''        'Monty'   'Monty'   True
+         1   'M'       'onty'    'Monty'   True
+         2   'Mo'      'nty'     'Monty'   True
+         3   'Mon'     'ty'      'Monty'   True
+         4   'Mont'    'y'       'Monty'   True
+         5   'Monty'   ''        'Monty'   True  <- past the end
+         6   'Monty'   ''        'Monty'   True  <- past the end
+         7   'Monty'   ''        'Monty'   True  <- past the end
+         8   'Monty'   ''        'Monty'   True  <- past the end
+         9   'Monty'   ''        'Monty'   True  <- past the end
+
+     19 values of n, 19 times True, zero exceptions.
+
+2. THE SWEEP: SEVEN STRINGS, AND NUMBERS NO MACHINE CAN INDEX WITH
+     7 strings x every n from -(len+8) to len+8
+     187 values of n tested, 0 failures
+
+     And n does not have to fit in a machine word:
+       s[:10**30]                'Monty'
+       s[10**30:]                ''
+       s[-10**30:]               'Monty'
+       s[:10**30] + s[10**30:]   'Monty'   == s: True
+     A slice of ten-to-the-thirty is not an error. It is 'Monty'.
+
+3. THE SAME BRACKETS, TWO CONTRACTS
+     s[n] and s[n:n+1] look like the same question asked twice.
+     They are not. One of them is allowed to fail.
+
+         n   s[n]         s[n:n+1]
+     --------------------------------------------
+        -9   IndexError   ''
+        -8   IndexError   ''
+        -7   IndexError   ''
+        -6   IndexError   ''
+        -5   'M'          'M'
+        -4   'o'          'o'
+        -3   'n'          'n'
+        -2   't'          't'
+        -1   'y'          ''          <- the two disagree
+         0   'M'          'M'
+         1   'o'          'o'
+         2   'n'          'n'
+         3   't'          't'
+         4   'y'          'y'
+         5   IndexError   ''
+         6   IndexError   ''
+         7   IndexError   ''
+         8   IndexError   ''
+         9   IndexError   ''
+
+     s[n]     raised on 9 of 19 values
+     s[n:n+1] raised on 0 of 19, and returned '' at every n where
+              s[n] raised. One row goes the other way, and it is not a
+              third contract -- it is section 5's arithmetic again:
+                s[-1]     'y'
+                s[-1:0]   ''     n + 1 is 0, and 0 as a STOP means
+                          position zero, not 'the end'. The slice asks for
+                          everything from the last character up to the
+                          first, which is nothing.
+
+     The bracket is one syntax over two protocols. What goes inside
+     decides which:
+       s[1]     passes an int to __getitem__
+       s[1:3]   passes a slice to __getitem__ -- a real object
+       s.__getitem__(slice(1, 100))   'onty'
+       s.__getitem__(100)             IndexError
+       s[10**30]                      IndexError
+     Both failures are IndexError; neither slice is.
+
+4. WHY A SLICE CANNOT FAIL: slice.indices() IS THE CLAMPING RULE
+     Every slice runs its bounds through this first. It takes the
+     length and returns start, stop and step already in range.
+
+     written        the slice object           .indices(5)      result
+     ------------------------------------------------------------------------
+     s[:3]          slice(None, 3, None)       (0, 3, 1)        'Mon'
+     s[3:]          slice(3, None, None)       (3, 5, 1)        'ty'
+     s[1:100]       slice(1, 100, None)        (1, 5, 1)        'onty'
+     s[100:]        slice(100, None, None)     (5, 5, 1)        ''
+     s[-100:]       slice(-100, None, None)    (0, 5, 1)        'Monty'
+     s[:-1]         slice(None, -1, None)      (0, 4, 1)        'Mont'
+     s[:-0]         slice(None, 0, None)       (0, 0, 1)        ''
+     s[::2]         slice(None, None, 2)       (0, 5, 2)        'Mny'
+     s[::-1]        slice(None, None, -1)      (4, -1, -1)      'ytnoM'
+
+     Nothing in that column is out of range, because clamping happened
+     before the string was touched. 100 became 5. -100 became 0.
+
+5. NEGATIVE INDICES, AND THE -0 ASYMMETRY
+     A negative index counts back from the end. len(s) is added to it,
+     once, and then the ordinary rules apply.
+
+       s[-1]  -> 'y'          (len + n = 4)
+       s[-2]  -> 't'          (len + n = 3)
+       s[-5]  -> 'M'          (len + n = 0)
+       s[-6]  -> IndexError   (len + n = -1)
+
+     So s[-1] is the last character. And yet:
+       s[:-1]   'Mont'    everything but the last
+       s[:-0]   ''         empty
+
+     Not an inconsistency in slicing -- an arithmetic fact that never
+     reaches it. The minus is gone before the slice exists:
+       -0 == 0            True
+       repr(slice(None, -0))   slice(None, 0, None)
+     The slice object itself has no memory of the sign. Which means
+     'drop the last n characters' as s[:-n] is a bug waiting for n = 0,
+     and s[:len(s) - n] is the version that survives it.
+
+6. THE THIRD SLOT
+       s[::2]        'Mny'        every second character
+       s[1::2]       'ot'         offset by one
+       s[::-1]       'ytnoM'      the idiomatic reverse
+       s[::-2]       'ynM'        backwards, every second
+       s[::10**30]   'M'          a step no machine can count to
+       s[::0]        ValueError   the one value that DOES raise
+
+     A step of zero is the single exception to 'a slice never raises',
+     and it is not about the bounds -- it is a ValueError, not an
+     IndexError, because no clamping can make a step of zero mean
+     anything. Every out-of-range bound is still fine, and so is every
+     other step:
+       s[100:-100:-1]   'ytnoM'
+       s[::-10**30]     'y'
+     (A non-integer in any of the three slots is a TypeError, but that
+     is the argument being the wrong kind of thing, not out of range.)
+
+7. s[::-1] REVERSES CODE POINTS, NOT CHARACTERS
+     The famous one-liner is correct for ASCII and wrong for a large
+     fraction of the world's text. Reversing a sequence is only
+     reversing a string when every element stands alone.
+
+     cafe + U+0301
+       original  len 5   café   'café'
+       reversed  len 5   ́efac   '́efac'
+       was       U+0063 U+0061 U+0066 U+0065 U+0301
+       now       U+0301 U+0065 U+0066 U+0061 U+0063
+
+     precomposed
+       original  len 4   café   'café'
+       reversed  len 4   éfac   'éfac'
+       was       U+0063 U+0061 U+0066 U+00E9
+       now       U+00E9 U+0066 U+0061 U+0063
+
+     flag of Poland
+       original  len 2   🇵🇱   '🇵🇱'
+       reversed  len 2   🇱🇵   '🇱🇵'
+       was       U+1F1F5 U+1F1F1
+       now       U+1F1F1 U+1F1F5
+
+     family
+       original  len 7   👨‍👩‍👧‍👦   '👨\u200d👩\u200d👧\u200d👦'
+       reversed  len 7   👦‍👧‍👩‍👨   '👦\u200d👧\u200d👩\u200d👨'
+       was       U+1F468 U+200D U+1F469 U+200D U+1F467 U+200D U+1F466
+       now       U+1F466 U+200D U+1F467 U+200D U+1F469 U+200D U+1F468
+
+     Devanagari
+       original  len 6   नमस्ते   'नमस्ते'
+       reversed  len 6   ेत्समन   'ेत्समन'
+       was       U+0928 U+092E U+0938 U+094D U+0924 U+0947
+       now       U+0947 U+0924 U+094D U+0938 U+092E U+0928
+
+     Read the first pair again. 'cafe' plus a COMBINING ACUTE ACCENT
+     renders as cafe-with-an-accent; reversed, the accent is now the
+     FIRST code point in the string, with nothing before it to sit on.
+     A combining mark attaches to what precedes it, and after a
+     reversal what precedes it is whatever came next in the sentence.
+
+     U+0301 category Mn, combining class 230
+     Mn means 'mark, nonspacing': by definition it has no width of its
+     own and modifies its neighbour. Slicing does not know that.
+
+     The flag is two REGIONAL INDICATOR letters, P and L, which a font
+     draws as one flag. Reversed they spell L then P -- not a country
+     code, so it renders as two letters and Poland is gone. The family
+     is four people joined by three ZERO WIDTH JOINERs; the joiners
+     survive the reversal and the order of the people does not.
+
+     None of these raised. Every one of them is a different string that
+     the type system, the linter and the test suite all call a str.
+
+8. 'THE FIRST N CHARACTERS' IS NOT WHAT s[:n] GIVES YOU
+     s = 'café'   which renders as café -- four characters to a reader
+
+       s[:1]   U+0063                               renders as  c
+       s[:2]   U+0063 U+0061                        renders as  ca
+       s[:3]   U+0063 U+0061 U+0066                 renders as  caf
+       s[:4]   U+0063 U+0061 U+0066 U+0065          renders as  cafe
+       s[:5]   U+0063 U+0061 U+0066 U+0065 U+0301   renders as  café
+
+     s[:4] is the 'first four characters' of a four-character word and
+     it is a different word. The accent was code point five.
+
+       flag[:1]     U+1F1F5                            half a flag
+       family[:2]   U+1F468 U+200D                     a man and a trailing joiner
+
+     s[:n] is 'the first n code points', which is the right answer to a
+     question about storage and the wrong one to a question about text.
+
+9. bytes SLICES TO bytes; bytes INDEXES TO AN int
+     data = b'\xc5\x81\xc3\xb3d\xc5\xba'   len 7
+       data[0]     197        int
+       data[0:1]   b'\xc5'    bytes
+     Two contracts again, and this time they differ in RETURN TYPE as
+     well as in failure mode.
+
+     The invariant holds here too, over the same range:
+       data[:n] + data[n:] == data for every n:   True
+
+       data[::-1]            b'\xba\xc5d\xb3\xc3\x81\xc5'
+       data[::-1].decode()   UnicodeDecodeError
+     Reversing bytes does not reverse text. It shreds the encoding,
+     and here it fails loudly -- which is the good case.

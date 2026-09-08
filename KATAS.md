@@ -32,8 +32,11 @@ The order is the practice order, and it is **not** the sidebar's reading order �
 | K6 | [Eight one-liners about a word that means two things](01_Text_and_Bytes/repr_is_not_str/README.md#practice) | [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md) | 201 |
 | K7 | [Eight calls, and the one that is right by accident](01_Text_and_Bytes/strip_is_a_set/README.md#practice) | [`strip` is a set, not a prefix](01_Text_and_Bytes/strip_is_a_set/README.md) | 201 |
 | K8 | [One drill per slot, then the grammar read backwards](01_Text_and_Bytes/the_format_mini_language/README.md#practice) | [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md) | 201 |
+| K9 | [Eight brackets over one word, and only one may fail](01_Text_and_Bytes/slicing_is_not_indexing/README.md#practice) | [Slicing is not indexing](01_Text_and_Bytes/slicing_is_not_indexing/README.md) | 201 |
 
 **K1–K4 are one subject asked four ways** — the type boundary, the constructor, the mutable half, and the two doors between them. Doing them in order is worth more than doing any one of them twice, because the thing that does not stick is not a fact but a *habit*: asking "which of the two types am I holding?" at the moment a value arrives rather than at the moment it breaks.
+
+**K9 is the one with a provable answer in it.** The other eight ask you to recall a behaviour; this one asks you to predict `IndexError` on line 1 and `''` on line 2 from the *same* number, which is the whole of [Slicing is not indexing](01_Text_and_Bytes/slicing_is_not_indexing/README.md) compressed into two rows. If you get every row right and still cannot say why line 5 and line 6 are the same mistake, the page's section 5 is the one to reread.
 
 **K8 is the odd one out, and deliberately.** The format spec is `[[fill]align][sign][z][#][0][width][grouping][.precision][type]` — nine independent slots in a fixed order, which is a grammar rather than a fact, and a grammar is exactly what drilling is for. It is the one kata here that also runs backwards: given the output, write the spec.
 

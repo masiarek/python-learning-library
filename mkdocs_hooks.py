@@ -58,7 +58,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "TODO.md",
     ],
     # The type boundary first, then the two doors, then the constructor that
-    # quietly is one of them, then the five places code points mislead you,
+    # quietly is one of them, then the six places code points mislead you,
     # then the boundaries with the outside world -- ending with the registry
     # behind the two doors, which is where data arriving in pieces goes wrong.
     "01_Text_and_Bytes": [
@@ -70,6 +70,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "bytearray_is_mutable",
         "opening_a_file",
         "counting_characters",
+        "slicing_is_not_indexing",
         "is_it_a_letter",
         "repr_is_not_str",
         "what_ends_a_line",

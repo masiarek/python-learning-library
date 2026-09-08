@@ -32,6 +32,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [Making a `bytes` object](01_Text_and_Bytes/making_a_bytes_object/README.md) | Why is `bytes(5)` five zero bytes and `bytes([5])` one? |
 | [`bytearray` is the mutable one](01_Text_and_Bytes/bytearray_is_mutable/README.md) | Which of the two binary types can I write into, and what does mutability cost? |
 | [Counting characters](01_Text_and_Bytes/counting_characters/README.md) | How long is this string — and which of the four answers did you want? |
+| [Slicing is not indexing](01_Text_and_Bytes/slicing_is_not_indexing/README.md) | Why does `s[100]` raise when `s[:100]` does not — and what does `s[::-1]` do to an accent? |
 | [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md) | What do `isalpha`, `isdigit` and the other ten actually test? |
 | [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md) | Why is a space "printable" and a tab not — and what did `str(b'x')` just do? |
 | [What ends a line](01_Text_and_Bytes/what_ends_a_line/README.md) | Which characters count as a line break — and why do I get three different answers? |

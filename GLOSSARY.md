@@ -70,6 +70,8 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **sequence protocol** — the operations every Python sequence shares, `index` among them: `list`, `tuple`, `range`, `str` and `bytes` all have `.index()` and all raise `ValueError` on a miss. `find` is not part of it — it exists only on `str`, `bytes` and `bytearray`, which is why there is no `list.find` and why the `-1` mistake has nowhere else in the language to be written. See [Four ways to find it](01_Text_and_Bytes/finding_a_substring/README.md).
 
+**slice** — both the operation `s[a:b:c]` and the built-in *type* it builds: a real object with `start`, `stop` and `step`, passed to `__getitem__` where an index would pass an `int`. Its bounds are clamped to the sequence's length before anything is read, so a slice cannot be out of range — only a step of `0` raises. See [Slicing is not indexing](01_Text_and_Bytes/slicing_is_not_indexing/README.md).
+
 **str** — Python's text type, a sequence of code points. Has `.encode()` and no `.decode()`. See [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md).
 
 **`chars` argument** — the operand of `strip` / `lstrip` / `rstrip`: a **set** of characters to remove, not a prefix, and it repeats. `'Arthur: three!'.lstrip('Arthur: ')` is `'ee!'`. `removeprefix` is the one that takes a prefix. See [`strip` is a set, not a prefix](01_Text_and_Bytes/strip_is_a_set/README.md).

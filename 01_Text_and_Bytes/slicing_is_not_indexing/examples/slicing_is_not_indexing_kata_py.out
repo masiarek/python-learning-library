@@ -1,0 +1,44 @@
+     expression             result         why
+     --------------------------------------------------------------------------------------
+     'Monty'[5]             IndexError     one past the end -- an index may fail, and does
+     'Monty'[5:]            ''             the same 5, clamped to len, so there is nothing left
+     'Monty'[100:200]       ''             both bounds clamped to 5; still not an error
+     'Monty'[:-1]           'Mont'         -1 becomes 4: everything but the last
+     'Monty'[:-0]           ''             -0 IS 0, so this is [:0] and the minus never arrived
+     'Monty'[-1:0]          ''             start 4, stop 0: from the last up to the first
+     'Monty'[::0]           ValueError     no clamping can give a step of zero a meaning
+     'cafe\u0301'[::-1]     '\u0301efac'   reversed by code point, so the accent leads
+
+     TWO FAILURES, AND THEY ARE DIFFERENT KINDS
+       'Monty'[5]     IndexError    a POSITION the string does not have
+       'Monty'[::0]   ValueError    a STEP no length can make sense of
+     Everything between those two rows is a slice with an out-of-range
+     bound, and not one of them raised. That is the page in one table:
+     bounds are clamped, positions are checked, and the brackets look
+     identical from the outside.
+
+     LINE 5 AND LINE 6 ARE THE SAME ARITHMETIC TWICE
+       s[-1]     'y'      a negative index counts back: len + (-1) = 4
+       s[:-0]    ''       but -0 == 0, so there is nothing to count back
+       s[-1:0]   ''       start 4, stop 0 -- and 0 as a STOP is a
+                         position, not 'the end'
+       repr(slice(None, -0))   slice(None, 0, None)
+     The slice object never sees a minus sign in either case. Both are
+     arithmetic that finished before slicing began.
+
+     AND THE INVARIANT, OVER EIGHT NUMBERS -- FIVE OF THEM OUT OF RANGE
+       n = 5        s[:n] 'Monty'   s[n:] ''        joined == s: True
+       n = 100      s[:n] 'Monty'   s[n:] ''        joined == s: True
+       n = 200      s[:n] 'Monty'   s[n:] ''        joined == s: True
+       n = -1       s[:n] 'Mont'    s[n:] 'y'       joined == s: True
+       n = 0        s[:n] ''        s[n:] 'Monty'   joined == s: True
+       n = 1        s[:n] 'M'       s[n:] 'onty'    joined == s: True
+       n = -5       s[:n] ''        s[n:] 'Monty'   joined == s: True
+       n = 10**30   s[:n] 'Monty'   s[n:] ''        joined == s: True
+     failures: 0
+     (-0 is not on that list, because it cannot be: written into a
+      list literal it is 0, exactly as it is written into a slice.)
+     4 of those 8 are numbers s[n] would refuse, and the
+     invariant does not care about any of them. It holds because
+     clamping happens before the cut, on both halves, and the two
+     clamped answers are always the two pieces of one string.
