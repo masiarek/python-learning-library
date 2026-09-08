@@ -1,0 +1,159 @@
+1. THE CLAIM, IN ONE PAIR OF WORDS
+     Two spellings of one German word. A reader calls them the same word.
+
+     'straße'   len 6
+     'STRASSE'  len 7
+
+     lower()     'straße'     vs 'strasse'    equal = False
+     upper()     'STRASSE'    vs 'STRASSE'    equal = True
+     casefold()  'strasse'    vs 'strasse'    equal = True
+
+     lower() is the folklore fix for case-insensitive comparison and it
+     is the one that fails. casefold() is the operation Unicode defines
+     for the question 'is this the same word ignoring case'.
+
+2. THE CHARACTERS THAT DO IT
+     code point  char  lower()  upper()  casefold()  why
+     ----------------------------------------------------------------------------------
+     U+00DF      'ß'   'ß'      'SS'     'ss'        no capital of its own to come back from
+     U+1E9E      'ẞ'   'ß'      'ẞ'      'ss'        the capital added in 2008; lower stops at ß
+     U+017F      'ſ'   'ſ'      'S'      's'         long s -- already lowercase, so lower() is a no-op
+     U+00B5      'µ'   'µ'      'Μ'      'μ'         MICRO SIGN; folding sends it to Greek small mu
+     U+03C2      'ς'   'ς'      'Σ'      'σ'         final sigma; folding erases the positional form
+
+     Checked over all 1,114,112 code points: 297 of them have a
+     casefold() that is not their lower(). Every one is a character where
+     'lowercase both sides and compare' gives the wrong answer.
+
+3. A STRING CAN GET LONGER WHEN YOU CHANGE ITS CASE
+     method        code points mapping to more than one character   longest
+     ----------------------------------------------------------------------
+     upper()              102                                           3
+     lower()                1                                           2
+     casefold()           104                                           3
+     title()               48                                           3
+
+     Nothing ever gets shorter: methods with a code point mapping to
+     zero characters = 0.
+
+     One character in, three characters out:
+       'ΐ' (U+0390)  .upper()  ->  'Ϊ́'  (U+0399 U+0308 U+0301)
+       'ΰ' (U+03B0)  .upper()  ->  'Ϋ́'  (U+03A5 U+0308 U+0301)
+       'ὒ' (U+1F52)  .upper()  ->  'Υ̓̀'  (U+03A5 U+0313 U+0300)
+
+     And exactly one code point in the whole table grows under lower():
+       'İ' (U+0130)  .lower()  ->  'i̇'  (U+0069 U+0307)
+     -- the Turkish dotted capital I, which section 5 comes back to.
+
+4. AND CASE IS NOT A PER-CHARACTER OPERATION AT ALL
+     Greek sigma has two lowercase forms. Which one you get depends on
+     where the letter sits in the word, so the whole string is the input.
+
+     string    .lower()   per character   same?   code points of .lower()
+     ------------------------------------------------------------------------------------
+     ΟΔΟΣ      οδος       οδοσ            False   U+03BF U+03B4 U+03BF U+03C2
+     ΟΔΟΣ.     οδος.      οδοσ.           False   U+03BF U+03B4 U+03BF U+03C2 U+002E
+     ΣΟΦΟΣ     σοφος      σοφοσ           False   U+03C3 U+03BF U+03C6 U+03BF U+03C2
+     ΑΣΑ       ασα        ασα             True    U+03B1 U+03C3 U+03B1
+     Σ         σ          σ               True    U+03C3
+
+     Over every two-character string from the Greek block, 127 of them
+     lower differently as a string than character by character. So
+     ''.join(c.lower() for c in s) is not a refactoring of s.lower().
+
+     casefold() takes the other road and erases the distinction:
+       'ΟΔΟΣ'.lower()     'οδος'   U+03BF U+03B4 U+03BF U+03C2
+       'ΟΔΟΣ'.casefold()  'οδοσ'   U+03BF U+03B4 U+03BF U+03C3
+     -- which is the point of folding: two spellings, one key.
+
+5. THE CONTEXT PYTHON DOES NOT TAKE: THE LANGUAGE
+     In Turkish, i and ı are two different letters, and so are İ and I.
+     Casing them correctly needs to know the text is Turkish. Python's
+     case methods take no such argument -- there is nowhere to say it:
+       'I'.lower('tr')          -> TypeError
+       str.upper('i', 'tr')     -> TypeError
+
+     So the same four letters give the same answers on every machine,
+     in every locale, and none of them is the Turkish answer:
+
+     char         Python .lower()       Python .upper()   Turkish wants     agrees?
+     ------------------------------------------------------------------------------------
+     U+0049       U+0069                U+0049            U+0131 / U+0049   False
+     U+0069       U+0069                U+0049            U+0069 / U+0130   False
+     U+0130       U+0069 U+0307         U+0130            U+0069 / U+0130   False
+     U+0131       U+0131                U+0049            U+0131 / U+0049   True
+
+     The 'Turkish wants' column is written out by hand from the
+     conditional section of the Unicode data. Python implements the
+     UNconditional mappings and not the language-tailored ones, which
+     is a documented choice, not an omission -- and it is why 'I'.lower()
+     is 'i' here whatever LANG says.
+
+     Note the shape of the failure. Uppercasing merges two Turkish
+     letters: 'ı'.upper() is 'I' and 'i'.upper() is 'I'.
+     Lowercasing splits one into two code points:
+       'İ'.lower()     'i̇'   U+0069 U+0307   len 2
+       'İ'.casefold()  'i̇'   U+0069 U+0307   len 2
+       'İstanbul'.casefold() == 'istanbul'.casefold()  ->  False
+     -- so casefold() does not rescue Turkish either. It is the right
+     answer to a question that is not about a specific language.
+
+6. THERE IS A THIRD CASE, AND IT IS A CHARACTER
+     code point  category  the char   .upper()   .lower()   .title()
+     ------------------------------------------------------------------
+     U+01C4      Lu        'Ǆ'        'Ǆ'        'ǆ'        'ǅ'
+     U+01C5      Lt        'ǅ'        'Ǆ'        'ǆ'        'ǅ'
+     U+01C6      Ll        'ǆ'        'Ǆ'        'ǆ'        'ǅ'
+
+     U+01C5 is titlecase: not the uppercase form, not the lowercase
+     form, a third one. That is why case has three methods and not two.
+
+7. THREE ANSWERS TO 'TITLE CASE', DISAGREEING ON ONE LINE
+     input                .title()              string.capwords()     .capitalize()
+     ------------------------------------------------------------------------------------
+     "o'brien and sons"   "O'Brien And Sons"    "O'brien And Sons"    "O'brien and sons"
+     "ǆenan o'brien"      "ǅenan O'Brien"       "ǅenan O'brien"       "ǅenan o'brien"
+     "DON'T PANIC"        "Don'T Panic"         "Don't Panic"         "Don't panic"
+     'hello   world'      'Hello   World'       'Hello World'         'Hello   world'
+
+     Read the first two columns against each other and neither wins.
+     .title() breaks after every uncased character, so the apostrophe
+     starts a new word: it gets O'Brien right and Don'T wrong, from the
+     same rule. capwords() splits on whitespace and capitalizes only the
+     first letter of each piece, so it gets Don't right and O'brien
+     wrong -- also from one rule. And capwords() rejoins with a single
+     space, so it edits text you did not ask it to edit.
+
+     All three do handle the third case correctly: the leading ǆ becomes
+     the titlecase ǅ (U+01C5) and not the capital Ǆ (U+01C4).
+     They agree about Unicode and disagree about what a word is.
+
+8. NONE OF THE CONVERSIONS IS REVERSIBLE
+     char   .upper()  then .lower()  .lower()  back where it started?
+     --------------------------------------------------------------------
+     'ß'    'SS'      'ss'           'ß'       False
+     'ﬁ'    'FI'      'fi'           'ﬁ'       False
+     'ŉ'    'ʼN'      'ʼn'           'ŉ'       False
+     'ı'    'I'       'i'            'ı'       False
+     'ς'    'Σ'       'σ'            'ς'       False
+     'µ'    'Μ'       'μ'            'µ'       False
+     'ſ'    'S'       's'            'ſ'       False
+
+     Applying one twice changes nothing the second time -- methods that
+     are not idempotent over the whole table: 0.
+     But swapcase() is not its own inverse: 104 code points do not
+     come back. 'ß' -> 'SS' -> 'ss', and the ß is gone for good.
+
+9. WHAT TO USE
+     the question you are asking            the method
+     ------------------------------------------------------------------------
+     is this the same word, ignoring case   casefold() on both sides
+     show this to a person, uppercased      upper()
+     show this to a person, lowercased      lower()
+     a heading, English, no apostrophes     title() -- and read it after
+     a person's name                        none of them; store what they typed
+     an ASCII protocol token                lower() is safe, the input is ASCII
+
+     The last two rows are the ones that save time. Case conversion is
+     for display; case folding is for comparison; and a name is neither,
+     because no rule in the table knows about McDonald or van der Berg.

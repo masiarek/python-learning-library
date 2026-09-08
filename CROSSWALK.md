@@ -110,7 +110,7 @@ The three sub-range rows are the sharpest disagreement in the table, because all
 | Default sort order | [code point](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | [code point (`Ord` on `str`) ↗](https://masiarek.github.io/rust-learning-library/14_Strings/comparing_strings/index.html) | UTF-16 code unit |
 | Alphabetical for a real language | `locale.strxfrm`, or ICU | needs a crate | collation-aware compare, or a sort key column |
 | Same-looking strings comparing unequal | [normalization](01_Text_and_Bytes/normalization/README.md) | same problem, same fix | same problem |
-| Case-insensitive comparison | [`str.casefold()` ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/preparing_a_string/index.html) | [`str::to_lowercase` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_to_lowercase/index.html) (locale-independent) | `TRANSLATE ... TO UPPER CASE` |
+| Case-insensitive comparison | [`str.casefold()`](01_Text_and_Bytes/lowercasing_is_not_folding/README.md) — and **not** `str.lower()` | [`str::to_lowercase` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_to_lowercase/index.html) — no folding in std at all | `TRANSLATE ... TO UPPER CASE` on both sides |
 | ASCII-only shortcut | `s.lower()` has none — it is always Unicode | [`eq_ignore_ascii_case` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_eq_ignore_ascii_case/index.html) — cheap, and silently skips `Ł` | — |
 
 All three languages get this equally wrong by default, and for the same reason: code-point order is the only ordering available without a locale database. This is the one row where "Python's answer" is not really Python's — it is everyone's.
@@ -128,6 +128,20 @@ All three languages get this equally wrong by default, and for the same reason: 
 | Which edition of the table answered | `unicodedata.unidata_version` | whatever `rustc` was built with | the system code page |
 
 This is the one section where the *names* match and the *sets* do not, in both directions: Rust's `is_alphabetic` accepts combining marks that Python's `isalpha` rejects, and Python's `isnumeric` accepts a CJK ideograph that Rust's `is_numeric` rejects. The measured grid is on [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md). The last row is the general form of the hazard — every one of these is a table lookup whose answer depends on which edition your toolchain was built against — and it has its own page: [the table has a version ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/the_table_has_a_version/index.html).
+
+## Changing case
+
+| The idea | Python | Rust | ABAP |
+|---|---|---|---|
+| Uppercase a whole string | [`str.upper()`](01_Text_and_Bytes/lowercasing_is_not_folding/README.md) | [`str::to_uppercase` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_to_uppercase/index.html) — allocates a `String` | `TRANSLATE lv TO UPPER CASE` — **in place**, no return value |
+| Uppercase one character | `s[i].upper()` — still a `str`, of any length | [`char::to_uppercase` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) — returns an **iterator**, because one `char` in is not one `char` out | — |
+| A key for caseless comparison | [`str.casefold()`](01_Text_and_Bytes/lowercasing_is_not_folding/README.md) — Default Case Folding | not in std — [a crate ↗](https://masiarek.github.io/rust-learning-library/14_Strings/comparing_strings/index.html) | — |
+| The cheap ASCII-only shortcut | none — every case method is Unicode | [`eq_ignore_ascii_case` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_eq_ignore_ascii_case/index.html), [`to_ascii_uppercase` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_to_ascii_uppercase/index.html) — correct for protocol tokens, wrong for names | — |
+| Language-tailored casing (Turkish `ı`/`i`) | **not available** — the methods take no locale | not in std — `icu_casemap` | depends on the system |
+| Positional forms (Greek final sigma) | [`str.lower()` does it](01_Text_and_Bytes/lowercasing_is_not_folding/README.md); a per-character loop does not | [`str::to_lowercase` does it ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_to_lowercase/index.html); `char::to_lowercase` does not | — |
+| Title case | `str.title()`, `string.capwords()`, `str.capitalize()` — [three answers that disagree](01_Text_and_Bytes/lowercasing_is_not_folding/README.md) | none — you write it | — |
+
+The row that carries the most information is the second one. Rust's `char::to_uppercase` returns `ToUppercase`, an iterator, because `ß` uppercases to two characters and a `char` cannot hold two; Python returns a `str`, which can hold any number, so the same fact is true and invisible. Both languages then split the *same* way on the sigma row: only the whole-string method can see a letter's neighbours, so only it gets the positional form right. C is the language where the fact is not merely hidden but unrepresentable — `int toupper(int)` is one value in and one value out, so the correct answer for `ß` cannot be returned at all, and the wide-character `towupper` has the same shape.
 
 ## Taking a string apart, and putting one together
 

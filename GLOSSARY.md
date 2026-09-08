@@ -8,7 +8,11 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **bytes** — Python's type for a sequence of numbers 0–255. Indexing one gives an `int`, not a one-byte `bytes`. See [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md).
 
-**casefold** — `str.casefold()`, a more aggressive `lower()` intended for caseless comparison; it can change a string's length (`ß` → `ss`). See [Normalization](01_Text_and_Bytes/normalization/README.md).
+**case conversion** — turning text into its uppercase, lowercase or titlecase *form*, for a person to read. `str.upper()`, `str.lower()`, `str.title()`. Unicode's Default Case Conversion, section 3.13.2 — **not** the same operation as case folding, which is why `'ß'.lower()` is `'ß'`. It is a whole-string operation: it may change the length, and `str.lower()` reads a letter's neighbours to pick Greek `σ` or `ς`. See [Lowercasing is not folding](01_Text_and_Bytes/lowercasing_is_not_folding/README.md).
+
+**case folding** — producing a *key* nobody reads, such that two strings that differ only by case produce the same key. `str.casefold()`. Unicode's Default Case Folding, section 3.13.3, and the correct operation for caseless comparison — `'straße'.casefold() == 'STRASSE'.casefold()` where the `lower()` version is `False`. Folds 297 code points differently from `lower()`. See [Lowercasing is not folding](01_Text_and_Bytes/lowercasing_is_not_folding/README.md).
+
+**casefold** — `str.casefold()`, the method that performs *case folding*; a more aggressive `lower()` for caseless comparison, which can change a string's length (`ß` → `ss`). See [Lowercasing is not folding](01_Text_and_Bytes/lowercasing_is_not_folding/README.md) and [Normalization](01_Text_and_Bytes/normalization/README.md).
 
 **category** — see *General_Category*.
 
@@ -81,6 +85,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **tab stop** — the column a tab advances to: the next multiple of `tabsize`, not a fixed run of spaces. So what `expandtabs` writes for one tab depends on everything before it on the line, and only LF and CR reset the count. See [Padding is not alignment](01_Text_and_Bytes/padding_is_not_alignment/README.md).
 
 **TOML** — the config format `pyproject.toml` is written in, defined to be UTF-8 and with no type coercion: quotes decide whether `1.10` is a string or a float, and only lower-case `true` / `false` are booleans. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) and [the spec ↗](https://toml.io/en/).
+
+**titlecase** — Unicode's third case, distinct from upper and lower: `ǅ` (`U+01C5`) is General_Category `Lt`, the form a digraph takes at the start of a capitalised word, and it is neither `isupper()` nor `islower()`. Python has three word-capitalising functions that all handle that character correctly and disagree about where a word starts — `str.title()` breaks after any uncased character, so it gets `O'Brien` right and `Don'T` wrong; `string.capwords()` splits on whitespace and does the reverse; `str.capitalize()` does only the first character. See [Lowercasing is not folding](01_Text_and_Bytes/lowercasing_is_not_folding/README.md).
 
 **tomllib** — the standard-library TOML *reader*, since Python 3.11. `load()` takes a file opened `"rb"`, `loads()` takes a `str`, and there is no writer. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
 

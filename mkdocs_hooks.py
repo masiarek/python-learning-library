@@ -72,6 +72,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "counting_characters",
         "slicing_is_not_indexing",
         "is_it_a_letter",
+        "lowercasing_is_not_folding",
         "repr_is_not_str",
         "what_ends_a_line",
         "strip_is_a_set",

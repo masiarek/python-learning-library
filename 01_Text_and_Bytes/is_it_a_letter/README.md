@@ -165,6 +165,7 @@ There is no predicate family at all. The idiom is a character set and a `CO` (co
 
 ## See also
 
+- [Lowercasing is not folding](../lowercasing_is_not_folding/README.md) — the conversion half of this page: `islower`/`isupper`/`istitle` ask the question, `lower`/`upper`/`title`/`casefold` change the answer, and `ǅ` turns up in both
 - [Counting characters](../counting_characters/README.md) — the same table, asked about length instead of class
 - [Sorting is not comparing](../sorting_is_not_comparing/README.md) — the other place a property lookup stands in for a human rule
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — why the eight `bytes` predicates can only answer for ASCII
