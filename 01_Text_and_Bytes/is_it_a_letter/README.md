@@ -170,5 +170,6 @@ There is no predicate family at all. The idiom is a character set and a `CO` (co
 - [Sorting is not comparing](../sorting_is_not_comparing/README.md) — the other place a property lookup stands in for a human rule
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — why the eight `bytes` predicates can only answer for ASCII
 - [The crosswalk](../../CROSSWALK.md) — which idea lives in which library
+- ["Supports Unicode" is a level, not a yes ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/what_a_regex_matches/index.html) — the same General_Category columns read by a regex engine instead of a method: `\d` is exactly `Nd` and `\w` is not what the specification says it is
 - [Python text in practice ↗](https://masiarek.github.io/encodings-learning-library/10_Best_Practices/python_text_in_practice/index.html) — the same ASCII-only rule running through `re`, where `\w` means one thing against `str` and another against `bytes`
 - [`str.isalpha()` in the Python docs ↗](https://docs.python.org/3/library/stdtypes.html#str.isalpha) — the definition this page is unpacking

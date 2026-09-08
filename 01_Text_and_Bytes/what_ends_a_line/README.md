@@ -181,6 +181,7 @@ ABAP never guesses, and that is the whole difference. `SPLIT text AT cl_abap_cha
 - [Counting characters](../counting_characters/README.md) — the other question with four defensible answers
 - [The crosswalk](../../CROSSWALK.md) — which idea lives in which library
 - [CRLF vs LF ↗](https://masiarek.github.io/encodings-learning-library/07_Real_Data/crlf_vs_lf/index.html) — the repair side: `dos2unix`, `tr -d '\r'`, `newline=''`, and git's `autocrlf`
+- ["Supports Unicode" is a level, not a yes ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/what_a_regex_matches/index.html) — why `re` stops at one boundary and `splitlines()` does not: UTS #18 calls it RL1.6, and it is one of five Level 1 requirements Python's `re` misses
 - [Control characters ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/control_characters/index.html) — what `FS`, `GS`, `RS` and `US` were designed to do before anything split lines on them
 - [RFC 1212 — how Rust's `lines()` learned about `\r\n` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/rfc_1212_line_endings/index.html) — the same decision, argued in public, in a language that took the narrow rung
 - [`str.splitlines()` in the Python docs ↗](https://docs.python.org/3/library/stdtypes.html#str.splitlines) — the table this page is unpacking, and the source of the phrase "universal newlines"
