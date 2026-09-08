@@ -85,6 +85,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "stdin_stdout_and_pipes",
         "filenames_are_not_text",
         "what_kind_of_file_is_this",
+        "the_string_module",
         "the_codecs_registry",
     ],
     # The file first: every other page in this chapter is about something the

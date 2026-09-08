@@ -33,6 +33,7 @@ The order is the practice order, and it is **not** the sidebar's reading order �
 | K7 | [Eight calls, and the one that is right by accident](01_Text_and_Bytes/strip_is_a_set/README.md#practice) | [`strip` is a set, not a prefix](01_Text_and_Bytes/strip_is_a_set/README.md) | 201 |
 | K8 | [One drill per slot, then the grammar read backwards](01_Text_and_Bytes/the_format_mini_language/README.md#practice) | [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md) | 201 |
 | K9 | [Eight brackets over one word, and only one may fail](01_Text_and_Bytes/slicing_is_not_indexing/README.md#practice) | [Slicing is not indexing](01_Text_and_Bytes/slicing_is_not_indexing/README.md) | 201 |
+| K10 | [Nine expressions, and the two that answer a name nobody wrote](01_Text_and_Bytes/the_string_module/README.md#practice) | [The `string` module](01_Text_and_Bytes/the_string_module/README.md) | 201 |
 
 **K1–K4 are one subject asked four ways** — the type boundary, the constructor, the mutable half, and the two doors between them. Doing them in order is worth more than doing any one of them twice, because the thing that does not stick is not a fact but a *habit*: asking "which of the two types am I holding?" at the moment a value arrives rather than at the moment it breaks.
 

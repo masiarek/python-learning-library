@@ -1,0 +1,41 @@
+     expression                                    answer           why
+     -----------------------------------------------------------------------------------------------
+     string.capwords('x-ray results')              'X-ray Results'  splits on whitespace, so 'ray' is not a word
+     'x-ray results'.title()                       'X-Ray Results'  a hyphen is uncased, so it starts a word
+     string.capwords('  spaced   out  ')           'Spaced Out'     rebuilt by split()+join(): the spacing is gone
+     '\u0663' in string.digits                     False            the constant is ASCII; '٣'.isdigit() is True
+     '\xa0Zoot'.strip(string.whitespace)           '\xa0Zoot'       6 characters in the constant, 29 in str.isspace()
+     len(string.printable)                         100              ASCII 0x20-0x7E is 95, plus five controls
+     string.Template('cost: $100').substitute()    ValueError       an identifier cannot begin with a digit
+     string.Template('$café').substitute(caf='X')  'Xé'             the placeholder is 'caf'; the 'e-acute' is literal
+     '{0.__class__.__name__}'.format(3)            'int'            a field name walks attributes -- that is the point
+
+     THE TWO THAT ANSWER A NAME NOBODY WROTE
+     Lines 7 and 8 are the same grammar seen from both sides.
+       Template('$café').get_identifiers()  -> ['caf']
+       Template('cost: $100').is_valid()    -> False
+     One asked for 'café' and got 'caf'; the other never meant
+     to have a placeholder and has a malformed one. Neither is
+     visible in the template as you read it, and both are
+     answerable before you run anything -- which is what those
+     two 3.11 methods are for.
+
+     WHY LINE 9 IS THE WHOLE ARGUMENT FOR Template
+     A dot in a field name walks an attribute, so a template
+     that came from outside your program reads whatever the
+     object can reach:
+       {0.__class__.__name__}.format(3)       -> 'int'
+       {0.numerator}.format(3)                -> '3'
+       {0.real}.format(3)                     -> '3'
+     Template has no dot. '$name.password' substitutes 'name'
+     and leaves nine literal characters, which is the entire
+     security argument for a syntax that can do nothing else.
+
+     THE CONSTANT-VERSUS-METHOD PAIR
+     Lines 4 and 5 are one question asked twice:
+       U+0663  in string.digits      False  str.isdigit()  True
+       U+00A0  in string.whitespace  False  str.isspace()  True
+     Both constants say no and both methods say yes. Neither is
+     wrong: a constant is a fixed ASCII list and a method is a
+     lookup in the Unicode table. For a validator, pick the one
+     whose promise you can state out loud.

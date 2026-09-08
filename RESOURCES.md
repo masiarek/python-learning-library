@@ -15,6 +15,7 @@ External material worth your time, by what it is good for. Everything here is so
 
 - [Unicode HOWTO ↗](https://docs.python.org/3/howto/unicode.html) — the best free single document on this subject. Short, official, current.
 - [`codecs` — standard encodings ↗](https://docs.python.org/3/library/codecs.html#standard-encodings) — the full list of codec names, and the error-handler table.
+- [`string` — Common string operations ↗](https://docs.python.org/3/library/string.html) — the constants, `capwords`, `Template` and `Formatter`, plus the format-string grammar, which lives here rather than with `str`. Behind [The `string` module](01_Text_and_Bytes/the_string_module/README.md).
 - [`codecs` ↗](https://docs.python.org/3/library/codecs.html) — the module itself: the registry, `getincrementaldecoder`, and `register_error`. Behind [The codecs registry](01_Text_and_Bytes/the_codecs_registry/README.md).
 - [PEP 293 ↗](https://peps.python.org/pep-0293/) — codec error handling callbacks, which is what makes the handler list extensible.
 - [`unicodedata` ↗](https://docs.python.org/3/library/unicodedata.html) — `normalize`, `combining`, `category`, `name`.

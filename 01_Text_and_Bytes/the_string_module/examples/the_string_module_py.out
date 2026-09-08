@@ -1,0 +1,197 @@
+1. THE WHOLE DRAWER
+     The string module has 12 public names, and that is all of it:
+       9 constants  ascii_letters ascii_lowercase ascii_uppercase
+                    digits hexdigits octdigits
+                    printable punctuation whitespace
+       3 callables  Formatter Template capwords
+
+     Not one of them does something to a string that a str method
+     does not do better. That is the shape of a module which used
+     to hold the string functions, back when str had no methods to
+     hold them itself.
+
+2. THE CONSTANTS ARE AN ASCII TABLE, WRITTEN SIDEWAYS
+     ascii_lowercase   26  abcdefghijklmnopqrstuvwxyz
+     ascii_uppercase   26  ABCDEFGHIJKLMNOPQRSTUVWXYZ
+     ascii_letters     52  abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+     digits            10  0123456789
+     hexdigits         22  0123456789abcdefABCDEF
+     octdigits          8  01234567
+     punctuation       32  !"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~
+     whitespace         6  \x20\t\n\r\x0b\x0c
+     printable        100  = digits + ascii_lowercase + ascii_uppercase
+                           + punctuation + whitespace
+                           -> that concatenation IS string.printable: True
+
+     Sort those 100 characters by code point and the drawer turns
+     into the ASCII chart, with every boundary computed, not typed:
+
+     code points     n  constant         the characters
+     ------------------------------------------------------------------
+     09-0D           5  whitespace       \t\n\x0b\x0c\r
+     20              1  whitespace       \x20
+     21-2F          15  punctuation      !"#$%&\'()*+,-./
+     30-39          10  digits           0123456789
+     3A-40           7  punctuation      :;<=>?@
+     41-5A          26  ascii_uppercase  ABCDEFGHIJKLMNOPQRSTUVWXYZ
+     5B-60           6  punctuation      [\\]^_`
+     61-7A          26  ascii_lowercase  abcdefghijklmnopqrstuvwxyz
+     7B-7E           4  punctuation      {|}~
+
+     Four runs of punctuation, and they are exactly the gaps left
+     between the digit block and the two letter blocks. Those two
+     blocks start 0x20 apart, which is why ASCII case is one bit
+     and not a lookup:
+       ord('a') - ord('A') = 32 = 0x20
+       chr(ord(c) | 0x20) lowercases all 26 of them: True
+
+3. ASCII-ONLY BY DEFINITION -- WHICH IS THE ONLY REASON TO USE THEM
+     A constant is a membership test against a fixed list. The
+     methods that replaced them ask the Unicode table instead, and
+     the two answers part company on the first non-ASCII character:
+
+                                    in the constant   what Unicode says
+     ------------------------------------------------------------------
+     '\u0663' ARABIC-INDIC 3        False             isdigit() True
+     '\xa0'   NO-BREAK SPACE        False             isspace() True
+     '\u2019' RIGHT QUOTE           False             category Pf
+     '\u0141' L WITH STROKE         False             isalpha() True
+
+     string.whitespace holds 6; str.isspace() is True for 29 code points.
+     So the two spellings of 'strip the whitespace' are not one:
+       \xa0Zoot\x1c      .strip()                  -> 'Zoot'
+       \xa0Zoot\x1c      .strip(string.whitespace) -> '\xa0Zoot\x1c'
+
+     And 'punctuation' is a name from before the categories were:
+       P*  23  punctuation  !"#%&\'()*,-./:;?@[\\]_{}
+       S*   9  symbol       $+<=>^`|~
+     9 of the 32 are symbols, not punctuation, by Unicode's own
+     accounting. The constant is not wrong about that -- it is
+     answering an older question: 'which ASCII characters are
+     neither letters nor digits nor space'.
+
+4. capwords() IS NOT title(), AND THE DIFFERENCE IS WHERE A WORD STARTS
+     The entire implementation, from Lib/string.py:
+       (sep or ' ').join(map(str.capitalize, s.split(sep)))
+
+     input                      str.title()                 string.capwords()
+     ------------------------------------------------------------------------------
+     "they're not the messiah"  "They'Re Not The Messiah"   "They're Not The Messiah"
+     'x-ray results'            'X-Ray Results'             'X-ray Results'
+     'e.e. cummings'            'E.E. Cummings'             'E.e. Cummings'
+     '3rd place'                '3Rd Place'                 '3rd Place'
+     "o'brien"                  "O'Brien"                   "O'brien"
+     '  spaced   out  '         '  Spaced   Out  '          'Spaced Out'
+
+     title() starts a new word after every UNCASED character -- an
+     apostrophe, a hyphen, a digit, a dot -- which is why it
+     capitalises the 'r' of "they're". capwords() splits on
+     whitespace and nothing else, so it does not. Neither is a
+     title-caser: both lowercase the rest of every word, so 'IBM'
+     comes back 'Ibm' from either one.
+
+     capwords() also rebuilds the string instead of editing it, so
+     with no separator it destroys the spacing it never read:
+       capwords('  spaced   out  ', None)   -> 'Spaced Out'
+       capwords('  spaced   out  ', ' ')    -> '  Spaced   Out  '
+       capwords('a,b,,c', ',')              -> 'A,B,,C'
+     With sep=None, split() collapses runs and drops the ends; with
+     an explicit separator it does neither. One call, two rules.
+
+5. Template IS THE SYNTAX THAT CANNOT REACH
+     A template that arrived from a user, a config file or a
+     database is a small program once you hand it to .format().
+     One object, four templates, one call each -- and this module
+     holds a global named DATABASE_PASSWORD, set to 'hunter2':
+
+       {0.name}                                     -> 'brian'
+       {0.password}                                 -> 'swordfish'
+       {0.__class__.__name__}                       -> 'User'
+       {0.__init__.__globals__[DATABASE_PASSWORD]}  -> 'hunter2'
+
+     A field name is a small expression language: a dot walks an
+     attribute, brackets index. Three hops from an object you
+     thought was harmless to a module global you never passed in.
+
+     The same four names through Template, which has no dot:
+       $name                substitute -> 'brian'
+       $password            substitute -> 'swordfish'
+       $name.password       substitute -> 'brian.password'
+       $__class__           substitute -> KeyError '__class__'
+
+     '$name.password' is 'brian' followed by nine literal
+     characters. The placeholder grammar ends at the identifier,
+     so there is nothing to reach with.
+
+6. substitute RAISES, safe_substitute NEVER DOES
+     template             substitute()           safe_substitute()
+     ------------------------------------------------------------------
+     '$greeting $name'    KeyError 'name'        'Hi $name'
+     'cost: $100'         ValueError             'cost: $100'
+     '$$HOME'             '$HOME'                '$HOME'
+     '${bad name}'        ValueError             '${bad name}'
+     '$'                  ValueError             '$'
+
+     'cost: $100' is the one that catches people. A price is an
+     invalid placeholder -- an identifier cannot begin with a digit
+     -- so substitute() raises on a template that was never trying
+     to have a placeholder in it. '$$' is the escape.
+
+     Since 3.11 you can ask before you run, which is the honest way
+     to accept a template from somebody else:
+       t = Template('$greeting, $name! ${name}s cost $$5')
+       t.get_identifiers()  -> ['greeting', 'name']
+       t.is_valid()         -> True
+       Template('$ oops').is_valid() -> False
+
+7. AND Template'S IDENTIFIERS ARE ASCII TOO, ON PURPOSE
+     Template.idpattern is '(?a:[_a-z][_a-z0-9]*)'
+
+       $café        identifiers ['caf']    substitute -> 'Xé'
+       $naïve       identifiers ['na']     substitute -> 'Yïve'
+       $_x1         identifiers ['_x1']    substitute -> 'Z'
+       $Ω           identifiers []         substitute -> ValueError
+
+     '$café' is the placeholder 'caf' followed by a literal 'é'.
+     It does not raise. It quietly substitutes a name that is a
+     prefix of the one you wrote.
+
+     The (?a: in that pattern is doing real work. Matching [a-z]
+     case-insensitively without it lets three non-ASCII characters
+     in, because they case-fold onto ASCII letters:
+
+                                            [a-z]/i   (?a:[a-z])/i
+       U+212A  KELVIN SIGN                  True      False
+       U+0131  LATIN SMALL LETTER DOTLESS I True      False
+       U+017F  LATIN SMALL LETTER LONG S    True      False
+
+8. Formatter: THE HOOK, AND THE ONE METHOD WORTH KNOWING
+     Formatter has 8 methods:
+       check_unused_args convert_field format format_field
+       get_field get_value parse vformat
+     Formatter().format('{:*^9.3f}', 3.14159) -> '**3.142**'
+     -- the same grammar, the same answer, in Python instead of C.
+
+     parse() is the part that is not a reimplementation. It is the
+     public parser for the format grammar, and it will tell you
+     what a template wants without formatting anything:
+
+       Formatter().parse('{greeting}, {0:>8.2f} and {a[1]!r}!')
+         literal      field      spec     conv
+         ''           'greeting' ''       None
+         ', '         '0'        '>8.2f'  None
+         ' and '      'a[1]'     ''       'r'
+         '!'          None       None     None
+
+     And the reason to subclass it is section 5. Overriding one
+     method closes that hole, because get_field is exactly where
+     the dot and the brackets get interpreted:
+
+       {who}                                        -> 'brian'
+       {who!r:>10}                                  -> "   'brian'"
+       {0.password}                                 -> ValueError: not a plain name
+       {0.__init__.__globals__[DATABASE_PASSWORD]}  -> ValueError: not a plain name
+
+     Five lines, and the whole attribute walk is gone. That you
+     have to write those five lines yourself is the argument for
+     reaching for Template instead.

@@ -82,6 +82,10 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **surrogateescape** — the errors policy that smuggles undecodable bytes through a `str` and restores them exactly on re-encode. How Python opens a filename that is not valid UTF-8. See [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md).
 
+**string interpolation** — building a string by substituting values into a template. Python has four spellings with different powers: an f-string (compiled from a literal, so a runtime template cannot be one), `str.format` and `format_map` (a field name may walk attributes and index), `%` (a separate, older language), and `string.Template` (a name and nothing else). Which one you may use is decided by where the template came from. See [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md) and [The `string` module](01_Text_and_Bytes/the_string_module/README.md).
+
+**`string.Template`** — the `$name` templating class, whose value is what its grammar *cannot* do: a placeholder is a `$` and an identifier and stops there, so a template from a user cannot walk an attribute the way a `str.format` field can. `substitute` raises on a missing or malformed name; `safe_substitute` never raises. See [The `string` module](01_Text_and_Bytes/the_string_module/README.md).
+
 **tab stop** — the column a tab advances to: the next multiple of `tabsize`, not a fixed run of spaces. So what `expandtabs` writes for one tab depends on everything before it on the line, and only LF and CR reset the count. See [Padding is not alignment](01_Text_and_Bytes/padding_is_not_alignment/README.md).
 
 **TOML** — the config format `pyproject.toml` is written in, defined to be UTF-8 and with no type coercion: quotes decide whether `1.10` is a string or a float, and only lower-case `true` / `false` are booleans. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) and [the spec ↗](https://toml.io/en/).

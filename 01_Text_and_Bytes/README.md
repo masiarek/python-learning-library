@@ -30,9 +30,10 @@ This is the chapter to read first — not because text is the most important par
 | 20 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
 | 21 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
 | 22 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
-| 23 | [The codecs registry](the_codecs_registry/README.md) | What is in the registry that `.encode()` and `.decode()` cannot reach — and why does decoding a stream in chunks differ? | written |
+| 23 | [The `string` module](the_string_module/README.md) | What is left in a module named `string`, and why is `capwords` not `title`? | written |
+| 24 | [The codecs registry](the_codecs_registry/README.md) | What is in the registry that `.encode()` and `.decode()` cannot reach — and why does decoding a stream in chunks differ? | written |
 
-Eight of these pages end with a `## Practice` section — a kata: predict the answer, then run it, then check. They are indexed in [KATAS.md](../KATAS.md), which is also the only place they are put in an order, and that order is not this one: it puts the four `bytes` katas first, because that is the thing this chapter's readers report bouncing off.
+Ten of these pages end with a `## Practice` section — a kata: predict the answer, then run it, then check. They are indexed in [KATAS.md](../KATAS.md), which is also the only place they are put in an order, and that order is not this one: it puts the four `bytes` katas first, because that is the thing this chapter's readers report bouncing off.
 
 ## Where this sits relative to the other libraries
 
