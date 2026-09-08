@@ -12,6 +12,8 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **category** — see *General_Category*.
 
+**cell** — one character position of a fixed-width grid: a terminal column, a monospaced font's advance. What a reader sees a padded column measured in, and *not* what `len()` counts — `'日本'` is two code points and four cells. Nothing in the standard library computes it. See [Padding is not alignment](01_Text_and_Bytes/padding_is_not_alignment/README.md).
+
 **code point** — the number Unicode assigns to a character, written `U+0141`. What `len()` on a `str` counts. See [Counting characters](01_Text_and_Bytes/counting_characters/README.md).
 
 **`bytes()` the call** — not a conversion but four constructors sharing a name: empty, encode-a-`str`, allocate-*n*-zero-bytes, build-from-ints. The argument's type picks. See [Making a `bytes` object](01_Text_and_Bytes/making_a_bytes_object/README.md).
@@ -24,9 +26,13 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **dependency group** — a named set of packages a *developer* of the project needs and a user never installs, declared in `[dependency-groups]` ([PEP 735 ↗](https://peps.python.org/pep-0735/)). Not the same as an optional dependency, which a user can ask for. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
 
+**East_Asian_Width** — the Unicode property that says how many cells a character asks for: `W` and `F` are two, `Na`/`H`/`N` are one, and `A` is **Ambiguous** — one cell in a Western context and two in a legacy East Asian one, decided by the reader's terminal rather than by the string. `unicodedata.east_asian_width` is the only cell-width data Python ships. See [Padding is not alignment](01_Text_and_Bytes/padding_is_not_alignment/README.md).
+
 **error handler** — the function behind an `errors=` name, taking the exception and returning `(replacement, where to resume)`. Python ships eight; the registry is open, so a ninth is about ten lines ([PEP 293 ↗](https://peps.python.org/pep-0293/)). One name serves both directions, and it is called once per *run* of bad input, not once per character. See [The codecs registry](01_Text_and_Bytes/the_codecs_registry/README.md).
 
 **errors policy** — the second argument to `.encode()` / `.decode()`, deciding what happens on a character the codec cannot handle: `strict`, `ignore`, `replace`, `backslashreplace`, `surrogateescape`. See [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md).
+
+**fill character** — the single character a padding call repeats: the second argument to `ljust`/`rjust`/`center`, or the slot before the alignment in a format spec (`'.<6'`). Exactly one character, always — `'a'.ljust(5, 'ab')` is a `TypeError` — and it may itself be two cells wide, which makes the column worse rather than better. See [Padding is not alignment](01_Text_and_Bytes/padding_is_not_alignment/README.md).
 
 **format specification** — everything after the colon in a replacement field — `*^+12.3f` — handed as a *string* to the object's own `__format__`, which may define its own meaning for it. The standard one has nine slots in a fixed order. See [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md).
 
@@ -69,6 +75,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **`chars` argument** — the operand of `strip` / `lstrip` / `rstrip`: a **set** of characters to remove, not a prefix, and it repeats. `'Arthur: three!'.lstrip('Arthur: ')` is `'ee!'`. `removeprefix` is the one that takes a prefix. See [`strip` is a set, not a prefix](01_Text_and_Bytes/strip_is_a_set/README.md).
 
 **surrogateescape** — the errors policy that smuggles undecodable bytes through a `str` and restores them exactly on re-encode. How Python opens a filename that is not valid UTF-8. See [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md).
+
+**tab stop** — the column a tab advances to: the next multiple of `tabsize`, not a fixed run of spaces. So what `expandtabs` writes for one tab depends on everything before it on the line, and only LF and CR reset the count. See [Padding is not alignment](01_Text_and_Bytes/padding_is_not_alignment/README.md).
 
 **TOML** — the config format `pyproject.toml` is written in, defined to be UTF-8 and with no type coercion: quotes decide whether `1.10` is a string or a float, and only lower-case `true` / `false` are booleans. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) and [the spec ↗](https://toml.io/en/).
 

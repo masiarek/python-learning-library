@@ -1,0 +1,199 @@
+1. FIVE PAIRS: A METHOD, AND THE SPEC THAT DUPLICATES IT
+     the value is 'ab', the field is 6 wide, so four characters to place
+
+     method                   spec                     result     agree?
+     ---------------------------------------------------------------
+     'ab'.ljust(6)            format('ab', '<6')       'ab    '   yes
+     'ab'.rjust(6)            format('ab', '>6')       '    ab'   yes
+     'ab'.center(6)           format('ab', '^6')       '  ab  '   yes
+     'ab'.ljust(6, '.')       format('ab', '.<6')      'ab....'   yes
+     '42'.zfill(6)            format(42, '06d')        '000042'   yes
+
+     Five names for one job. The methods came first; the mini-language
+     arrived with str.format and absorbed them. Nothing was removed, so
+     both spellings are still here and both are still correct. On these
+     inputs they agree exactly -- sections 4 and 5 are where they stop.
+     expandtabs is the one method with no spec at all: the mini-language
+     has no tab-stop slot, so there is nothing for it to have absorbed.
+
+2. NOT ONE OF THE FIVE TRUNCATES
+     'Bartholomew' is 11 characters, and every field below asks for 6:
+
+     call                          result           length
+     -------------------------------------------------------
+     'Bartholomew'.ljust(6)        'Bartholomew'    11
+     'Bartholomew'.rjust(6)        'Bartholomew'    11
+     'Bartholomew'.center(6)       'Bartholomew'    11
+     'Bartholomew'.zfill(6)        'Bartholomew'    11
+     format('Bartholomew', '<6')   'Bartholomew'    11
+
+     ljust(6) does not even copy -- it returns the same object: True
+
+     So a 'fixed-width' column built from these is not fixed width. It is
+     a MINIMUM width, and one long value makes the whole table ragged
+     without raising anything. Two things in the standard library do cut:
+
+     format('Bartholomew', '<6.6')      'Bartho'              6 wide, always
+     struct.pack('6s', b'Bartholomew')  b'Bartho'             6 wide, always
+     struct.pack('6s', b'ab')           b'ab\x00\x00\x00\x00' 6 wide, always
+
+3. THE PADDING IS COUNTED IN CODE POINTS; A TERMINAL LAYS OUT CELLS
+     len() is the number every method on this page pads to. The two right
+     columns are what the character database says the string occupies.
+
+     string                        len()   cells   cells if 'A' is wide
+     --------------------------------------------------------------------
+     '\u0141\xf3d\u017a'               4       4             6   Latin-2, composed
+     '\u0141o\u0301dz\u0301'           6       4             5   the same word, decomposed
+     '\u65e5\u672c'                    2       4             4   CJK
+     '\uff21\uff22'                    2       4             4   fullwidth Latin
+     '\U0001f44d'                      1       2             2   emoji
+     '\U0001f469\u200d\U0001f4bb'      3       4             4   emoji, ZWJ sequence
+     'Reid'                            4       4             4   ASCII, for scale
+
+     ljust(10), then a bar, so the ragged edge is visible:
+
+       [Łódź      ]  padding added 6, cells 10
+       [Łódź    ]  padding added 4, cells  8
+       [日本        ]  padding added 8, cells 12
+       [ＡＢ        ]  padding added 8, cells 12
+       [👍         ]  padding added 9, cells 11
+       [👩‍💻       ]  padding added 7, cells 11
+       [Reid      ]  padding added 6, cells 10
+
+     The same list padded by CELLS instead of by code points:
+
+       [Łódź      ]
+       [Łódź      ]
+       [日本      ]
+       [ＡＢ      ]
+       [👍        ]
+       [👩‍💻      ]
+       [Reid      ]
+
+     Nothing in the standard library computes that second column.
+     unicodedata.east_asian_width is the raw material; the model at the
+     top of this file -- W and F are two cells, combining marks are zero
+     -- is a convention, and the convention has two holes of its own:
+
+     Hole 1: 'A' means AMBIGUOUS, and two of the four letters in Łódź are
+     in it.
+       '\u0141'   LATIN CAPITAL LETTER L WITH STROKE       EAW=A
+       '\xf3'     LATIN SMALL LETTER O WITH ACUTE          EAW=A
+     One cell in a Western terminal, two in a legacy East Asian one. The
+     string does not carry the answer; the terminal's configuration does.
+
+     Hole 2: East_Asian_Width predates emoji sequences.
+       '\U0001f469'   WOMAN                                    EAW=W
+       '\u200d'       ZERO WIDTH JOINER                        EAW=N
+       '\U0001f4bb'   PERSONAL COMPUTER                        EAW=W
+     The model scores that at 4 cells -- two Wide characters, joiner
+     skipped -- but a terminal that supports the sequence draws ONE glyph,
+     two cells wide. So the column-aware padding above is wrong too, just
+     less often. There is no correct answer inside the standard library.
+
+4. center AND ^ DISAGREE ABOUT WHERE THE ODD SPACE GOES
+     'ab' -- an even length -- in fields of every width from 3 to 9
+
+     width   'ab'.center(w)     format('ab', '^w')
+     ---------------------------------------------------
+         3   ' ab'              'ab '              <- DIFFER
+         4   ' ab '             ' ab '
+         5   '  ab '            ' ab  '            <- DIFFER
+         6   '  ab  '           '  ab  '
+         7   '   ab  '          '  ab   '          <- DIFFER
+         8   '   ab   '         '   ab   '
+         9   '    ab   '        '   ab    '        <- DIFFER
+
+     center's tiebreak reads the parity of BOTH numbers. CPython computes
+     left = margin // 2 + (margin & width & 1), so the spare space goes
+     LEFT when margin and width are both odd. The format spec has no such
+     rule: '^' always puts pad // 2 on the left and the remainder on the
+     right. Two spellings of 'centre this', one apart, in exactly the case
+     where centring is genuinely ambiguous.
+
+5. zfill IS SIGN-AWARE, AND THE SPEC THAT LOOKS LIKE IT IS NOT
+
+     input      zfill(5)   what it did
+     ---------------------------------------------------------
+     '-42'      '-0042'    sign kept in front, zeros behind it
+     '+4'       '+0004'    '+' is a sign too
+     '42'       '00042'    no sign, so the zeros go all the way
+     '-'        '-0000'    a lone sign is still a sign
+     '--42'     '-0-42'    only the FIRST character is a sign
+     'a-42'     '0a-42'    not at position 0, so not a sign
+     '-4.2'     '-04.2'    it never looks at what follows
+     ''         '00000'    an empty string is five zeros
+
+     Four ways to ask for 'five wide, zero padded', and three answers:
+
+       '-42'.zfill(5)         '-0042'  the sign is found and kept in place
+       format(-42, '05d')     '-0042'  the int agrees with zfill
+       format('-42', '0>5')   '00-42'  fill='0', align='>': padding, no sign
+       format('-42', '05')    '-4200'  and this one is a different bug
+
+     The last line is the trap. On an int, a '0' before the width is a
+     flag meaning 'pad after the sign'. On a str there is no sign to pad
+     after, so the '0' degrades to a plain fill character -- and the
+     default alignment for a str is LEFT, which puts the zeros on the
+     wrong end of the number. zfill is '{:05d}' for a value that is
+     already text, and it is that for no other spelling.
+
+6. expandtabs IS COLUMN ARITHMETIC, NOT REPLACEMENT
+     '01\t012\t0123'.expandtabs(4)
+       -> '01  012 0123'
+
+     Two spaces, then one. A tab is not N spaces; it is 'advance to the
+     next multiple of N', so what one expands to depends on everything
+     in front of it on the line:
+
+     piece    column before   next stop   spaces written
+     ---------------------------------------------------
+     '01'                 2           4              2
+     '012'                7           8              1
+     '0123'              12           -              -
+
+     tabsize    'a\tb'.expandtabs(n)
+           8    'a       b'
+           4    'a   b'
+           1    'a b'
+           0    'ab'
+          -1    'ab'
+     Zero and negative delete the tab rather than raising.
+
+     It counts characters, so it misses a wide column for exactly the
+     reason ljust does -- the next tab stop after 'X' should be cell 4:
+
+       'ab\tX'                -> 'ab  X'                  X lands at cell 4
+       '\u65e5\u672c\tX'      -> '\u65e5\u672c  X'        X lands at cell 6 <- not 4
+       '\U0001f44d\tX'        -> '\U0001f44d   X'         X lands at cell 5 <- not 4
+
+     And what resets the column back to zero is a shorter list than you
+     would guess from splitlines:
+
+     separator             expandtabs resets?   splitlines() splits?
+     --------------------------------------------------------------
+     LINE FEED             yes                  yes
+     CARRIAGE RETURN       yes                  yes
+     LINE TABULATION       no                   yes
+     FORM FEED             no                   yes
+     FILE SEPARATOR        no                   yes
+     NEXT LINE             no                   yes
+     LINE SEPARATOR        no                   yes
+     PARAGRAPH SEPARATOR   no                   yes
+
+     Two against eight. Every separator here begins a new line as far as
+     splitlines is concerned; only LF and CR begin one as far as the tab
+     stops are concerned.
+
+7. ON bytes THE METHODS SURVIVE AND THE BRACES DO NOT
+     b'ab'.ljust(5, b'.')      b'ab...'
+     b'-42'.zfill(5)           b'-0042'
+     b'01\t012'.expandtabs(4)  b'01  012'
+     b'%-5s|' % b'ab'          b'ab   |'
+     format(b'ab', '<5')       TypeError
+
+     str.format and f-strings do not exist on bytes, so for binary output
+     the padding methods and % are the whole toolbox. That is the honest
+     answer to 'why are there two ways to do this': one of the two still
+     works on the type the other one never learned.

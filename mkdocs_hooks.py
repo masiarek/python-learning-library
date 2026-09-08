@@ -76,6 +76,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "finding_a_substring",
         "translate_is_a_table",
         "the_format_mini_language",
+        "padding_is_not_alignment",
         "normalization",
         "sorting_is_not_comparing",
         "stdin_stdout_and_pipes",

@@ -51,6 +51,22 @@ The row with consequences is the sixth. Python keeping an unknown escape is what
 
 Row four is the one with consequences. Python's `str()` falling back to `repr()` is what makes `str(b'Zoot!')` return `"b'Zoot!'"` instead of raising, and Rust's refusal to fall back is what makes the equivalent a compile error. Both languages define "printable" as *"what the debug form does not escape"*, and on every sample tested they agree about which characters those are.
 
+## Making a column line up
+
+| The idea | Python | Rust | ABAP |
+|---|---|---|---|
+| Pad to a width | [`ljust` / `rjust` / `center`, or `'{:<10}'`](01_Text_and_Bytes/padding_is_not_alignment/README.md) — five methods and five specs | [`format!("{:<10}")` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/the_format_language/index.html) — one spelling only | nothing to call: a `c LENGTH 10` field is already padded |
+| Zero-pad a number | [`zfill` on a `str`, `'{:05d}'` on an `int`](01_Text_and_Bytes/padding_is_not_alignment/README.md) — and `'{:05}'` on a `str` is neither | `format!("{:05}")`, sign-aware the same way | `UNPACK`, or the numeric edit masks |
+| Truncate to a width | [`'{:.10}'` — the *precision* slot, never the width](01_Text_and_Bytes/padding_is_not_alignment/README.md) | `format!("{:.10}")`, counted in `char`s | the assignment itself truncates, silently |
+| Expand tabs to columns | [`str.expandtabs(n)`](01_Text_and_Bytes/padding_is_not_alignment/README.md) — arithmetic, not replacement | none in std | — |
+| Where the width is decided | in the call, every time | in the call, every time | in the **type**, once |
+| What the width counts | [code points](01_Text_and_Bytes/counting_characters/README.md) | `char`s | characters |
+| Cells the result occupies | `unicodedata.east_asian_width` is the only data; no function computes it | [none in std ↗](https://masiarek.github.io/rust-learning-library/14_Strings/four_lengths/index.html) | — |
+
+The last two rows are the failure this whole section is about: every language here pads by counting *characters*, and every reader is looking at *cells*. Row five is the difference worth carrying between them. ABAP puts the width in the type, so a short value is padded and a long one is **truncated** at the assignment; Python and Rust put it in the call, where the width is a floor and nothing is ever cut. The two failure modes are opposites — silent data loss against a silently crooked table — and moving between the languages means expecting the wrong one.
+
+C# is the same grammar as Python's with the slots swapped: `"{0,-20} {1,5:N1}"` puts the alignment **before** the colon, inside the field, where Python puts it after, inside the spec — `'{0:<20} {1:5.1f}'`. Read a `.NET` format string as a Python one and the `,` reads as a thousands separator instead.
+
 ## Mutable and immutable
 
 | The idea | Python | Rust | C | ABAP |
