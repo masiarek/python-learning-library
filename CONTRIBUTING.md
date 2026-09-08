@@ -29,7 +29,7 @@ Open with the title, then two lines that let a reader decide in five seconds whe
 
 `**Level:**` is `101` / `201` / `301` / `reference`, then `·`, then who it is for. The one-line summary states the *claim*, not the topic.
 
-Then, in this order: the mechanism in prose, the generated output block, what the run shows, the bridge, `## Try it`, `## See also`.
+Then, in this order: the mechanism in prose, the generated output block, what the run shows, the bridge, `## Try it`, `## Practice` if the page has a kata, `## See also`.
 
 Do not hard-wrap paragraphs. Write each paragraph as one long line and let the editor soft-wrap.
 
@@ -87,6 +87,52 @@ Every lesson has a section **If you are coming from ABAP** — and Rust or C whe
 
 The ABAP half is prose. CI cannot run ABAP, so every page says so: *(Not machine-checked — CI cannot run ABAP.)* Never quote an SAP code-page number without saying it should be verified against the system.
 
+## Try it, and Practice
+
+**`## Try it` closes a lesson.** Three to five numbered prompts, each one something the reader runs against *their own* files — the CSV that came out wrong, a script they already have, a filename their tools cannot see. All 19 finished lesson pages here end with one; the only pages without it are the three stubs, which have no example behind them to try. Treat it as required.
+
+**`## Practice` is optional, and it is a different thing.** It holds a **kata**: predict the answer, then run it, then check. It goes after `## Try it` and before `## See also`.
+
+The test for which section a prompt belongs in is whether **you can print the answer**:
+
+- *"Read a file two ways and compare the `len()` of each"* has no answer — the answer is on the reader's disk. `## Try it`.
+- *"Write down the type and value of these eight expressions before you run any of them"* has exactly one answer, and it is the same on every machine. `## Practice`.
+
+Both failure modes are quiet. A kata with no checkable answer is a chore the reader abandons; a *Try it* with an answer printed under it is a claim about a file nobody here has seen.
+
+**Fold the answer, and put `markdown="1"` on the tag:**
+
+```markdown
+<details markdown="1">
+<summary><strong>Answers</strong></summary>
+
+<!-- output:strip_is_a_set_kata_py -->
+<!-- /output -->
+
+</details>
+```
+
+That attribute is load-bearing and its absence is invisible from the author's chair. `md_in_html` is enabled in `mkdocs.yml`, so **without** `markdown="1"` the body ships as literal Markdown — asterisks and backticks drawn on the published page — while GitHub renders the same block correctly either way and `mkdocs build --strict` passes, because it is not a link error. The sibling encodings library shipped its first kata exactly like that, and the only surface showing the bug was the live site. Do not reach for a `???` Material admonition instead; that one prints as literal text on GitHub, which is the mirror of the same problem.
+
+**An answer has to have been run** — required, not preferred, and machine-checked. The solution goes in `examples/<stem>_kata_py.py` beside the lesson's own program and is pasted into the fold with `<!-- output:<stem>_kata_py -->`, so the answer key runs in CI on Ubuntu, macOS and the 3.11 floor with every other example, and a solution cannot rot into one that no longer prints what the page says.
+
+Two rules follow from every example here being Python, and both catch a mistake nothing else does. **The stem in the fold must contain `_kata`**: a lesson's stem and its kata's stem differ by one word, so pasting `<!-- output:strip_is_a_set_py -->` into the fold fills in perfectly and answers a question nobody asked. And **the file must live under the page's own folder**: a fold copied from the page next door also fills in perfectly, and `run_examples.py` has no way to know it is on the wrong page.
+
+**Prefer `type(exc).__name__` over the message** in an answer key. The key is compared byte for byte and CPython rewords these between releases — 3.14 changed the unhashable-key `TypeError` from *"unhashable type: 'bytearray'"* to *"cannot use 'bytearray' as a dict key (unhashable type: 'bytearray')"*. A lesson page may print a message where the message *is* the lesson, at the cost of running it across `python:3.11/3.12/3.13/3.14-slim` first; a kata should not need to.
+
+```bash
+python3 tools/check_katas.py              # ten rules, all of them from this section
+python3 tools/check_katas.py --selftest   # prove the gate still bites
+```
+
+It reads prose only. Fenced blocks **and inline code spans** are stripped first, so a page may show a malformed fold as an example, or name the tag in a sentence, without failing its own gate — which is what this section does twice.
+
+**A kata lives on the page for the topic it teaches**, never in a folder of its own and never with a number in its heading. Folders are permanent URLs and a sequence is the thing that gets reordered — the same reasoning as [Nav order](#nav-order) below. The sequence lives in [KATAS.md](KATAS.md), a table that costs nothing to reshuffle, and **a new kata needs a row there**: the index is the one file no lesson owns, so nothing about your page can reveal that its row is missing. `check_katas.py` fails a `## Practice` with no row, a row pointing at a page with no kata, a row whose links do not resolve, and numbering that has stopped reading K1, K2, K3 in table order.
+
+**Do not print the kata's number on its own page.** Open with a short bold title instead. The number lives in that one table, which is what makes reordering free; a `K7` in a page's prose is a second place to update and the reason a stale one goes unnoticed.
+
+**A stub gets neither section.** It has no example behind it, so a *Try it* would point at nothing and a folded answer would be a guess with a disclosure triangle over it.
+
 ## Other people's material
 
 This library exists alongside good paid material, and several pages were prompted by it. **Cite it, link it, and write your own.** A page may take a *topic* from an article or a course — a topic is not ownable — but the prose, the examples and the data must be written here. Do not paste someone's code into an example, do not paraphrase their explanation, and do not reproduce their figures. Put the source in [RESOURCES.md](RESOURCES.md) and say on the page that it prompted it. This repository is public; that is the whole reason the rule is strict.
@@ -107,7 +153,8 @@ Sidebar reading order lives in `NAV_ORDER` in `mkdocs_hooks.py`, keyed by folder
 ```bash
 python3 tools/run_examples.py --check
 python3 tools/check_link_style.py
+python3 tools/check_katas.py
 uv run --group docs mkdocs build --strict
 ```
 
-All three are what CI runs.
+All four are what CI runs.

@@ -1,0 +1,43 @@
+     expression                           dir  result                    note
+     -------------------------------------------------------------------------------------------------
+     '€'.encode('cp1252')                 out  b'\x80'                   cp1252 has the euro, at one byte
+     '€'.encode('latin-1')                out  raises UnicodeEncodeError latin-1 predates it, and says so
+     '€'.encode('ascii', 'replace')       out  b'?'                      '?' -- the euro is gone
+     b'\xff'.decode('latin-1')            in   'ÿ'                       latin-1 NEVER raises: 256 of 256
+     b'\xff'.decode('utf-8')              in   raises UnicodeDecodeError 0xff cannot start a UTF-8 sequence
+     b'\xff'.decode('utf-8', 'replace')   in   '�'                       U+FFFD -- a permanent record
+     b'\xff'.decode('utf-8', 'ignore')    in   ''                        the byte is simply gone
+
+     The 'dir' column is the half people get backwards, and there is
+     nothing to memorise: .encode() is only on str and .decode() is
+     only on bytes, so the method you can REACH tells you which type
+     you are already holding. Text lives inside Python; bytes are
+     what travel. Out is encode, in is decode.
+
+     WHICH ONES LOSE INFORMATION?
+     '€'.encode('cp1252')             -> b'\x80'  -> '€'   same: True
+     '€'.encode('ascii', 'replace')   -> b'?'     -> '?'   same: False
+
+     Only one policy on the list is reversible, and it is not on the
+     list -- because it is the one nobody reaches for:
+     b'Za\xff\xfe\xc3\xb3'.decode('utf-8', 'surrogateescape')
+       -> 'Za\udcff\udcfeó'
+       -> re-encoded b'Za\xff\xfe\xc3\xb3'
+       -> identical to the original: True
+
+     'replace' and 'ignore' are decisions to destroy data quietly.
+     'strict' is the default and the only one that loses nothing by
+     raising. 'surrogateescape' is the only one that loses nothing
+     by keeping -- which is how Python survives a filename that is
+     not valid UTF-8.
+
+     THE TRAP IN LINE 4
+     b'\xff'.decode('latin-1') did not fail, and it was not right.
+     Every one of the 256 byte values is a character in latin-1, so
+     the call always succeeds -- which makes it genuinely useful as
+     a byte-preserving round trip and lethal as a guess. It turns
+     'I do not know this encoding' into 'here is some text' with no
+     error anywhere. If you have ever seen 'Ã³' where 'ó' belonged,
+     this is the mechanism:
+     'ó'.encode('utf-8').decode('latin-1')   'Ã³'
+     and back again                         'ó'

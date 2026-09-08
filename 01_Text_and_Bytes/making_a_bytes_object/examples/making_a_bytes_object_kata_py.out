@@ -1,0 +1,37 @@
+     call                   len  result          which job
+     -----------------------------------------------------------------------------
+     bytes(3)                 3  b'\x00\x00\x00' the allocator: a SIZE, zero-filled
+     bytes([3])               1  b'\x03'         one datum: the number 3, as a byte
+     bytes('3', 'ascii')      1  b'3'            encode(), written backwards
+     bytes.fromhex('03')      1  b'\x03'         the named door to the same thing as line 2
+     bytes(True)              1  b'\x00'         bool is an int, so this is the allocator again
+     bytes('3')              --  TypeError       no default encoding exists, so it refuses
+     bytes([300])            --  ValueError      range(0, 256), and nothing is truncated
+     bytes(3.0)              --  TypeError       a float has no __bytes__, no __index__, no buffer
+
+     WHICH TWO ARE EQUAL?
+     Lines 2 and 4. bytes([3]) and bytes.fromhex('03') are both the
+     single byte 0x03; everything else on the list is a different
+     length, a different value, or an exception.
+
+     bytes([3])             == bytes.fromhex('03')    True
+     bytes(3)               == bytes([3])             False
+     bytes(True)            == bytes([1])             False
+     bytes('3', 'ascii')    == bytes([3])             False
+
+     The third line is the one worth staring at. bytes(True) is not
+     b'\x01' -- True is an int, the int branch is the allocator, and
+     the value you passed was used as a COUNT and then thrown away.
+
+     THE ONE-LINE RULE
+     bytes(x) reads the TYPE of x, not the value. A number means
+     'this many zero bytes'. Everything named -- .encode(),
+     .fromhex(), .to_bytes() -- says in the call what bytes() says
+     only in the type of its argument, which is the whole argument
+     for preferring them.
+
+     'Za'.encode('utf-8')      b'Za'
+     bytes.fromhex('5a61')     b'Za'
+     (23137).to_bytes(2, 'big') b'Za'
+     Three spellings of the same two bytes, and none of them could
+     be mistaken for an allocation.

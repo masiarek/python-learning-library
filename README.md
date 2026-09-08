@@ -17,6 +17,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 - **[Start here](00_Start_Here/README.md)** — what this is, and a four-question diagnostic
 - **[Chapter 1 — Text and bytes](01_Text_and_Bytes/README.md)** — the type boundary, encoding, counting, sorting
 - **[Chapter 2 — Projects and environments](02_Projects_and_Environments/README.md)** — the project file, and the interpreter that runs it
+- **[Katas](KATAS.md)** — the practice track: predict the answer, then run it. Eight so far, four of them on `bytes`
 - **[The crosswalk](CROSSWALK.md)** — the same ideas in Rust, C and ABAP, one table per question
 - **[Roadmap](ROADMAP.md)** — what is written, what is a stub, what is next
 - **[What to write next](TODO.md)** — the questions backlog, ranked, and the five pages worth writing first
@@ -50,6 +51,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 ```bash
 python3 01_Text_and_Bytes/sorting_is_not_comparing/examples/sorting_is_not_comparing_py.py
 python3 tools/run_examples.py --check     # what CI runs
+python3 tools/check_katas.py              # every kata folded, run and indexed
 ```
 
 ## Sibling libraries

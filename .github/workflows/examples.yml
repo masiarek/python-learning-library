@@ -47,6 +47,15 @@ jobs:
       - name: Check that every external link is marked as external
         run: python3 tools/check_link_style.py
 
+      # A folded answer has failure modes neither of the gates above can see: a
+      # <details> without markdown="1" renders correctly on GitHub and in
+      # --strict and ships as literal Markdown on the site, and a kata whose row
+      # is missing from KATAS.md is invisible from the page itself.
+      - name: Check every kata is folded, answered by its own program, and indexed
+        run: |
+          python3 tools/check_katas.py
+          python3 tools/check_katas.py --selftest
+
   # The oldest Python this project claims to support. Answer keys are checked on
   # the matrix above; this leg is here to catch an example that does not run at
   # all on the floor.

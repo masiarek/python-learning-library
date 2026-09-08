@@ -1,0 +1,56 @@
+     expression                       result            note
+     ---------------------------------------------------------------------------------
+     ' '.isprintable()                True              a space IS printable -- the one exception in the rule
+     '\t'.isprintable()               False             a tab is not: repr() escapes it
+     ''.isprintable()                 True              vacuously true -- no character in it is non-printable
+     '\u00a0'.isprintable()           False             NO-BREAK SPACE: whitespace, and not printable
+     string.printable.isprintable()   False             the constant is not printable, BY DESIGN
+     len(str(b'Zoot!'))               8                 five bytes in, eight characters out
+     len(str(b'Zoot!', 'utf-8'))      5                 the other signature, and the one you meant
+     repr(Fraction(1, 3))             'Fraction(1, 3)'  what f'{x = }' shows you, and f'{x}' does not
+
+     PRINTABLE HAS NOTHING TO DO WITH INK
+     str.isprintable() asks one question: would repr() escape this?
+     That is why a space passes and a tab does not, and why every
+     space character in Unicode EXCEPT U+0020 fails -- a
+     representation whose job is to be unambiguous cannot render
+     an invisible character as itself.
+
+     string.printable is the OTHER word, the POSIX one: characters
+     a terminal can cope with, which includes the five that move a
+     cursor without drawing anything.
+     the five that separate them:  '\t' '\n' '\r' '\x0b' '\x0c'
+     len(string.printable)         100
+     Two questions, one spelling, about twenty years apart.
+
+     THE QUIET ONE IS LINE 6
+     b                  b'Zoot!'     len 5
+     str(b)             "b'Zoot!'"   len 8   <- the repr, as text
+     str(b, 'utf-8')    'Zoot!'      len 5
+     b.decode()         'Zoot!'      len 5
+
+     Nothing raised. A five-byte object became an eight-character
+     string containing a 'b' and two quote marks, because str() with
+     no encoding falls back to repr(). It is a perfectly good str and
+     it will travel a long way before anything notices.
+     sys.flags.bytes_warning on this run: 0
+     Run any file with python3 -b and that becomes 1, and str(b)
+     raises a BytesWarning. -bb makes it an error. Python shipping a
+     command-line flag for one call is as close to an apology as a
+     language gets.
+
+     THE CHEAPEST DEBUGGING TRICK IN PYTHON
+     print(value)     ->  a	b
+     print([value])   ->  ['a\tb']
+
+     One tab, printed two ways in the same program, and nothing
+     about the string changed. A container has no way to show you
+     where one element ends, so it always uses repr() on what is
+     inside -- which is the practical reason 'printable' had to be
+     defined in terms of repr() in the first place.
+
+     f'{x}'      1/3
+     f'{x!r}'    Fraction(1, 3)
+     f'{x = }'   one_third = Fraction(1, 3)
+     The debug specifier silently switches the conversion to repr().
+     Same expression, one equals sign, two different strings.

@@ -1,0 +1,29 @@
+     TEXT = 'Łódź'          DATA = TEXT.encode('utf-8')
+
+     expression               type     value      note
+     ----------------------------------------------------------------------------
+     len(TEXT)                int      4          characters, and the word has four
+     len(DATA)                int      7          bytes, and UTF-8 spent two on each of Ł ó ź
+     DATA[0]                  int      197        indexing bytes gives a NUMBER
+     DATA[0:1]                bytes    b'\xc5'    slicing bytes gives bytes -- the only way back to one byte
+     TEXT == DATA             bool     False      the quiet one
+     TEXT[0] + DATA[0:1]      raises   TypeError  the loud one
+     b'x'.startswith('x')     raises   TypeError  even the method arguments are typed
+     DATA.decode() == TEXT    bool     True       the round trip is exact
+
+     Two of the eight raise. The other six hand back a value, and
+     one of those six is wrong -- which is the whole lesson.
+
+     WHICH IS THE DANGEROUS ONE?
+     Not the TypeErrors. An exception is a bug that has already been
+     found. It is line 5: TEXT == DATA is False, always, for every
+     text and every bytes -- and False is a perfectly good answer that
+     a program will act on. A str is never equal to a bytes, however
+     identical the two look on screen.
+
+     TEXT == DATA                 False
+     TEXT == DATA.decode()        True   <- what you meant
+     TEXT.encode() == DATA        True   <- or this
+
+     The fix is not a cast. It is deciding, at the boundary where the
+     value arrived, which of the two types this program holds it in.

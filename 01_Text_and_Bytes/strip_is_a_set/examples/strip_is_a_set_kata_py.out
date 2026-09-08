@@ -1,0 +1,64 @@
+     call                                         result       why
+     ------------------------------------------------------------------------------------------------
+     'Arthur: three!'.lstrip('Arthur: ')          'ee!'        the bag ate 'thr' as well
+     'Arthur: three!'.removeprefix('Arthur: ')    'three!'     what everyone meant
+     'aaab'.lstrip('a')                           'b'          lstrip REPEATS until it stops matching
+     'aaab'.removeprefix('a')                     'aab'        removeprefix runs ONCE, always
+     'report.txt'.rstrip('.txt')                  'repor'      the bag is {'.', 't', 'x'}
+     'data.txt'.rstrip('.txt')                    'data'       right, and right by accident
+     'abc'.strip('')                              'abc'        an empty bag removes nothing
+     '\x1cabc\u2028'.strip()                      'abc'        a FILE SEPARATOR and a LINE SEPARATOR
+
+     THREE DIFFERENCES, NOT ONE
+     They get collapsed into 'set versus prefix'. Lines 1-4 hold all
+     three, and each one can bite on its own:
+       (a) lstrip repeats, removeprefix runs once      (lines 3, 4)
+       (b) lstrip splits its argument into characters  (lines 1, 2)
+       (c) neither says anything when nothing matched  (below)
+
+     'three!'.lstrip('Q: ')           'three!'
+     'three!'.removeprefix('Q: ')     'three!'
+     Same value as 'the prefix was there and I removed it' would
+     give. You cannot tell the two cases apart from the result, so if
+     the distinction matters -- and for a protocol or a filename it
+     does -- ask separately with startswith.
+
+     WHY ORDER AND REPEATS IN THE ARGUMENT MEAN NOTHING
+     lstrip('Arthur: '    ) -> 'ee!'
+     lstrip(' :Arthu'     ) -> 'ee!'
+     lstrip('rrrAAA uth:' ) -> 'ee!'
+     lstrip(' :Ahrtu'     ) -> 'ee!'
+     Four spellings of one set, one answer. If the argument were a
+     prefix, only the first of those could possibly match. That is
+     the fastest proof available that it is a bag of characters.
+
+     THE ONE THAT SHIPS: LINE 6 IS RIGHT BY ACCIDENT
+     filename       rstrip(.txt)   removesuffix   agree?
+     --------------------------------------------------------
+     report.txt     'repor'        'report'       False
+     data.txt       'data'         'data'         True
+     text.txt       'te'           'text'         False
+     extract.txt    'extrac'       'extract'      False
+
+     1 of 4 agree. 'data' survives because it happens to end
+     in a letter that is not in the bag -- nothing about the code
+     was right. That is the worst possible outcome: it passes whichever
+     example you tried first and fails on a filename you have not
+     seen yet. removesuffix is correct on all four, and
+     pathlib.Path(name).stem is correct on all four AND stops in the
+     right place on 'archive.tar.gz'.
+
+     WHAT LINE 8 REMOVED
+     '\x1cabc\u2028'.strip()  ->  'abc'
+     code points where str.isspace() is True: 29
+     U+0009 U+000A U+000B U+000C U+000D U+001C U+001D U+001E U+001F U+0020
+     U+0085 U+00A0 U+1680 U+2000 U+2001 U+2002 U+2003 U+2004 U+2005 U+2006
+     U+2007 U+2008 U+2009 U+200A U+2028 U+2029 U+202F U+205F U+3000
+
+     strip() with no argument means 'everything str.isspace() calls
+     whitespace' -- the ten line boundaries, the tab, the unit
+     separator and seventeen space characters. Not the four you can
+     type on a keyboard. That is usually what you want when cleaning
+     a CSV field, and it is worth knowing that it is what happened:
+     'I stripped whitespace' and 'I removed four specific characters'
+     are different claims about your data.

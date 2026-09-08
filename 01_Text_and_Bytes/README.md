@@ -30,6 +30,8 @@ This is the chapter to read first — not because text is the most important par
 | 20 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
 | 21 | [The codecs registry](the_codecs_registry/README.md) | What is in the registry that `.encode()` and `.decode()` cannot reach — and why does decoding a stream in chunks differ? | written |
 
+Eight of these pages end with a `## Practice` section — a kata: predict the answer, then run it, then check. They are indexed in [KATAS.md](../KATAS.md), which is also the only place they are put in an order, and that order is not this one: it puts the four `bytes` katas first, because that is the thing this chapter's readers report bouncing off.
+
 ## Where this sits relative to the other libraries
 
 The [encodings library ↗](https://masiarek.github.io/encodings-learning-library/) teaches encodings *as a subject*, using four languages to illustrate. This chapter teaches **Python's answer** to that subject — the type boundary, the codec registry, the `errors=` policies, the locale coupling. Where a page here needs the language-agnostic groundwork, it links there rather than repeating it. [The crosswalk](../CROSSWALK.md) is the index of which idea lives where.

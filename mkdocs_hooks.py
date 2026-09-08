@@ -50,6 +50,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "00_Start_Here",
         "01_Text_and_Bytes",
         "02_Projects_and_Environments",
+        "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
         "RESOURCES.md",
