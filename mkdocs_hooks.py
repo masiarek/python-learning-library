@@ -61,6 +61,12 @@ NAV_ORDER: dict[str, list[str]] = {
     # quietly is one of them, then the six places code points mislead you,
     # then the boundaries with the outside world -- ending with the registry
     # behind the two doors, which is where data arriving in pieces goes wrong.
+    #
+    # `opening_a_file` moved down into that last group on 2026-09-08, when it
+    # stopped being a stub about the default encoding and became a page about
+    # the file API. It reads after `what_ends_a_line`, because its line-counting
+    # section is that page's boundary set applied to a file, and before the pipe
+    # and filesystem pages, which are the same subject one layer out.
     "01_Text_and_Bytes": [
         "README.md",
         "str_is_not_bytes",
@@ -68,7 +74,6 @@ NAV_ORDER: dict[str, list[str]] = {
         "encode_and_decode",
         "making_a_bytes_object",
         "bytearray_is_mutable",
-        "opening_a_file",
         "counting_characters",
         "slicing_is_not_indexing",
         "is_it_a_letter",
@@ -82,6 +87,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "padding_is_not_alignment",
         "normalization",
         "sorting_is_not_comparing",
+        "opening_a_file",
         "stdin_stdout_and_pipes",
         "filenames_are_not_text",
         "what_kind_of_file_is_this",

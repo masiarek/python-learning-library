@@ -1,0 +1,164 @@
+1. open() MAKES FOUR DECISIONS, AND ONLY ONE OF THEM IS THE ENCODING
+   open(path, mode, buffering, encoding, errors, newline)
+     mode       what you may do -- and whether the file survives being opened
+     buffering  when your bytes actually leave the process
+     encoding   which table turns characters into bytes
+     newline    which byte sequences count as the end of a line
+   Every one of those defaults is a decision somebody made for you. Only
+   the third changes what your program MEANS rather than when or how fast,
+   and it is the one this page hands off: the sibling library owns it.
+     open(p, encoding='utf-8').encoding  = utf-8      you decided
+     open(p).encoding                    = utf-8      the machine decided
+   What the machine decided it on, this run:
+     sys.flags.utf8_mode = 1      sys.flags.isolated = 1
+   Read those two together. The answer-key runner sets PYTHONUTF8=1 and
+   then starts Python with -I, which implies -E and throws every PYTHON*
+   variable away. UTF-8 mode is on for the other reason -- LC_ALL=C, which
+   PEP 540 turns into UTF-8 mode by itself. Under a pl_PL.ISO8859-2 locale
+   the second line above reads ISO8859-2 and every unnamed open() in your
+   program silently changes meaning. That is the argument for typing the
+   encoding: not that the default is wrong, but that it is not yours.
+
+2. THE TRUNCATION HAPPENS AT open(), NOT AT THE FIRST WRITE
+   before                              : 10 bytes
+   after open(p, 'w'), nothing written : 0 bytes  <-- already gone
+   The name is the trap. 'w' does not mean write; it means truncate now,
+   and then let you write. A crash on the next line leaves an empty file.
+
+   Opening a 10-byte file six ways, and looking at it before writing:
+     mode   the file, immediately after open()   tell()
+     'r'    10 bytes                             0
+     'w'    0 bytes                              0
+     'x'    FileExistsError                      -
+     'a'    10 bytes                             10
+     'r+'   10 bytes                             0
+     'w+'   0 bytes                              0
+   'w' and 'w+' show 0 because the file was emptied on the way in, before
+   the with-block began. 'x' is the only mode that refuses rather than
+   proceeding, and it is the one to reach for when overwriting would be a
+   bug. 'a' is the only one that starts anywhere but 0.
+
+   In 'a', seek(0) then write: tell() says 0 and the byte lands at the
+   end anyway -- 'important\nZ'. Append is a property of the file
+   descriptor, not of the position, so tell() is not lying so much as
+   answering a question you did not ask.
+
+3. tell() IN TEXT MODE IS A COOKIE, NOT A POSITION
+   The file is 7 bytes and 6 characters: b'a\xc5\xbc\nbc\n'
+   Reading it one character at a time, what tell() reports before each:
+     utf-8       7 bytes on disk   [0, 1, 3, 4, 5, 6, 7]
+     utf-16     14 bytes on disk   [0, 4, 6, 8, 10, 12, 14]
+     utf-8-sig  10 bytes on disk   [0, 4, 6, 7, 8, 9, 10]
+   So far those look like byte offsets, and for a stateless codec reading
+   a file with no translation to do, that is exactly what they are. Now
+   give the decoder something to remember:
+     6-byte file, newline=''    [0, 1, 340282367000166625996085689099021713410, 3, 4, 340282367000166625996085689099021713413, 6]
+                                ['a', '\r', '\n', 'b', '\r', '\n', '']
+     6-byte file, newline=None  [0, 1, 3, 4, 6]
+                                ['a', '\n', 'b', '\n', '']
+     11-byte file, iso-2022-jp  [0, 160203995535087573890236417, 160208717901570443535450118, 160203995535087573890236426, 160203995535087573890236427]
+                                ['a', '\u3042', 'b', '\n', '']
+   A 39-digit number for a 6-byte file. CPython packs the byte position,
+   the decoder's state, how many bytes to re-feed and how many characters
+   to skip into one integer -- because after '\r' the decoder does not yet
+   know whether it has seen one line ending or the first half of one, and
+   a plain offset cannot hold that. The number is not a position; it is a
+   receipt. The only thing you may do with it is hand it back:
+     seek(cookie) then read() -> '\nb\r\n', same as the first read: True
+   And the API says so, by refusing everything else:
+     seek(0, 1)   -> ok
+     seek(1, 1)   -> UnsupportedOperation
+     seek(0, 2)   -> ok
+     seek(-2, 2)  -> UnsupportedOperation
+   Only 'no movement' is allowed relative to anything. Making up a number
+   is allowed and is where it bites: byte 2 of this file is the second
+   half of z-with-dot-above, so a seek to it starts the decoder in the
+   middle of a character --
+     seek(2); read() -> UnicodeDecodeError at position 0 of what it was handed
+   -- and it reports position 0, because as far as the decoder is
+   concerned it was handed a fresh file that begins with a stray byte.
+
+4. WHO IS ON THE OTHER END DECIDES WHEN YOUR OUTPUT LEAVES
+   The same five-line program, printing 1 to stdout, 2 to stderr, 3 to
+   stdout. Its stdout goes to a pipe:
+     2 stderr
+     1 stdout
+     3 stdout
+     isatty False line_buffering False
+   Its stdout goes to a terminal:
+     1 stdout
+     2 stderr
+     3 stdout
+     isatty True line_buffering True
+   Nothing about the program changed. Into a pipe stdout is block-
+   buffered and holds everything until exit, while stderr is line-
+   buffered always -- so message 2 overtakes message 1, and a log read
+   top to bottom tells you the warning came first. Into a terminal
+   stdout is line-buffered and the order is the one you wrote.
+   The fixes, in order of bluntness: print(..., flush=True) for one call,
+   sys.stdout.reconfigure(line_buffering=True) for the process, python3 -u
+   or PYTHONUNBUFFERED=1 from outside it.
+   The terminal changed the bytes too, which is a second lesson for free.
+   The line reading '3 stdout', as it arrived:
+     from the pipe    b'3 stdout\n'
+     from the pty     b'3 stdout\r\n'
+   The terminal's line discipline turned '\n' into '\r\n' on the way out,
+   so a program that writes Unix line endings is read back with Windows
+   ones -- by the terminal, not by Python.
+
+   The same two arguments on a file you opened yourself:
+     open(mode='w'  buffering=0) -> ValueError
+     open(mode='w'  buffering=1) -> accepted
+     open(mode='wb' buffering=0) -> accepted
+     open(mode='wb' buffering=1) -> RuntimeWarning
+   Unbuffered text is refused outright, because a character is not a unit
+   the operating system can write; line buffering in binary mode is
+   accepted with a warning and quietly ignored. buffering=0 exists for
+   binary only, and it is the one setting that makes write() a syscall.
+
+5. FIVE WAYS TO COUNT THE LINES, AND NO TWO ASK THE SAME QUESTION
+   One file, 33 bytes: b'alpha\nbeta\rgamma\r\ndelta\xe2\x80\xa8epsilon'
+     for line in open(p)                     4
+     for line in open(p, newline='')         4
+     for line in open(p, 'rb')               3
+     open(p).read().splitlines()             5
+     raw.count(b'\n')  -- what wc -l counts  2
+   They disagree because they are different questions about where a line
+   ends. The first two agree on the COUNT and on nothing else:
+     universal newlines ['alpha\n', 'beta\n', 'gamma\n', 'delta\u2028epsilon']
+     newline=''         ['alpha\n', 'beta\r', 'gamma\r\n', 'delta\u2028epsilon']
+     splitlines()       ['alpha', 'beta', 'gamma', 'delta', 'epsilon']
+   Read the first two together. Universal newlines did not just split the
+   file, it REWROTE it: the lone '\r' after beta came back as '\n', and so
+   did the '\r\n' after gamma. Nothing in your program asked for that, and
+   it is why csv and any code that re-serialises what it read must pass
+   newline=''. splitlines() finds one more boundary than any file reader
+   will, because U+2028 ends a line in a str and does not in a file.
+
+6. REPLACING A FILE: WRITE BESIDE IT, THEN RENAME
+   Truncating in place, watched by a second reader:
+     right after open(p, 'w')  ''
+     half way through          'name=new\n'
+     after close()             'name=new\nport=2\n'
+   The middle two lines are states the file was never supposed to have.
+   Any reader -- another process, a signal handler, your own retry -- can
+   see them, and a crash makes one of them permanent.
+
+   Writing beside it instead:
+     half way through          'name=old\nport=1\n'
+     after os.replace()        'name=new\nport=2\n'
+   There is no third state. A reader gets all of the old file or all of
+   the new one, because os.replace() is rename(2) and the directory entry
+   changes in one step. fsync() before the rename is the durability half:
+   without it the rename can reach the disk before the bytes do.
+
+   What the rename does NOT carry over:
+     the file you are replacing  0o644
+     what mkstemp made           0o600   (private, on purpose)
+     the file afterwards         0o600   <-- the new file's, not the old
+   mkstemp is careful for you, and then you throw the careful thing on top
+   of a file everyone could read. Owner, group and ACLs go the same way.
+   Copy the mode across with os.chmod before the rename, or shutil.copystat
+   for the rest of it. And the temporary file has to be in the SAME
+   directory: rename(2) cannot cross a filesystem, so a temp file in /tmp
+   makes os.replace() raise OSError with EXDEV instead of being atomic.

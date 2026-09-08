@@ -177,6 +177,23 @@ The substitution rows are the sharpest three-way split in the table. Python has 
 
 Two things run through the whole table. **Rust's versions are lazy and byte-indexed**: `split` hands back an iterator you can stop consuming, and `find` gives a byte offset you must not treat as a character position — which is the same trap as indexing, one method along. And **Rust returns `Option` where Python returns a sentinel or raises**: `find` gives `None` rather than `-1`, `split_once` gives `None` rather than a one-element list, so the failure is in the type instead of in the docs. The Python column here is thin on links on purpose — this library's chapter 1 is about the text *model*, and the method-by-method tour is one of the gaps this page is meant to make visible. Two of those gaps are now filled by pages that group methods by **how they fail**: [`strip` is a set](01_Text_and_Bytes/strip_is_a_set/README.md) and [four ways to find it](01_Text_and_Bytes/finding_a_substring/README.md).
 
+## Opening, reading and replacing a file
+
+| The idea | Python | Rust | C | ABAP |
+|---|---|---|---|---|
+| Open for reading | [`open(p, encoding="utf-8")`](01_Text_and_Bytes/opening_a_file/README.md) | [`File::open` ↗](https://masiarek.github.io/rust-learning-library/04_Files/opening_a_file/index.html) — bytes, no encoding argument exists | `fopen(p, "r")` | `OPEN DATASET … FOR INPUT IN TEXT MODE ENCODING UTF-8` |
+| Open for writing, destroying what is there | [`open(p, "w")` — at `open()`, not at the first write](01_Text_and_Bytes/opening_a_file/README.md) | `File::create` — same moment, same surprise | `fopen(p, "w")` | `… FOR OUTPUT` |
+| Create, or fail if it exists | `open(p, "x")` | `OpenOptions::create_new` | `fopen(p, "wx")` — C11 only | no direct form; test first |
+| Is there a text mode? | **always** — every read decodes | **no such thing** — a `File` is bytes | on Unix, text mode *is* binary mode | `IN TEXT MODE ENCODING …`, opt-in |
+| Where a file position comes from | [`tell()` — an opaque cookie](01_Text_and_Bytes/opening_a_file/README.md), 39 digits for a 6-byte file | `Seek::seek` — a byte offset, always | `ftell` — a byte offset in practice, "unspecified" in text mode by the standard | `GET DATASET … POSITION` — bytes |
+| Line endings, reading a file | [three — `\n`, `\r`, `\r\n`, all delivered as `\n`](01_Text_and_Bytes/what_ends_a_line/README.md) | one — `\n`, with a trailing `\r` trimmed | one — `\n`, and `fgets` keeps it | platform-dependent; there is no default |
+| Turning that translation off | `newline=""` | nothing to turn off | nothing to turn off | `IN BINARY MODE` |
+| stdout when it is a pipe | [block-buffered — stderr overtakes it](01_Text_and_Bytes/opening_a_file/README.md) | **line-buffered anyway** — `io::stdout()` is a `LineWriter` | block-buffered | no equivalent |
+| Forcing it out | `flush=True`, `-u`, `PYTHONUNBUFFERED` | `flush()`, and `BufWriter` makes it visible | `fflush`, `setvbuf` | `CLOSE DATASET` |
+| Replace a file atomically | [`os.replace`](01_Text_and_Bytes/opening_a_file/README.md) — and it does not carry the old mode | `fs::rename` | `rename` — POSIX guarantees it, ISO C does not | **no rename statement** |
+
+The row that decides the shape of every other one is the fourth. Rust has no text mode, so it has no cookie, no newline translation and no encoding default — three of Python's traps are absent because one layer is. C has a text mode on paper and not on Unix, which is why its `ftell` rule is the same rule as Python's and almost no C programmer has met it. And the last row is where ABAP is genuinely short: without a rename, the write-beside-and-rename idiom is unavailable, so a file really is rewritten in place.
+
 ## Numbers, bytes and hex
 
 | The idea | Python | Rust | C | Where the idea itself lives |

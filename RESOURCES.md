@@ -31,6 +31,12 @@ Subscription material, and good. Cited here as sources rather than summarized:
 - [How to Sort Unicode Strings Alphabetically in Python ↗](https://realpython.com/python-sort-unicode-strings/) — Bartosz Zaczyński. The article that prompted [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md); it goes further than that page does, into transliteration, natural sort order and multi-key sorting.
 - [Python Project: Build a Word Count Command-Line App ↗](https://realpython.com/courses/word-count-app-project/) — Bartosz Zaczyński. The course whose non-ASCII lesson prompted [Counting characters](01_Text_and_Bytes/counting_characters/README.md).
 
+## Other languages' FAQs
+
+Old, free, and written by people who had already met the problem. Cited as sources; nothing is run and nothing is copied.
+
+- [perlfaq5 — Files and Formats ↗](https://perldoc.perl.org/perlfaq5) — forty-two questions about file I/O, and the source of four of the six sections in [Opening a file](01_Text_and_Bytes/opening_a_file/README.md): flushing an output handle, counting the lines in a file, why opening read-write wipes it out, and renaming a file reliably. The topics transfer; the Perl does not, and none of it is reproduced here. Its companion [perlpacktut ↗](https://perldoc.perl.org/perlpacktut) is still on [the backlog](TODO.md) as the `struct` / `to_be_bytes` / fixed-width-field page.
+
 ## macOS specifics
 
 The two pages behind [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md)'s macOS half. Both are about the *terminal*, not about Python, and neither is the source of a number on that page — every measurement there was re-run on 2026-09-06 against Linux, because both pages predate APFS.

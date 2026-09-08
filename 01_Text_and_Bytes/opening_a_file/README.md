@@ -2,18 +2,304 @@
 
 **Level:** 101 → 201 · for Python programmers
 
-> **Stub — an outline, not a lesson.** There is no runnable example behind this page yet, so nothing on it has been through [the check that backs every other claim in this library](../../CONTRIBUTING.md). The bullets below are the questions the finished page has to answer.
+**One line:** `open()` makes four decisions — what may be done to the file, when your bytes leave, which table turns characters into bytes, and what counts as the end of a line — and the three that are not the encoding are where the surprises live: `'w'` destroys the file at `open()` rather than at the first write, `tell()` in text mode returns a 39-digit number that is not a position, and whether stdout is a terminal decides the order your own `print()` calls come out in.
 
-**One line:** `open(path)` picks an encoding for you, the choice depends on the machine, and naming `encoding=` explicitly is the single highest-value habit in this chapter.
+`open(path)` looks like one call with one job. It is six parameters, of which four are decisions somebody has already made for you:
 
-- What does `open(path)` actually use when you say nothing? (`locale.getencoding()`, and why the answer differs between macOS, Ubuntu and Windows.)
-- Why is `encoding="utf-8"` the right default to type every time, and what is `PYTHONUTF8=1` / UTF-8 mode?
-- What does `newline=` do, and why does the default rewrite `\r\n` on the way in?
-- When is `"rb"` the correct answer instead of an encoding — and how does that change `len()`?
-- [PEP 686 ↗](https://peps.python.org/pep-0686/) makes UTF-8 mode the default. What breaks, and when?
-- `EncodingWarning` and `-X warn_default_encoding`: how to find every unnamed `open()` in a codebase.
+```python
+open(path, mode="r", buffering=-1, encoding=None, errors=None, newline=None)
+```
+
+`mode` says what you may do — and whether the file survives being opened at all. `buffering` says when your bytes actually leave the process. `encoding` says which table turns characters into bytes. `newline` says which byte sequences count as the end of a line, on the way in *and* on the way out. Only one of those four is about encodings, and it is the one that gets all the attention; the other three account for most of the bugs.
+
+## Which library answers which question
+
+This page and the encodings library's [Opening a file ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) are one subject split down a line that was settled on 2026-09-08, because both had a stub with four bullets that said nearly the same thing.
+
+| The question | Where it is answered |
+|---|---|
+| What does `mode` do, and when does the file get emptied? | here |
+| What does `tell()` return in text mode, and what may you do with it? | here |
+| Who decides when the output leaves, and what does that reorder? | here |
+| What is a line, when you are counting them? | here |
+| How do you replace a file without a reader seeing half of it? | here |
+| **Which encoding does the default pick, on which machine?** | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
+| **What happens when that bet is wrong** — `UnicodeDecodeError`, mojibake, `sys.stdout.encoding` under `cron` | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
+| **How to find every unnamed `open()` in a codebase** — `EncodingWarning`, `-X warn_default_encoding` | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
+| **PEP 686, and what changes when UTF-8 mode becomes the default** | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
+
+The short version of the half that lives there, so that this page is not misleading on its own: **type `encoding="utf-8"` every time.** Not because the default is wrong, but because it is not yours — it is the machine's, and the machine changes.
+
+## The environment this page runs in, and why it matters here more than elsewhere
+
+Every example in this library runs under a fixed environment — `LC_ALL=C`, `LANG=C`, `PYTHONUTF8=1` — so an answer key does not depend on whose laptop recorded it ([CONTRIBUTING](../../CONTRIBUTING.md)). On most pages that is invisible. On this one it is part of the subject, because two of those three variables change what `open()` does.
+
+Section 1 of the run below prints the two flags rather than a conclusion, and they are worth reading together: **`sys.flags.isolated` is 1**, because the runner starts Python with `-I`, which implies `-E` and throws away every `PYTHON*` variable — including the `PYTHONUTF8=1` the runner just set. **`sys.flags.utf8_mode` is 1 anyway**, for the other reason: [PEP 540 ↗](https://peps.python.org/pep-0540/) turns UTF-8 mode on by itself when the locale is `C` or `POSIX`. So the fixed environment is not hiding the lesson; it is an instance of it, arrived at by a route nobody intends.
+
+Two values are deliberately *not* printed by the example, because they would make the answer key machine-dependent — which is the failure mode CI's Ubuntu **and** macOS legs exist to catch:
+
+```text title="measured 2026-09-08 — the reason these are a table and not an answer key"
+locale.getencoding()      under LC_ALL=C     macOS 3.14   US-ASCII
+                                             Linux 3.14   ANSI_X3.4-1968
+io.DEFAULT_BUFFER_SIZE                       3.11–3.13    8192
+                                             3.14         131072
+```
+
+Two names for ASCII on two machines, and a buffer that grew sixteenfold in one release. Neither changes a single behaviour on this page; both would fail the check.
+
+## The run
+
+<!-- output:opening_a_file_py -->
+*Verified output of [`opening_a_file_py.py`](examples/opening_a_file_py.py) — regenerated by `tools/run_examples.py`, never hand-typed.*
+
+```text
+1. open() MAKES FOUR DECISIONS, AND ONLY ONE OF THEM IS THE ENCODING
+   open(path, mode, buffering, encoding, errors, newline)
+     mode       what you may do -- and whether the file survives being opened
+     buffering  when your bytes actually leave the process
+     encoding   which table turns characters into bytes
+     newline    which byte sequences count as the end of a line
+   Every one of those defaults is a decision somebody made for you. Only
+   the third changes what your program MEANS rather than when or how fast,
+   and it is the one this page hands off: the sibling library owns it.
+     open(p, encoding='utf-8').encoding  = utf-8      you decided
+     open(p).encoding                    = utf-8      the machine decided
+   What the machine decided it on, this run:
+     sys.flags.utf8_mode = 1      sys.flags.isolated = 1
+   Read those two together. The answer-key runner sets PYTHONUTF8=1 and
+   then starts Python with -I, which implies -E and throws every PYTHON*
+   variable away. UTF-8 mode is on for the other reason -- LC_ALL=C, which
+   PEP 540 turns into UTF-8 mode by itself. Under a pl_PL.ISO8859-2 locale
+   the second line above reads ISO8859-2 and every unnamed open() in your
+   program silently changes meaning. That is the argument for typing the
+   encoding: not that the default is wrong, but that it is not yours.
+
+2. THE TRUNCATION HAPPENS AT open(), NOT AT THE FIRST WRITE
+   before                              : 10 bytes
+   after open(p, 'w'), nothing written : 0 bytes  <-- already gone
+   The name is the trap. 'w' does not mean write; it means truncate now,
+   and then let you write. A crash on the next line leaves an empty file.
+
+   Opening a 10-byte file six ways, and looking at it before writing:
+     mode   the file, immediately after open()   tell()
+     'r'    10 bytes                             0
+     'w'    0 bytes                              0
+     'x'    FileExistsError                      -
+     'a'    10 bytes                             10
+     'r+'   10 bytes                             0
+     'w+'   0 bytes                              0
+   'w' and 'w+' show 0 because the file was emptied on the way in, before
+   the with-block began. 'x' is the only mode that refuses rather than
+   proceeding, and it is the one to reach for when overwriting would be a
+   bug. 'a' is the only one that starts anywhere but 0.
+
+   In 'a', seek(0) then write: tell() says 0 and the byte lands at the
+   end anyway -- 'important\nZ'. Append is a property of the file
+   descriptor, not of the position, so tell() is not lying so much as
+   answering a question you did not ask.
+
+3. tell() IN TEXT MODE IS A COOKIE, NOT A POSITION
+   The file is 7 bytes and 6 characters: b'a\xc5\xbc\nbc\n'
+   Reading it one character at a time, what tell() reports before each:
+     utf-8       7 bytes on disk   [0, 1, 3, 4, 5, 6, 7]
+     utf-16     14 bytes on disk   [0, 4, 6, 8, 10, 12, 14]
+     utf-8-sig  10 bytes on disk   [0, 4, 6, 7, 8, 9, 10]
+   So far those look like byte offsets, and for a stateless codec reading
+   a file with no translation to do, that is exactly what they are. Now
+   give the decoder something to remember:
+     6-byte file, newline=''    [0, 1, 340282367000166625996085689099021713410, 3, 4, 340282367000166625996085689099021713413, 6]
+                                ['a', '\r', '\n', 'b', '\r', '\n', '']
+     6-byte file, newline=None  [0, 1, 3, 4, 6]
+                                ['a', '\n', 'b', '\n', '']
+     11-byte file, iso-2022-jp  [0, 160203995535087573890236417, 160208717901570443535450118, 160203995535087573890236426, 160203995535087573890236427]
+                                ['a', '\u3042', 'b', '\n', '']
+   A 39-digit number for a 6-byte file. CPython packs the byte position,
+   the decoder's state, how many bytes to re-feed and how many characters
+   to skip into one integer -- because after '\r' the decoder does not yet
+   know whether it has seen one line ending or the first half of one, and
+   a plain offset cannot hold that. The number is not a position; it is a
+   receipt. The only thing you may do with it is hand it back:
+     seek(cookie) then read() -> '\nb\r\n', same as the first read: True
+   And the API says so, by refusing everything else:
+     seek(0, 1)   -> ok
+     seek(1, 1)   -> UnsupportedOperation
+     seek(0, 2)   -> ok
+     seek(-2, 2)  -> UnsupportedOperation
+   Only 'no movement' is allowed relative to anything. Making up a number
+   is allowed and is where it bites: byte 2 of this file is the second
+   half of z-with-dot-above, so a seek to it starts the decoder in the
+   middle of a character --
+     seek(2); read() -> UnicodeDecodeError at position 0 of what it was handed
+   -- and it reports position 0, because as far as the decoder is
+   concerned it was handed a fresh file that begins with a stray byte.
+
+4. WHO IS ON THE OTHER END DECIDES WHEN YOUR OUTPUT LEAVES
+   The same five-line program, printing 1 to stdout, 2 to stderr, 3 to
+   stdout. Its stdout goes to a pipe:
+     2 stderr
+     1 stdout
+     3 stdout
+     isatty False line_buffering False
+   Its stdout goes to a terminal:
+     1 stdout
+     2 stderr
+     3 stdout
+     isatty True line_buffering True
+   Nothing about the program changed. Into a pipe stdout is block-
+   buffered and holds everything until exit, while stderr is line-
+   buffered always -- so message 2 overtakes message 1, and a log read
+   top to bottom tells you the warning came first. Into a terminal
+   stdout is line-buffered and the order is the one you wrote.
+   The fixes, in order of bluntness: print(..., flush=True) for one call,
+   sys.stdout.reconfigure(line_buffering=True) for the process, python3 -u
+   or PYTHONUNBUFFERED=1 from outside it.
+   The terminal changed the bytes too, which is a second lesson for free.
+   The line reading '3 stdout', as it arrived:
+     from the pipe    b'3 stdout\n'
+     from the pty     b'3 stdout\r\n'
+   The terminal's line discipline turned '\n' into '\r\n' on the way out,
+   so a program that writes Unix line endings is read back with Windows
+   ones -- by the terminal, not by Python.
+
+   The same two arguments on a file you opened yourself:
+     open(mode='w'  buffering=0) -> ValueError
+     open(mode='w'  buffering=1) -> accepted
+     open(mode='wb' buffering=0) -> accepted
+     open(mode='wb' buffering=1) -> RuntimeWarning
+   Unbuffered text is refused outright, because a character is not a unit
+   the operating system can write; line buffering in binary mode is
+   accepted with a warning and quietly ignored. buffering=0 exists for
+   binary only, and it is the one setting that makes write() a syscall.
+
+5. FIVE WAYS TO COUNT THE LINES, AND NO TWO ASK THE SAME QUESTION
+   One file, 33 bytes: b'alpha\nbeta\rgamma\r\ndelta\xe2\x80\xa8epsilon'
+     for line in open(p)                     4
+     for line in open(p, newline='')         4
+     for line in open(p, 'rb')               3
+     open(p).read().splitlines()             5
+     raw.count(b'\n')  -- what wc -l counts  2
+   They disagree because they are different questions about where a line
+   ends. The first two agree on the COUNT and on nothing else:
+     universal newlines ['alpha\n', 'beta\n', 'gamma\n', 'delta\u2028epsilon']
+     newline=''         ['alpha\n', 'beta\r', 'gamma\r\n', 'delta\u2028epsilon']
+     splitlines()       ['alpha', 'beta', 'gamma', 'delta', 'epsilon']
+   Read the first two together. Universal newlines did not just split the
+   file, it REWROTE it: the lone '\r' after beta came back as '\n', and so
+   did the '\r\n' after gamma. Nothing in your program asked for that, and
+   it is why csv and any code that re-serialises what it read must pass
+   newline=''. splitlines() finds one more boundary than any file reader
+   will, because U+2028 ends a line in a str and does not in a file.
+
+6. REPLACING A FILE: WRITE BESIDE IT, THEN RENAME
+   Truncating in place, watched by a second reader:
+     right after open(p, 'w')  ''
+     half way through          'name=new\n'
+     after close()             'name=new\nport=2\n'
+   The middle two lines are states the file was never supposed to have.
+   Any reader -- another process, a signal handler, your own retry -- can
+   see them, and a crash makes one of them permanent.
+
+   Writing beside it instead:
+     half way through          'name=old\nport=1\n'
+     after os.replace()        'name=new\nport=2\n'
+   There is no third state. A reader gets all of the old file or all of
+   the new one, because os.replace() is rename(2) and the directory entry
+   changes in one step. fsync() before the rename is the durability half:
+   without it the rename can reach the disk before the bytes do.
+
+   What the rename does NOT carry over:
+     the file you are replacing  0o644
+     what mkstemp made           0o600   (private, on purpose)
+     the file afterwards         0o600   <-- the new file's, not the old
+   mkstemp is careful for you, and then you throw the careful thing on top
+   of a file everyone could read. Owner, group and ACLs go the same way.
+   Copy the mode across with os.chmod before the rename, or shutil.copystat
+   for the rest of it. And the temporary file has to be in the SAME
+   directory: rename(2) cannot cross a filesystem, so a temp file in /tmp
+   makes os.replace() raise OSError with EXDEV instead of being atomic.
+```
+<!-- /output -->
+
+## What the run shows
+
+**`'w'` is not "write", it is "truncate now".** Section 2 opens a ten-byte file for writing, writes nothing, and looks: it is already zero bytes. The destruction is part of `open()`, not of the first `write()`, so every line between the `open()` and the last `write()` is a window in which a crash leaves you with an empty file and no copy of the old one. `'x'` is the mode that refuses instead — *create, or fail* — and it is the right answer whenever overwriting would be a bug rather than the plan.
+
+**In append mode `tell()` answers a question you did not ask.** `seek(0)` then `write()` reports position 0 and puts the byte at the end anyway. Appending is a property of the file *descriptor* (`O_APPEND`), so the kernel moves to the end before every write regardless of where you think you are.
+
+**`tell()` in text mode is a receipt, not a position — and section 3 is the sharpest thing on this page.** For a six-byte file opened with `newline=''`, `tell()` returns `340282367000166625996085689099021713410`. That is not a corruption and not a bug: CPython packs the byte position, the decoder's internal state, how many bytes to re-feed and how many characters to skip into a single integer, because after a `\r` the decoder does not yet know whether it has seen a whole line ending or the first half of one, and a plain offset cannot hold that. That decoder is the one [the codecs registry](../the_codecs_registry/README.md) takes apart by hand: reading text mode is an incremental decode you did not ask for, its `getstate()` is the held-back bytes, and this number is that state with a file offset stapled to it. The same thing happens with a stateful codec — `iso-2022-jp` gives 27-digit cookies for an eleven-byte file — and it does *not* happen for a stateless codec with no translation to do, which is exactly why the trap is easy to miss: the numbers look like offsets right up until the day they do not.
+
+The API says so, and refuses everything that would treat the number as a position: `seek(0, 1)` and `seek(0, 2)` are allowed, `seek(1, 1)` and `seek(-2, 2)` raise `UnsupportedOperation`. The one thing it cannot refuse is a number you made up. `seek(2)` on a file whose second byte is the tail of a two-byte character starts the decoder mid-character, and the `UnicodeDecodeError` says *position 0* — because as far as the decoder is concerned it was handed a fresh file that begins with a stray byte. An error about offset 2 that reports offset 0 is a hard hour if you do not know why.
+
+**A character is not a byte, so a text file has no seekable positions of its own.** That is the whole reason for the cookie, and it is the point at which "a file is a sequence of bytes" stops being an abstraction you can lean on. If you need offsets, open in `'rb'` and do your own decoding; the offsets are then real, and so is the work.
+
+**Section 4 is a bug people ship.** The same five-line child program prints `1` to stdout, `2` to stderr, `3` to stdout. Into a terminal it comes out 1, 2, 3. Into a pipe it comes out **2, 1, 3** — because stdout to a pipe is block-buffered and holds everything until exit, while stderr is line-buffered always. The program is correct, the terminal shows it correct, and the log file from the same program under `systemd`, Docker or a CI runner says the warning happened before the thing it was warning about. The fixes, in order of bluntness: `print(..., flush=True)` for one call, `sys.stdout.reconfigure(line_buffering=True)` for the process, `python3 -u` or `PYTHONUNBUFFERED=1` from outside it.
+
+The same section pays a second dividend nobody asked for: the line that arrives from the pipe as `b'3 stdout\n'` arrives from the terminal as `b'3 stdout\r\n'`. The terminal's line discipline added the `\r`. A program that writes Unix line endings is read back with Windows ones, and Python had nothing to do with it.
+
+**`buffering` has exactly one setting that makes `write()` a system call**, and it is unavailable in text mode: `open(p, "w", buffering=0)` raises `ValueError`, because a character is not a unit the operating system can write. `buffering=1` in *binary* mode is the mirror image — accepted with a `RuntimeWarning` and then ignored.
+
+**Five ways to count the lines in one 33-byte file give 4, 4, 3, 5 and 2.** They are not competing answers to one question — they are answers to five different questions about where a line ends, and the two that agree on the number agree on nothing else, which is [what ends a line](../what_ends_a_line/README.md) in full. Universal newlines did not merely split the file, it **rewrote** it — the lone `\r` after `beta` came back as `\n`, and so did the `\r\n` after `gamma`. Nothing in the program asked for that. It is why `csv` insists on `newline=''`, and why any code that reads a file and writes it back must too. And `splitlines()` finds a boundary no file reader will, because `U+2028` ends a line in a `str` and does not in a file.
+
+**Replacing a file safely is four lines, and section 6 is why.** Truncating in place puts the file through states it was never meant to have — empty, then half-written — and any reader can see them; a crash makes one of them permanent. Writing beside it and calling `os.replace()` has no third state, because `rename(2)` swaps the directory entry in one step. Two details make the difference between the idiom and a cargo cult: `fsync()` before the rename is the durability half, since without it the rename can reach the disk before the bytes do; and the temporary file has to be in the **same directory**, because `rename(2)` cannot cross a filesystem and `os.replace()` raises `OSError` (`EXDEV`) if you try.
+
+The trap in the last block is the one nobody mentions: **the rename does not carry the old file's permissions.** `tempfile.mkstemp` is careful and creates its file `0o600`; `os.replace` then puts that mode on top of a config file that was `0o644`, and the service that reads it as another user starts failing at the next restart with a permission error nobody can trace to a successful config update. Owner, group and ACLs go the same way. `os.chmod` before the rename, or `shutil.copystat` for the rest of it.
+
+## The same file, in four languages
+
+| The idea | Python | Rust | C | ABAP |
+|---|---|---|---|---|
+| Open for reading | `open(p, encoding="utf-8")` | [`File::open` ↗](https://masiarek.github.io/rust-learning-library/04_Files/opening_a_file/index.html) — bytes only | `fopen(p, "r")` | `OPEN DATASET … FOR INPUT IN TEXT MODE ENCODING UTF-8` |
+| Open for writing, destroying what is there | `open(p, "w")` | `File::create` | `fopen(p, "w")` | `OPEN DATASET … FOR OUTPUT` |
+| Create, or fail if it exists | `open(p, "x")` | `OpenOptions::create_new` | `fopen(p, "wx")` — C11 | no direct form; test first |
+| Append | `open(p, "a")` | `OpenOptions::append` | `fopen(p, "a")` | `… FOR APPENDING` |
+| Text mode transcodes | always | **there is no text mode** | never, on Unix | `IN TEXT MODE ENCODING …` |
+| Where a position comes from | a `tell()` cookie | a byte offset, always | `ftell` — unspecified in text mode | `GET DATASET … POSITION` |
+| stdout into a pipe | block-buffered | **line-buffered anyway** | block-buffered | no equivalent |
+| Replace a file atomically | `os.replace` | `fs::rename` | `rename` — POSIX; implementation-defined in ISO C | no rename statement |
+
+```text title="stdout into a pipe, one program printing 1 (stdout) 2 (stderr) 3 (stdout) — macOS 2026-09-08, rustc 1.98.0, clang 21.0.0"
+Python 3.14.7   2 stderr / 1 stdout / 3 stdout
+C               2 stderr / 1 stdout / 3 stdout
+Rust            1 stdout / 2 stderr / 3 stdout
+```
+
+That is a dated measurement, not an example — CI here runs Python only, and a second toolchain for one page is what [CONTRIBUTING](../../CONTRIBUTING.md) forbids.
+
+## If you are coming from Rust
+
+Rust does not have a text mode at all, and that single absence removes three of this page's six sections. A `File` is bytes; there is no transcoding layer, so `Seek::seek` is always a real byte offset and no cookie exists to misread. Decoding is a separate, explicit step — `fs::read_to_string` fails with `ErrorKind::InvalidData` on invalid UTF-8 rather than guessing a codec — which is the same discipline this page asks you to adopt by hand. What *does* transfer is the truncation trap: `File::create` empties the file at the moment of opening exactly as `'w'` does, and [Opening a file ↗](https://masiarek.github.io/rust-learning-library/04_Files/opening_a_file/index.html) in the Rust library calls that the trap the page exists for. Two things Rust does differently and better: `io::stdout()` is a `LineWriter` regardless of what is on the other end, so a Rust program does not have section 4's reordering bug; and `BufWriter` makes the flush visible, which is the cost of removing the surprise — dropping one without `flush()` discards the error. Its line boundaries are one, not ten: [`BufRead::lines` ↗](https://masiarek.github.io/rust-learning-library/04_Files/reading_lines_efficiently/index.html) splits on `\n` and trims a trailing `\r`, so the file in section 5 gives Rust 3 lines where Python's reader gives 4 and `splitlines()` gives 5.
+
+## If you are coming from C
+
+Python's file API is C's with the sharp edges labelled, and the cookie rule is inherited outright. ISO C says that for a **text** stream the value from `ftell` "contains unspecified information" usable only by `fseek`, and that `fseek` on a text stream must be given either offset zero or a value that came from `ftell` — which is, word for word, the contract Python's `tell()`/`seek()` enforce with `UnsupportedOperation`. Almost no C programmer meets it, because on Unix a text stream *is* a binary stream and `ftell` hands back plain byte offsets; Python transcodes in text mode on every platform, so the rule that is theoretical in C is load-bearing in Python. `fopen(p, "w")` truncates at open, `setvbuf` with `_IOFBF` / `_IOLBF` / `_IONBF` is where Python's `buffering` argument comes from, and stdout-is-line-buffered-iff-it-is-a-terminal is C's rule that Python adopted. The one place C is *weaker* is the last section: `rename` is in ISO C but its behaviour when the destination already exists is implementation-defined, so the atomic-replace idiom is a POSIX guarantee rather than a C one — and `os.replace` exists in Python precisely because `os.rename` could not promise it on Windows.
+
+## If you are coming from ABAP
+
+`OPEN DATASET dsn FOR INPUT IN TEXT MODE ENCODING UTF-8` is the direct counterpart of `open(path, encoding="utf-8")`, and the shape of the statement makes ABAP's version of this page's argument for you: mode and encoding are two separate clauses you must both write, and `ENCODING` is not optional in text mode. Where Python defaults quietly to the process locale, ABAP's `ENCODING DEFAULT` resolves against the *system's* setting — the same bet, made once for the installation rather than per process, which is better for consistency and worse for noticing.
+
+Three differences are worth carrying across. **There is no buffering argument and no flush**: `CLOSE DATASET` is the flush, and a dataset left open at the end of a dialog step is the ABAP shape of section 4's bug. **`SET DATASET … POSITION` names a byte offset**, not a cookie — so the thing Python refuses to let you do is the only thing ABAP offers, and mixing it with `IN TEXT MODE` on a UTF-8 file is how you land mid-character with no `UnicodeDecodeError` to tell you. **And there is no rename statement at all**, which is where section 6 does not transfer: the write-beside-and-rename idiom is unavailable in pure ABAP, so a config file on the application server really is rewritten in place, and the window this page warns about is one you can only close by writing to a work file and having something outside ABAP move it. Verify the position semantics and the `ENCODING DEFAULT` resolution against your own system before relying on either; code-page behaviour is configuration. *(Not machine-checked — CI cannot run ABAP.)*
+
+## Try it
+
+1. `open("notes.txt", "w")` in an interactive session, and then — before typing anything else — look at the file in another window. Everything that was in it is gone. Now do the same with `"x"`.
+2. Write a file containing `a`, `ż`, `\n`, and read it back one character at a time printing `tell()`. Then open the same file with `newline=""` after adding a `\r\n`, and print `tell()` again. One of those two runs prints a number longer than the file.
+3. `f.seek(2)` on that file and read. Read the exception's `.start` attribute, and explain why it is 0.
+4. Take any script that prints progress lines and pipe it into `cat`. If the lines arrive all at once at the end, you have found the buffering; add `flush=True` to one of them and watch that line jump the queue.
+5. Make a file with a lone `\r` in the middle. Count its lines with `wc -l`, with `sum(1 for _ in open(p))`, and with `len(open(p).read().splitlines())`. Three tools, three numbers, no bug.
+6. Replace a file with `os.replace` and then check its permissions with `ls -l`. They are `mkstemp`'s, not the old file's.
 
 ## See also
 
-- [Encode and decode](../encode_and_decode/README.md)
-- [Locale and `LC_CTYPE` ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/locale_and_lc_ctype/index.html)
+- [What ends a line](../what_ends_a_line/README.md) — section 5 in full: the ten boundaries `splitlines()` knows, the three a file reader knows, and the one `re` knows
+- [Standard in, standard out, and pipes](../stdin_stdout_and_pipes/README.md) — the other half of section 4: not *when* your output leaves but *which bytes* it is, and what `| head` does to it
+- [What kind of file is this?](../what_kind_of_file_is_this/README.md) — the question that comes before this one, and the five APIs that answer five different versions of it
+- [`str` is not `bytes`](../str_is_not_bytes/README.md) — why `'rb'` is a different type and not just a different flag
+- [Encode and decode](../encode_and_decode/README.md) — the two doors this page's `encoding=` argument is choosing between
+- [The codecs registry](../the_codecs_registry/README.md) — the incremental decoder that text mode runs on your behalf, with its state printed rather than packed into a cookie
+- [Filenames are not text](../filenames_are_not_text/README.md) — one layer out: the *path* you handed `open()` is not text either
+- [Opening a file ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) — the encoding half of this subject, in the library that owns it
+- [Opening a file ↗](https://masiarek.github.io/rust-learning-library/04_Files/opening_a_file/index.html) — three doors, no text mode, and a `Drop` instead of a `close()`
+- [The trailing newline ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/trailing_newline/index.html) — why a two-byte file can report zero lines, from the shell's side
+- [`open()` ↗](https://docs.python.org/3/library/functions.html#open) and [`io` ↗](https://docs.python.org/3/library/io.html) — the six parameters, and the three-layer stack underneath them
+
+*This page was prompted by [perlfaq5 ↗](https://perldoc.perl.org/perlfaq5) — "How do I flush/unbuffer an output filehandle?", "How do I count the number of lines in a file?", "When I open a file read-write, why does it wipe it out?" and "How can I reliably rename a file?" are its questions. The topic is Perl's; every measurement, example and sentence here is this library's own, and no Perl is run.*

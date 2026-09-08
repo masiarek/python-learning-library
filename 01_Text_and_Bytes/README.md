@@ -13,20 +13,20 @@ This is the chapter to read first — not because text is the most important par
 | 3 | [Encode and decode](encode_and_decode/README.md) | Which direction is which, and what does `errors=` throw away? | written |
 | 4 | [Making a `bytes` object](making_a_bytes_object/README.md) | Why is `bytes(5)` five zero bytes and `bytes([5])` one? | written |
 | 5 | [`bytearray` is the mutable one](bytearray_is_mutable/README.md) | Which of the two binary types can I write into, and what does mutability cost? | written |
-| 6 | [Opening a file](opening_a_file/README.md) | What encoding does `open()` use when I don't say? | stub |
-| 7 | [Counting characters](counting_characters/README.md) | How long is this string — and which of the four answers did you want? | written |
-| 8 | [Slicing is not indexing](slicing_is_not_indexing/README.md) | Why does `s[100]` raise when `s[:100]` does not — and what does `s[::-1]` do to an accent? | written |
-| 9 | [Is it a letter?](is_it_a_letter/README.md) | What do the twelve `is*` predicates actually test? | written |
-| 10 | [Lowercasing is not folding](lowercasing_is_not_folding/README.md) | Why do `'straße'` and `'STRASSE'` still differ after `.lower()` — and what is `casefold()` for? | written |
-| 11 | [`repr` is not `str`](repr_is_not_str/README.md) | Why is a space "printable" and a tab not — and what did `str(b'x')` just do? | written |
-| 12 | [What ends a line](what_ends_a_line/README.md) | Which characters count as a line break — and why do I get three different answers? | written |
-| 13 | [`strip` is a set, not a prefix](strip_is_a_set/README.md) | Why did `lstrip('Arthur: ')` eat three more characters than I asked for? | written |
-| 14 | [Four ways to find it](finding_a_substring/README.md) | Why did a search that found nothing hand back the last character of my string? | written |
-| 15 | [`translate` is a table, keyed by ordinal](translate_is_a_table/README.md) | Why is `maketrans` a separate call, and why is `translate` one pass where three `.replace()` calls are not? | written |
-| 16 | [The format mini-language](the_format_mini_language/README.md) | Is `f'{x:>8}'` the same grammar as `'{:>8}'.format(x)` — and where does `%` fit? | written |
-| 17 | [Padding is not alignment](padding_is_not_alignment/README.md) | Why is my column still ragged after `ljust(20)` — and why did `zfill` keep the minus sign? | written |
-| 18 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
-| 19 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
+| 6 | [Counting characters](counting_characters/README.md) | How long is this string — and which of the four answers did you want? | written |
+| 7 | [Slicing is not indexing](slicing_is_not_indexing/README.md) | Why does `s[100]` raise when `s[:100]` does not — and what does `s[::-1]` do to an accent? | written |
+| 8 | [Is it a letter?](is_it_a_letter/README.md) | What do the twelve `is*` predicates actually test? | written |
+| 9 | [Lowercasing is not folding](lowercasing_is_not_folding/README.md) | Why do `'straße'` and `'STRASSE'` still differ after `.lower()` — and what is `casefold()` for? | written |
+| 10 | [`repr` is not `str`](repr_is_not_str/README.md) | Why is a space "printable" and a tab not — and what did `str(b'x')` just do? | written |
+| 11 | [What ends a line](what_ends_a_line/README.md) | Which characters count as a line break — and why do I get three different answers? | written |
+| 12 | [`strip` is a set, not a prefix](strip_is_a_set/README.md) | Why did `lstrip('Arthur: ')` eat three more characters than I asked for? | written |
+| 13 | [Four ways to find it](finding_a_substring/README.md) | Why did a search that found nothing hand back the last character of my string? | written |
+| 14 | [`translate` is a table, keyed by ordinal](translate_is_a_table/README.md) | Why is `maketrans` a separate call, and why is `translate` one pass where three `.replace()` calls are not? | written |
+| 15 | [The format mini-language](the_format_mini_language/README.md) | Is `f'{x:>8}'` the same grammar as `'{:>8}'.format(x)` — and where does `%` fit? | written |
+| 16 | [Padding is not alignment](padding_is_not_alignment/README.md) | Why is my column still ragged after `ljust(20)` — and why did `zfill` keep the minus sign? | written |
+| 17 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
+| 18 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
+| 19 | [Opening a file](opening_a_file/README.md) | What does `open()` decide for me besides the encoding? | written |
 | 20 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
 | 21 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
 | 22 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |

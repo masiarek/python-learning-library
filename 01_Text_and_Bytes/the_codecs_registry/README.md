@@ -251,6 +251,7 @@ stateful objects, the ninth handler -- is reached through the module.
 - [Encode and decode](../encode_and_decode/README.md) — the two doors themselves, and what each `errors=` policy costs
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — the type boundary the `_is_text_encoding` flag is defending
 - [Filenames are not text](../filenames_are_not_text/README.md) — `surrogateescape`, the built-in handler that is closest to what you would write yourself
+- [Opening a file](../opening_a_file/README.md) — where that held-back lead byte becomes visible without your asking: `open()` runs an incremental decoder for you, and `tell()` in text mode returns its state packed into an integer, which is why a 6-byte file can report position 340282367000166625996085689099021713410
 - [Encode, decode and errors ↗](https://masiarek.github.io/encodings-learning-library/04_Python/encode_decode_and_errors/index.html) — the eight built-in handlers as a matrix, including the two that raise `TypeError` on decode
 - [Rotation is not encryption ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/rotation_is_not_encryption/index.html) — why `rot13` being in the codec registry is the right filing and still not cryptography
 - [Byte order and the BOM ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/byte_order_and_bom/index.html) — the mark section 5 writes twice, and what reads it
