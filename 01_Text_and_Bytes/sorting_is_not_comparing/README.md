@@ -110,6 +110,7 @@ A **hand-written key** — rewriting each word as the positions of its letters i
 
 ## See also
 
+- [Comparison has a mode](../comparison_has_a_mode/README.md) — the same `locale.strxfrm`, asked for equality instead of order, and the word .NET makes you say at every call
 - [Normalization](../normalization/README.md) — why `café` and `café` can compare `False`
 - [Counting characters](../counting_characters/README.md) — the other place code points mislead
 - [The crosswalk](../../CROSSWALK.md) — how Rust and ABAP order strings

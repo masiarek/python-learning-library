@@ -14,6 +14,7 @@
 
 ## See also
 
+- [Comparison has a mode](../comparison_has_a_mode/README.md) — measures that no comparison mode repairs the four spellings and every normal form does, which is why this page exists
 - [Counting characters](../counting_characters/README.md) — where the NFC/NFD length difference first shows up
 - [Sorting is not comparing](../sorting_is_not_comparing/README.md)
 - [Lowercasing is not folding](../lowercasing_is_not_folding/README.md) — the case half, written; this page owes the interaction between folding and normalizing

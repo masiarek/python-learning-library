@@ -36,6 +36,13 @@ Subscription material, and good. Cited here as sources rather than summarized:
 Old, free, and written by people who had already met the problem. Cited as sources; nothing is run and nothing is copied.
 
 - [perlfaq5 — Files and Formats ↗](https://perldoc.perl.org/perlfaq5) — forty-two questions about file I/O, and the source of four of the six sections in [Opening a file](01_Text_and_Bytes/opening_a_file/README.md): flushing an output handle, counting the lines in a file, why opening read-write wipes it out, and renaming a file reliably. The topics transfer; the Perl does not, and none of it is reproduced here. Its companion [perlpacktut ↗](https://perldoc.perl.org/perlpacktut) is still on [the backlog](TODO.md) as the `struct` / `to_be_bytes` / fixed-width-field page.
+## Microsoft's .NET documentation
+
+Free, and worth reading even if you never write C#, because .NET names distinctions Python leaves implicit. Cited as sources; nothing here is reproduced.
+
+- [Best practices for using strings in .NET ↗](https://learn.microsoft.com/en-us/dotnet/standard/base-types/best-practices-strings) — the article that prompted [Comparison has a mode](01_Text_and_Bytes/comparison_has_a_mode/README.md). Its structural idea is that every string API should take an explicit `StringComparison`; its sharpest detail is that culture-sensitive comparison ignores embedded NUL characters. **Neither is machine-checked here** — CI runs no .NET — and the Python behaviour on the same pair was measured on that page rather than assumed.
+- [Character encoding in .NET ↗](https://learn.microsoft.com/en-us/dotnet/standard/base-types/character-encoding-introduction) — read alongside it. `System.String` is UTF-16, so .NET's "character" is a code *unit* and its surrogate handling is visible in a way Python's is not.
+- [Encoding overview ↗](https://learn.microsoft.com/en-us/globalization/encoding/encoding-overview) and [best practices for displaying data ↗](https://learn.microsoft.com/en-us/dotnet/standard/base-types/best-practices-display-data) — the wider pair, filed in [TODO.md](TODO.md) as reference rather than as pages.
 
 ## macOS specifics
 

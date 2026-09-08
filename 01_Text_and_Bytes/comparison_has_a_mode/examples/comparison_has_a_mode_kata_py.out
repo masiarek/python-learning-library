@@ -1,0 +1,30 @@
+PREDICTIONS
+     #  expression                                    answer   why
+     ------------------------------------------------------------------------------------------------
+     1  'straße'.lower() == 'STRASSE'.lower()          False   lower() has no 1-to-2 mapping: 'ß' stays 'ß'
+     2  'straße'.casefold() == 'STRASSE'.casefold()     True   casefold() folds 'ß' to 'ss', so both sides become 'strasse'
+     3  re.fullmatch('straße', 'STRASSE', re.I)        False   re.IGNORECASE has no 1-to-2 mapping either -- it agrees with lower()
+     4  'ı'.casefold() == 'I'.casefold()               False   dotless i is a different letter; folding keeps them apart
+     5  re.fullmatch('ı', 'I', re.I)                    True   ...and here re.IGNORECASE disagrees with casefold() instead
+     6  'ꭰ'.casefold().isupper()                        True   Cherokee folds UPWARD -- the fold of a small letter is a capital
+     7  'admin' == 'admin' + chr(0)                    False   ordinal: a NUL is a character, so the strings differ
+
+8    locale.strxfrm('admin' + chr(0))
+     -> ValueError
+     Not equal, and not unequal either. The linguistic API refuses a
+     string it cannot represent rather than quietly dropping the NUL.
+
+THE FOLLOW-UP: WHY 3 AND 5 GO OPPOSITE WAYS
+   Three case-insensitive answers, and no two of them agree on both pairs:
+
+     pair                     lower  casefold   re.I
+     straße / STRASSE         False      True  False
+     ı / I                    False     False   True
+
+     casefold() implements Unicode case folding, which is defined for
+     caseless MATCHING: it expands 'ß' and it deliberately leaves the
+     Turkish letters apart. re.IGNORECASE is built from a table of
+     single-character equivalences, so it can pair 'ı' with 'I' -- one
+     code point for one -- and cannot pair 'ß' with 'ss' at all.
+     Neither is a bug. They answer different questions, and the only
+     mistake available is not knowing which one you called.

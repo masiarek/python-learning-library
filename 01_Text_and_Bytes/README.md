@@ -24,14 +24,15 @@ This is the chapter to read first — not because text is the most important par
 | 14 | [`translate` is a table, keyed by ordinal](translate_is_a_table/README.md) | Why is `maketrans` a separate call, and why is `translate` one pass where three `.replace()` calls are not? | written |
 | 15 | [The format mini-language](the_format_mini_language/README.md) | Is `f'{x:>8}'` the same grammar as `'{:>8}'.format(x)` — and where does `%` fit? | written |
 | 16 | [Padding is not alignment](padding_is_not_alignment/README.md) | Why is my column still ragged after `ljust(20)` — and why did `zfill` keep the minus sign? | written |
-| 17 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
-| 18 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
-| 19 | [Opening a file](opening_a_file/README.md) | What does `open()` decide for me besides the encoding? | written |
-| 20 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
-| 21 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
-| 22 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
-| 23 | [The `string` module](the_string_module/README.md) | What is left in a module named `string`, and why is `capwords` not `title`? | written |
-| 24 | [The codecs registry](the_codecs_registry/README.md) | What is in the registry that `.encode()` and `.decode()` cannot reach — and why does decoding a stream in chunks differ? | written |
+| 17 | [Comparison has a mode](comparison_has_a_mode/README.md) | Which of the four ways to compare two strings did I just use? | written |
+| 18 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
+| 19 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
+| 20 | [Opening a file](opening_a_file/README.md) | What does `open()` decide for me besides the encoding? | written |
+| 21 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
+| 22 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
+| 23 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
+| 24 | [The `string` module](the_string_module/README.md) | What is left in a module named `string`, and why is `capwords` not `title`? | written |
+| 25 | [The codecs registry](the_codecs_registry/README.md) | What is in the registry that `.encode()` and `.decode()` cannot reach — and why does decoding a stream in chunks differ? | written |
 
 Ten of these pages end with a `## Practice` section — a kata: predict the answer, then run it, then check. They are indexed in [KATAS.md](../KATAS.md), which is also the only place they are put in an order, and that order is not this one: it puts the four `bytes` katas first, because that is the thing this chapter's readers report bouncing off.
 

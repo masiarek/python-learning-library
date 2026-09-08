@@ -60,6 +60,8 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **normalization** — rewriting text into a canonical form (NFC, NFD, NFKC, NFKD) so that strings which render identically also compare equal. See [Normalization](01_Text_and_Bytes/normalization/README.md).
 
+**ordinal comparison** — comparing two strings by their code points, left to right, first difference wins: no alphabet, no locale, no case table, no normalization. What Python's `==`, `<`, `in`, `find`, `startswith`, `hash` and `sorted` all do, and the only mode Python has. The name is .NET's, which makes every string API take a `StringComparison`; Python's is invisible because there is nothing to choose. See [Comparison has a mode](01_Text_and_Bytes/comparison_has_a_mode/README.md).
+
 **printable** — in Python, *not* about ink: `str.isprintable()` is true when `repr()` would not escape the character, which is General_Category `L`, `M`, `N`, `P` or `S` plus the ASCII space. So a space is printable and a tab is not, and `string.printable` — the older, POSIX sense — is not printable. See [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md).
 
 **pyproject.toml** — the one declarative file describing a Python project: standardised tables (`[project]`, `[build-system]`, `[dependency-groups]`) plus a `[tool.<name>]` room per tool. Replaced the executable `setup.py`. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).

@@ -374,6 +374,7 @@ Then: **two of the eight raise, and they raise different exception types.** Say 
 
 ## See also
 
+- [Comparison has a mode](../comparison_has_a_mode/README.md) — a slice at an index `find` returned, landing between a letter and its combining accent
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — why indexing a `bytes` gives an `int` while slicing one gives `bytes`
 - [Counting characters](../counting_characters/README.md) — the four answers to "how long", and why `s[:n]` picks one of them
 - [Normalization](../normalization/README.md) — the choice that decides whether `s[::-1]` is lossless

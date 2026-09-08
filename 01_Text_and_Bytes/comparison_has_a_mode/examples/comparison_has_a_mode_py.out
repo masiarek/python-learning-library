@@ -1,0 +1,160 @@
+1. == IS ORDINAL -- PYTHON JUST NEVER SAYS THE WORD
+   Ordinal means: compare code points, left to right, first difference
+   wins. No alphabet, no locale, no case table, no normalization.
+
+     the two strings print as        résumé and résumé
+     left == right                   False
+     len(left), len(right)           6, 8
+     first differing position        1
+     the two code points there       U+00E9 and U+0065
+
+     That is the whole rule. Every str comparison in Python obeys it,
+     and none of them takes an argument that could change it.
+
+2. FOUR SPELLINGS OF ONE WORD
+   To a reader these are the same word, four times:
+
+     A   résumé
+     B   résumé
+     C   résumé
+     D   résumé
+
+   To Python they are four different values:
+
+     A   len 6    8 bytes   0072 00E9 0073 0075 006D 00E9
+     B   len 7    9 bytes   0072 00E9 0073 0075 006D 0065 0301
+     C   len 7    9 bytes   0072 0065 0301 0073 0075 006D 00E9
+     D   len 8   10 bytes   0072 0065 0301 0073 0075 006D 0065 0301
+
+   Every pair, under ==:
+
+              A      B      C      D
+     A     True  False  False  False
+     B    False   True  False  False
+     C    False  False   True  False
+     D    False  False  False   True
+
+     4 distinct values, so all 6 pairs are False. One word, four keys:
+     len(set(...)) is 4, and a dict built from them has 4 entries.
+
+3. WHERE find() PUTS YOU
+   find() is ordinal too, so a needle matches one spelling and not the
+   other -- and the offset it returns moves with a letter you did not
+   search for.
+
+     needle                           A    B    C    D
+     'e'                             -1    5    1    1
+     'e' with acute, precomposed      1    1    6   -1
+     'e' then U+0301                 -1    5    1    1
+     'sum'                            2    2    3    3
+
+     Read the last row first: 'sum' is pure ASCII and appears in all
+     four, at index 2 in two of them and index 3 in the other two. The
+     accent is nowhere near the needle and it still moved the answer,
+     because a code point earlier in the string was written as two.
+
+     Rows one and three are the same four numbers, which is the
+     other half of it: in B, C and D the 'e' you find by searching for
+     a bare 'e' IS the front of the accented letter. 'e' is not in A at
+     all, and in D it is found at an index inside a letter:
+
+     D.find('e')          1
+     D[:2] and D[2:]      're' and '\u0301sume\u0301'
+     D.replace('e', 'a')  'rásumá'   = 'ra\u0301suma\u0301'
+     A.replace('e', 'a')  'résumé'   = 'r\xe9sum\xe9'
+
+     Slicing there leaves a combining accent stranded at the head of
+     the tail, and replacing 'e' with 'a' carries both accents onto the
+     'a'. In A the same call changes nothing: there is no 'e' in A.
+
+4. THREE CASE-INSENSITIVE ANSWERS, AND NO TWO OF THEM AGREE
+   .NET spells this OrdinalIgnoreCase and gives you exactly one.
+   Python has three, spelled as unrelated APIs, and picking one is
+   picking a mode. WHY lower() and casefold() differ is its own page;
+   this table is only about how far apart the three answers land.
+
+     left       right          ==   lower  casefold   re.I   what it is
+     'STRASSE'  'straße'    False   False      True  False   German sharp s
+     'Σ'        'ς'         False   False      True   True   Greek final sigma
+     'K'        'k'         False    True      True   True   KELVIN SIGN U+212A
+     'I'        'ı'         False   False     False   True   Turkish dotless i
+     'ꭰ'        'Ꭰ'         False    True      True   True   Cherokee A, both cases
+
+     Two rows carry the lesson. re.IGNORECASE will not match STRASSE
+     against straße, which casefold() does -- it has no one-to-two
+     mappings, so on that row it sides with lower(). And it WILL match
+     'I' against Turkish dotless 'ı', which casefold() refuses,
+     because those are two different letters -- so on that row it sides
+     with neither. Three APIs, three questions, and nothing at the call
+     site says which one you asked.
+
+     One more pair, because it shows casefold() is a mapping in its
+     own right rather than a thorough lower():
+
+       'ꭰ'.lower()     'ꭰ'   (already lowercase, so nothing to do)
+       'ꭰ'.casefold()  'Ꭰ'   (CHEROKEE LETTER A)
+
+     The fold of a Cherokee small letter is a CAPITAL. Whatever
+     casefold() is, it is not lower() with more entries.
+
+5. THE LINGUISTIC MODE, AND HOW LITTLE OF IT PYTHON HAS
+   .NET's default is culture-sensitive. Python's only stdlib door to
+   that is locale.strxfrm, which asks the C library for a sort key.
+
+     locale.strxfrm('résumé')
+       -> 'résumé'
+       identical to the input?  True
+
+     Under the C locale there are no rules to apply, so the linguistic
+     API hands back the ordinal answer -- silently, with no error and no
+     flag. That is the state a container, a cron job and a CI runner all
+     start in. It is also process-global state, and not thread-safe.
+
+6. THE NUL CHARACTER, WHERE THE MODES DISAGREE MOST
+   A NUL inside a string is the case that separates the three modes
+   furthest, because a comparison that ignores it will call two
+   different strings equal. Here is what Python does with three
+   strings that differ by nothing else.
+
+     'admin'       len 5   utf-8 b'admin'       decodes back unchanged: True
+     'admin\x00'   len 6   utf-8 b'admin\x00'   decodes back unchanged: True
+     'ad\x00min'   len 6   utf-8 b'ad\x00min'   decodes back unchanged: True
+
+     TRIO[0] == TRIO[1]     False
+     TRIO[0] == TRIO[2]     False
+     len(set(TRIO))         3
+     distinct hashes        3
+     'admin' in TRIO[2]     False
+
+     Ordinal says three different strings, and that is the right
+     answer: NUL is a character like any other, it encodes to one
+     ordinary byte, and UTF-8 round-trips it without complaint.
+
+     Now hand the same three to the linguistic API:
+
+     locale.strxfrm on 'admin'       -> 'admin'
+     locale.strxfrm on 'admin\x00'   -> ValueError: embedded null character
+     locale.strxfrm on 'ad\x00min'   -> ValueError: embedded null character
+
+     Python does not ignore the NUL, and it does not compare it
+     either. It refuses the string. That is a third possible behaviour,
+     and it is the one worth having: the two strings are not equal, and
+     the call that cannot say so fails instead of guessing.
+
+7. SO WHICH MODE FIXES THE FOUR SPELLINGS? NONE OF THEM.
+   Count the distinct values the four collapse to under each mode.
+   1 would mean all four finally agree.
+
+     == (ordinal)               4
+     lower()                    4
+     casefold()                 4
+     locale.strxfrm, C locale   4
+     NFC                        1
+     NFD                        1
+     NFC then casefold()        1
+
+     Every comparison mode says four. Every normal form says one.
+     Comparison mode was never the question here: the four spellings
+     are four different strings, and no way of comparing four different
+     strings makes them one. Normalization is the fix, and it belongs
+     on the way in, once, at the boundary -- not in the comparison.

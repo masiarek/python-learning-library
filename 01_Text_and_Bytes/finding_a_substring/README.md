@@ -275,6 +275,7 @@ One unit note worth carrying between all three languages on this page: ABAP's ma
 
 - [`strip` is a set, not a prefix](../strip_is_a_set/README.md) — the other method whose failure mode is "returns the string unchanged and says nothing"
 - [What ends a line](../what_ends_a_line/README.md) — the split family, and the ten boundaries it splits on
+- [Comparison has a mode](../comparison_has_a_mode/README.md) — why the offset moves when an accent elsewhere is spelled differently, and why a needle that is not found may still be *there*
 - [Counting characters](../counting_characters/README.md) — why the offset is in code points, and what else that number is not
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — why `115 in b'spam'` is `True` and `115 in 'spam'` is a `TypeError`
 - [What to write next](../../TODO.md) — this page closes three questions; slicing and the rest of the method tour are still open

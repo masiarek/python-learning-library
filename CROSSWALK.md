@@ -107,13 +107,18 @@ The three sub-range rows are the sharpest disagreement in the table, because all
 
 | The idea | Python | Rust | ABAP |
 |---|---|---|---|
+| What `==` actually compares | [code points, and only those — *ordinal*](01_Text_and_Bytes/comparison_has_a_mode/README.md) | [UTF-8 bytes ↗](https://masiarek.github.io/rust-learning-library/14_Strings/comparing_strings/index.html) — same order, other end | the internal representation; a `c` field's trailing blanks fall out |
+| Choosing a comparison mode | there is nothing to choose — one mode, no parameter | same, plus `eq_ignore_ascii_case` for the ASCII case | the **operator** decides: `CS`/`CP` ignore case, `CO`/`CA` do not |
 | Default sort order | [code point](01_Text_and_Bytes/sorting_is_not_comparing/README.md) | [code point (`Ord` on `str`) ↗](https://masiarek.github.io/rust-learning-library/14_Strings/comparing_strings/index.html) | UTF-16 code unit |
 | Alphabetical for a real language | `locale.strxfrm`, or ICU | needs a crate | collation-aware compare, or a sort key column |
 | Same-looking strings comparing unequal | [normalization](01_Text_and_Bytes/normalization/README.md) | same problem, same fix | same problem |
 | Case-insensitive comparison | [`str.casefold()`](01_Text_and_Bytes/lowercasing_is_not_folding/README.md) — and **not** `str.lower()` | [`str::to_lowercase` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_to_lowercase/index.html) — no folding in std at all | `TRANSLATE ... TO UPPER CASE` on both sides |
+| A NUL inside the string | [three distinct strings; `locale.strxfrm` raises](01_Text_and_Bytes/comparison_has_a_mode/README.md) | distinct — `\0` is an ordinary `char` | — |
 | ASCII-only shortcut | `s.lower()` has none — it is always Unicode | [`eq_ignore_ascii_case` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/str_methods/str_eq_ignore_ascii_case/index.html) — cheap, and silently skips `Ł` | — |
 
-All three languages get this equally wrong by default, and for the same reason: code-point order is the only ordering available without a locale database. This is the one row where "Python's answer" is not really Python's — it is everyone's.
+All three languages get the *ordering* rows equally wrong by default, and for the same reason: code-point order is the only ordering available without a locale database. Those are the rows where "Python's answer" is not really Python's — it is everyone's.
+
+The second row is where they genuinely differ, and it is a three-way split rather than a spectrum. .NET makes the mode a **parameter** on every string API, so the choice is visible at each call site and unavoidable even when you have no opinion. ABAP makes it the **operator**, so two comparisons one letter apart in the source are two different modes. Python makes it **nothing at all** — there is one comparison, it is ordinal, and the cost is that a programmer can use it for years without learning there was a question. [Comparison has a mode](01_Text_and_Bytes/comparison_has_a_mode/README.md) measures what each of Python's near-substitutes actually does.
 
 ## Classifying a character
 
