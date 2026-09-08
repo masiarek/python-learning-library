@@ -58,6 +58,12 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **raw string** — a literal with the `r` prefix, in which backslash sequences are not interpreted. The backslash still ends the literal, so a raw string cannot end in an odd number of them. See [String literals](01_Text_and_Bytes/string_literals/README.md).
 
+**sentinel** — a value inside a function's ordinary return type that stands for *no answer*: `str.find` returns `-1`. It is not an error and does not interrupt anything, so it reaches the next line like any other value — and `-1` in particular is a **valid index**, which is why an unchecked `find` result slices out the last character rather than failing. The alternatives are raising (`str.index`) and a type that cannot be used unwrapped (Rust's `Option`). See [Four ways to find it](01_Text_and_Bytes/finding_a_substring/README.md).
+
+**separator field** — the middle element of the three-tuple from `str.partition` / `str.rpartition`. Empty exactly when the separator was not found, which is the only signal of a miss those two methods give — the tuple is always three long, so the unpack never raises. The other two fields cannot answer the question: on a miss the whole string lands in the first field for `partition` and the third for `rpartition`. See [Four ways to find it](01_Text_and_Bytes/finding_a_substring/README.md).
+
+**sequence protocol** — the operations every Python sequence shares, `index` among them: `list`, `tuple`, `range`, `str` and `bytes` all have `.index()` and all raise `ValueError` on a miss. `find` is not part of it — it exists only on `str`, `bytes` and `bytearray`, which is why there is no `list.find` and why the `-1` mistake has nowhere else in the language to be written. See [Four ways to find it](01_Text_and_Bytes/finding_a_substring/README.md).
+
 **str** — Python's text type, a sequence of code points. Has `.encode()` and no `.decode()`. See [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md).
 
 **`chars` argument** — the operand of `strip` / `lstrip` / `rstrip`: a **set** of characters to remove, not a prefix, and it repeats. `'Arthur: three!'.lstrip('Arthur: ')` is `'ee!'`. `removeprefix` is the one that takes a prefix. See [`strip` is a set, not a prefix](01_Text_and_Bytes/strip_is_a_set/README.md).

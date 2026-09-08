@@ -1,0 +1,192 @@
+1. FOUR WAYS TO ASK, ONE ANSWER
+     line                     'spam, spam, eggs and spam'
+     'eggs' in line           True
+     line.find('eggs')        12
+     line.index('eggs')       12
+     line.partition('eggs')   ('spam, spam, ', 'eggs', ' and spam')
+
+     All four found the same thing in the same place. Nothing on
+     this page is about the hit.
+
+2. THE SAME FOUR ON A MISS -- THIS IS THE WHOLE LESSON
+     the needle is 'Lancelot', which is not in the line
+
+     'Lancelot' in line          False    a bool, and you have to test it
+     line.find('Lancelot')       -1       an int -- and a valid index
+     line.index('Lancelot')      ValueError: substring not found
+     line.partition('Lancelot')  ('spam, spam, eggs and spam', '', '')
+
+     One of the four says so out loud. Two hand back a value that
+     the next line of code will happily use. And 'in' cannot be
+     misread, because False is the only thing it knows how to say.
+
+3. THE TRUTH VALUE OF find() IS EXACTLY BACKWARDS
+     0 means 'found, at the very start' and is falsy.
+     -1 means 'not there at all' and is truthy.
+
+     needle        find  bool(r)   r > 0  r > -1  r >= 0
+     --------------------------------------------------
+     'spam'           0    False   False    True    True
+     'eggs'          12     True    True    True    True
+     'Lancelot'      -1     True   False   False   False
+
+     Read bool(r) against the last two columns. Only a comparison
+     with a number agrees with 'in' on all three rows:
+
+       if line.find(needle):          WRONG -- False at position 0,
+                                      and True on a miss. Both ways.
+       if line.find(needle) > 0:      WRONG -- False at position 0.
+       if line.find(needle) > -1:     right
+       if line.find(needle) >= 0:     right
+       if needle in line:             right, and it says what it means
+
+     The first one is not one bug, it is two: it misses a match at
+     the start and it accepts a miss anywhere.
+
+4. -1 IS A VALID INDEX, WHICH IS WHY THE MISS STAYS QUIET
+     at = line.find('Lancelot')   ->  -1
+     line[at:]   'm'
+                 -- the last character, not ''
+     line[:at]   'spam, spam, eggs and spa'
+                 -- everything except the last character
+     line[at]    'm'
+                 -- no IndexError either: -1 counts from the end
+
+     On a hit (at = 12) the same line is what you meant:
+     line[at:]   'eggs and spam'
+
+     Nothing raised. Nothing logged. A search that found nothing
+     returned the last character of the string. That is the bug
+     the docs are steering you away from when they say to use
+     find only if you need the position.
+     line.index('Lancelot') would have stopped here instead:
+       ValueError: substring not found
+
+5. partition AND rpartition FAIL IN MIRROR IMAGE
+     'Monty Python'.partition('-')    ('Monty Python', '', '')
+     'Monty Python'.rpartition('-')   ('', '', 'Monty Python')
+
+     Neither raised. The separator field is empty in both, and
+     that is the only field that tells you anything went wrong.
+     The string itself moved from the FIRST slot to the THIRD.
+
+     head, sep, tail = title.partition('-')    head 'Monty Python'   tail ''
+     head, sep, tail = title.rpartition('-')   head ''               tail 'Monty Python'
+     Two lines that differ by one letter put your data in
+     different variables, and neither one complains.
+
+     They differ on a hit too -- first separator against last:
+       'a-b-c'.partition('-')    ('a', '-', 'b-c')
+       'a-b-c'.rpartition('-')   ('a-b', '-', 'c')
+
+6. THE MIRROR IS DELIBERATE: EACH ONE IS RIGHT FOR ITS OWN JOB
+     partition splits off the FIRST field and keeps the rest:
+       'timeout=30'   key 'timeout'    value '30'
+       'DEBUG'        key 'DEBUG'      value ''
+       A flag with no '=' is a key with no value. Right answer.
+
+     rpartition splits off the LAST field and keeps the rest:
+       'usr/share/doc/spam.txt'   dir 'usr/share/doc'      name 'spam.txt'
+       'spam.txt'                 dir ''                   name 'spam.txt'
+       A bare filename is a name with no directory. Right answer.
+
+     In both cases the whole string lands in the field that wanted
+     it. Pick by which end you are scanning from -- and then read
+     the separator field, because it is the one that knows.
+
+7. THE UNPACK THAT RAISES, AND THE ONE THAT NEVER DOES
+     key, value      = 'DEBUG'.split('=', 1)
+       ValueError: not enough values to unpack (expected 2, got 1)
+     key, sep, value = 'DEBUG'.partition('=')
+       ('DEBUG', '', '')
+
+     Same job, two failure styles. partition's tuple is three
+     long whatever happens, so the unpack is total and the
+     traceback never arrives. The separator field is falsy on a
+     miss and truthy on a hit -- 'if not sep' is the test, and
+     no other field in the tuple can answer the question.
+
+8. start AND end ARE SLICE NOTATION -- THE RESULT IS NOT
+     s = 'spam, spam'
+     s.find('sp', 5)       6   an offset into s
+     s[5:].find('sp')      1   an offset into the slice
+     s[5:] is ' spam'
+
+     The window is s[start:end]; the number handed back is an
+     index into s. That is the useful half -- you can slice with it.
+
+     Out-of-range and negative behave like slicing, not like errors:
+       s.find('sp', -4)      6
+       s.find('sp', 99)     -1
+       s.find('a', -100)     2
+
+     And 'end' can cut a match in half:
+       s.find('am', 0, 3)   -1   s[0:3] is 'spa'
+       s.find('am', 0, 4)    2   s[0:4] is 'spam'
+     'am' sits at index 2 in both. It is the window that moved.
+
+9. THE EMPTY NEEDLE IS EVERYWHERE -- EXCEPT PAST THE END
+     '' in 'spam'          True
+     'spam'.find('')          0
+     'spam'.rfind('')         4   len(s): a slice bound, not an index
+     'spam'.count('')         5   n + 1 gaps between n characters
+     'spam'.find('', 2)       2
+     'spam'.find('', 99)     -1   even '' can be reported missing
+
+     The separator families refuse it outright:
+       'spam'.partition('')   ValueError: empty separator
+       'spam'.rpartition('')  ValueError: empty separator
+       'spam'.split('')       ValueError: empty separator
+
+     So partition is not 'the one that never raises'. It never
+     raises about the DATA. It still raises about the SEPARATOR.
+
+10. ON bytes, AN INT IS A NEEDLE
+     b'sp' in b'spam'     True
+     115 in b'spam'       True   115 is ord('s')
+     b'spam'.find(115)    0
+     115 in 'spam'        TypeError: 'in <string>' requires string as left operand, not int
+     'spam'.find(115)     TypeError   (message reworded in 3.13)
+
+     The same expression means different things on the two types.
+     On bytes an int asks about one byte VALUE; on str it is
+     refused, because a str has no members that are not strings.
+
+11. THE OFFSET COUNTS CODE POINTS, NOT BYTES
+     s = 'żółw'   4 characters, 7 bytes in UTF-8
+     s.find('w')              3   code points
+     s.encode().find(b'w')    6   bytes
+     s[3:] is 'w'
+
+     Both numbers are right; they answer different questions.
+     Python's str search counts characters, which is the number a
+     person means -- and is not the number a byte buffer wants.
+
+12. WHY THERE ARE TWO NAMES FOR ONE SEARCH
+     type           .find  .index
+     ----------------------------
+     list           False    True
+     tuple          False    True
+     range          False    True
+     str             True    True
+     bytes           True    True
+     bytearray       True    True
+
+     index belongs to the sequence protocol, and every sequence
+     that has it answers a miss the same way:
+       [1, 2].index(9)     ValueError
+       (1, 2).index(9)     ValueError
+       range(2).index(9)   ValueError
+       'spam'.index('9')   ValueError
+     (the type only: CPython reworded two of those four in 3.14,
+      which is why an answer key prints the type and not the text)
+
+     find is text-only: it is the convenience that trades the
+     exception for a sentinel. There is no list.find, so there
+     is nowhere else in the language to write the -1 bug.
+
+     One more asymmetry in the same direction:
+       'spam'.startswith(('sp', 'eg'))   True   a tuple of alternatives
+       'spam'.find(('sp', 'eg'))         TypeError   (message reworded in 3.13)
+     startswith and endswith take a tuple. find, index, count,
+     partition and 'in' all take exactly one needle.
