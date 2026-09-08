@@ -73,6 +73,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "repr_is_not_str",
         "what_ends_a_line",
         "strip_is_a_set",
+        "translate_is_a_table",
         "the_format_mini_language",
         "normalization",
         "sorting_is_not_comparing",

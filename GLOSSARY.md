@@ -68,6 +68,8 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **tomllib** — the standard-library TOML *reader*, since Python 3.11. `load()` takes a file opened `"rb"`, `loads()` takes a `str`, and there is no writer. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
 
+**translation table** — the argument to `str.translate()`: a mapping from a **code point number** to an `int`, a `str` of any length, or `None` to delete. `str.maketrans` builds one, and any object whose `__getitem__` accepts an `int` will do — a `dict` subclass with `__missing__` maps everything you did not list. A `LookupError` from it means *leave this character alone*, which is why passing a `str` by mistake is a silent no-op. `bytes.translate` takes a different thing entirely: a 256-byte sequence, plus a separate `delete` argument. See [`translate` is a table, keyed by ordinal](01_Text_and_Bytes/translate_is_a_table/README.md).
+
 **universal newlines** — the translation Python's text mode applies on the way in: `\r\n` and `\r` both arrive as `\n`. It is why iterating a file gives three line boundaries where `splitlines()` gives ten, and why `newline=""` exists for the `csv` module. See [What ends a line](01_Text_and_Bytes/what_ends_a_line/README.md).
 
 **workspace** — one repository holding several packages that share a single resolved environment, declared by a tool rather than by any PEP (`[tool.uv.workspace]`). Borrowed from Cargo. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
