@@ -99,3 +99,24 @@
      That is why wrapping a value in a list is the cheapest debugging
      trick in Python, and why 'printable' had to be defined in terms
      of repr() rather than in terms of ink.
+
+8. THE PROMPT CALLS repr() FOR YOU
+     At >>> the interpreter passes each result to sys.displayhook,
+     which prints repr() of it. So a function that RETURNS a repr
+     arrives quoted twice. This section calls the real hook.
+
+     you type             the prompt shows   print(it) shows
+     --------------------------------------------------------
+     'café'               'café'             café
+     repr('café')         "'café'"           'café'
+     ascii('café')        "'caf\\xe9'"       'caf\xe9'
+     ascii('abcd')        "'abcd'"           'abcd'
+     len(ascii('café'))   9                  9
+     None                 (nothing)          None
+
+     every row is exactly repr(value), and None prints nothing:  True
+
+     The doubled backslash is the prompt's, not ascii()'s. The string
+     ascii('café') returns is 9 characters -- two quotes, c, a, f, ONE
+     backslash, then x, e, 9 -- and the quotes are inside it, which is
+     why len(ascii('abcd')) is 6 and not 4.

@@ -85,6 +85,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "translate_is_a_table",
         "the_format_mini_language",
         "padding_is_not_alignment",
+        "bin_is_not_the_bits",
         "comparison_has_a_mode",
         "normalization",
         "sorting_is_not_comparing",

@@ -46,6 +46,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md) | What is actually allowed in a filename, and why can't I print one? |
 | [What kind of file is this?](01_Text_and_Bytes/what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked — and why did the stdlib stop answering one of them? |
 | [The codecs registry](01_Text_and_Bytes/the_codecs_registry/README.md) | What is in the registry that `.encode()` cannot reach — and why does decoding a stream in chunks break? |
+| [`bin()` is not the bits](01_Text_and_Bytes/bin_is_not_the_bits/README.md) | Why is `bin(-9)` `'-0b1001'` and not eight bits — and how do I get the bits? |
 | [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) | What is this file, who reads which part, and how do I read it myself? |
 
 ## Run it

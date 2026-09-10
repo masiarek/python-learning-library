@@ -225,3 +225,4 @@ Then: **exactly two of the eight are equal to each other. Which two?** And the f
 - [The crosswalk](../../CROSSWALK.md) — the same idea in Rust, C and ABAP
 - [A byte is eight bits ↗](https://masiarek.github.io/encodings-learning-library/01_Bits_and_Bytes/a_byte_is_eight_bits/index.html) — what the numbers 0–255 are, before any language names them
 - [Meet the byte ↗](https://masiarek.github.io/rust-learning-library/19_Numbers/meet_the_byte/index.html) — `u8` in Rust, where the range check is the type
+- [Printing bytes ↗](https://masiarek.github.io/rust-learning-library/19_Numbers/printing_bytes/index.html) — how Rust shows the value once it is built: `{:?}` gives the numbers, `escape_ascii()` gives what `b'…'` gives here

@@ -33,8 +33,9 @@ This is the chapter to read first — not because text is the most important par
 | 23 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
 | 24 | [The `string` module](the_string_module/README.md) | What is left in a module named `string`, and why is `capwords` not `title`? | written |
 | 25 | [The codecs registry](the_codecs_registry/README.md) | What is in the registry that `.encode()` and `.decode()` cannot reach — and why does decoding a stream in chunks differ? | written |
+| 26 | [`bin()` is not the bits](bin_is_not_the_bits/README.md) | Why is `bin(-9)` `'-0b1001'` — and where did the bits go? | written |
 
-Ten of these pages end with a `## Practice` section — a kata: predict the answer, then run it, then check. They are indexed in [KATAS.md](../KATAS.md), which is also the only place they are put in an order, and that order is not this one: it puts the four `bytes` katas first, because that is the thing this chapter's readers report bouncing off.
+Several of these pages end with a `## Practice` section — a kata: predict the answer, then run it, then check. They are indexed in [KATAS.md](../KATAS.md), which is also the only place they are put in an order, and that order is not this one: it puts the four `bytes` katas first, because that is the thing this chapter's readers report bouncing off.
 
 ## Where this sits relative to the other libraries
 

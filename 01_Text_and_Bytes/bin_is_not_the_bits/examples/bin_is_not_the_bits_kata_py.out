@@ -1,0 +1,23 @@
+     expression                               result         note
+     --------------------------------------------------------------------------------------
+     bin(-1)                                  '-0b1'         a sign, and a magnitude of one
+     bin(-1 & 0xFF)                           '0b11111111'   masked to eight bits: now it is the bits
+     bin(True)                                '0b1'          a bool is an int, so it has __index__
+     format(-5, '08b')                        '-0000101'     the zeros go AFTER the sign
+     int('-0b101', 0)                         -5             base 0 reads the sign and the prefix
+     int('0b101', 10)                         ValueError     base 10 has no prefix to read
+     (128).to_bytes(1, 'big', signed=True)    OverflowError  a signed byte stops at 127
+     (-5).bit_count()                         2              the ones of |n|, and 5 is 101
+
+     THE RULE
+     Lines 2 and 7 are the only two that were given a width -- a mask
+     and a byte count. One prints eight bits; the other refuses 128,
+     because a signed byte stops at 127. Every other line writes or
+     reads a minus sign and the digits of |n|, which is all an int
+     without a width has to offer.
+
+     THE ONE THAT LOOKS RIGHT
+     format(-5, '08b') is eight characters wide, which is the shape of
+     a byte, and it is not one: it is a minus sign and seven digits of
+     5. A width in a format spec pads the TEXT; only a mask or
+     to_bytes() chooses a width for the NUMBER.

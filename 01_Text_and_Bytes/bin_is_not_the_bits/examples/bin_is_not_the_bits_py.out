@@ -1,0 +1,65 @@
+1. THREE FUNCTIONS, ONE FORMAT SPEC
+     bin(n) is format(n, '#b'); oct(n) is '#o'; hex(n) is '#x'.
+
+         n   bin(n)         oct(n)    hex(n)
+     ----------------------------------------
+         0   '0b0'          '0o0'     '0x0'
+         9   '0b1001'       '0o11'    '0x9'
+       230   '0b11100110'   '0o346'   '0xe6'
+        -9   '-0b1001'      '-0o11'   '-0x9'
+
+     equal to format(n, '#b' / '#o' / '#x') for every n in -1000..1000:  True
+     bin(True)   '0b1'   a bool is an int, so it has __index__
+     bin(1.0)    TypeError   a float has no __index__
+
+2. A NEGATIVE NUMBER PRINTS A SIGN, NOT ITS BITS
+     bin(9)      '0b1001'
+     bin(-9)     '-0b1001'   <- the same four digits, and a minus sign
+
+     A Python int has no width. In two's complement -9 is ...11110111
+     with the ones running left forever -- that is the model &, | and
+     >> use -- so there is no finite pattern for bin() to print. It
+     prints the one finite thing it has: a sign, and the digits of |n|.
+     -9 >> 1000  = -1    <- a thousand places right, and still all ones
+
+3. CHOOSE A WIDTH AND THE BITS APPEAR
+     format(-9, '08b')          '-0001001'   <- padded, still sign and magnitude
+     format(-9 & 0xFF, '08b')   '11110111'   <- masked to eight bits first
+
+     width    -9 & mask   the bits
+         8          247   11110111
+        16        65527   1111111111110111
+        32   4294967287   11111111111111111111111111110111
+
+     raw = (-9).to_bytes(1, 'big', signed=True)   b'\xf7'   = 11110111
+     Every width shows a different number of ones, and none of them is
+     wrong. The width is a decision -- a mask or a byte count -- and
+     the int never made it.
+
+4. READING IT BACK
+     int('0b1001', 0)                         9           base 0 reads the prefix
+     int('0b1001', 2)                         9           and so does base 2
+     int('-0b1001', 0)                        -9          the sign comes back too
+     int('0b1001', 10)                        ValueError  base 10 has no prefix to read
+     int('11110111', 2)                       247         the eight bits of -9, read as 247
+     int.from_bytes(raw, 'big', signed=True)  -9          told the width AND the sign
+
+     bin() and int(s, 0) are inverses, sign included. The bits of -9
+     are not: read as base 2 they are 247, because a width and a
+     signedness went into them that the string does not carry.
+
+5. TWO METHODS THAT READ THE MAGNITUDE
+        n   bin(n)     bit_length()  bit_count()
+        9   '0b1001'              4            2
+       -9   '-0b1001'             4            2
+        1   '0b1'                 1            1
+        0   '0b0'                 0            0
+
+     -9 and 9 answer both the same way: both count |n|, the digits
+     bin() prints. The ones in a chosen width are another question:
+     (-9 & 0xFF).bit_count() = 7
+
+     The docs define bit_length() as len(bin(n).lstrip('-0b')). lstrip
+     removes a SET of characters, not the prefix -- it works here only
+     because the digits left over start with 1, or are all zeros:
+     bin(0).lstrip('-0b') = '', and (0).bit_length() = 0

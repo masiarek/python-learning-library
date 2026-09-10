@@ -76,6 +76,8 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **sequence protocol** — the operations every Python sequence shares, `index` among them: `list`, `tuple`, `range`, `str` and `bytes` all have `.index()` and all raise `ValueError` on a miss. `find` is not part of it — it exists only on `str`, `bytes` and `bytearray`, which is why there is no `list.find` and why the `-1` mistake has nowhere else in the language to be written. See [Four ways to find it](01_Text_and_Bytes/finding_a_substring/README.md).
 
+**sign and magnitude** — writing a number as a sign followed by the digits of its absolute value. It is what `bin(-9)` prints, `'-0b1001'`, and how `format()` and `int(s, 2)` write and read every base; it needs no width, which is why a Python `int` can use it, while the alternative, two's complement, needs one. See [`bin()` is not the bits](01_Text_and_Bytes/bin_is_not_the_bits/README.md).
+
 **slice** — both the operation `s[a:b:c]` and the built-in *type* it builds: a real object with `start`, `stop` and `step`, passed to `__getitem__` where an index would pass an `int`. Its bounds are clamped to the sequence's length before anything is read, so a slice cannot be out of range — only a step of `0` raises. See [Slicing is not indexing](01_Text_and_Bytes/slicing_is_not_indexing/README.md).
 
 **str** — Python's text type, a sequence of code points. Has `.encode()` and no `.decode()`. See [`str` is not `bytes`](01_Text_and_Bytes/str_is_not_bytes/README.md).
@@ -83,6 +85,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **`chars` argument** — the operand of `strip` / `lstrip` / `rstrip`: a **set** of characters to remove, not a prefix, and it repeats. `'Arthur: three!'.lstrip('Arthur: ')` is `'ee!'`. `removeprefix` is the one that takes a prefix. See [`strip` is a set, not a prefix](01_Text_and_Bytes/strip_is_a_set/README.md).
 
 **surrogateescape** — the errors policy that smuggles undecodable bytes through a `str` and restores them exactly on re-encode. How Python opens a filename that is not valid UTF-8. See [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md).
+
+**sys.displayhook** — the function the `>>>` prompt hands each result to. It prints `repr()` of the value, and nothing for `None` — so a call that *returns* a repr, like `ascii('café')`, appears quoted twice with its backslash doubled, while `print()` shows the string itself. See [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md).
 
 **string interpolation** — building a string by substituting values into a template. Python has four spellings with different powers: an f-string (compiled from a literal, so a runtime template cannot be one), `str.format` and `format_map` (a field name may walk attributes and index), `%` (a separate, older language), and `string.Template` (a name and nothing else). Which one you may use is decided by where the template came from. See [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md) and [The `string` module](01_Text_and_Bytes/the_string_module/README.md).
 
@@ -97,6 +101,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **tomllib** — the standard-library TOML *reader*, since Python 3.11. `load()` takes a file opened `"rb"`, `loads()` takes a `str`, and there is no writer. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
 
 **translation table** — the argument to `str.translate()`: a mapping from a **code point number** to an `int`, a `str` of any length, or `None` to delete. `str.maketrans` builds one, and any object whose `__getitem__` accepts an `int` will do — a `dict` subclass with `__missing__` maps everything you did not list. A `LookupError` from it means *leave this character alone*, which is why passing a `str` by mistake is a silent no-op. `bytes.translate` takes a different thing entirely: a 256-byte sequence, plus a separate `delete` argument. See [`translate` is a table, keyed by ordinal](01_Text_and_Bytes/translate_is_a_table/README.md).
+
+**two's complement** — how a fixed-width integer stores a negative number: `-9` in eight bits is `11110111`. Python's bitwise operators behave as if an `int` were two's complement with infinitely many sign bits, so a negative `int` has no finite bit pattern until you mask it to a width — `-9 & 0xFF` is `247`, `0b11110111`. See [`bin()` is not the bits](01_Text_and_Bytes/bin_is_not_the_bits/README.md).
 
 **universal newlines** — the translation Python's text mode applies on the way in: `\r\n` and `\r` both arrive as `\n`. It is why iterating a file gives three line boundaries where `splitlines()` gives ten, and why `newline=""` exists for the `csv` module. See [What ends a line](01_Text_and_Bytes/what_ends_a_line/README.md).
 

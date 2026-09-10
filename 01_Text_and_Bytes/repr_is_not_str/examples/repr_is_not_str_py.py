@@ -1,5 +1,7 @@
 """'Printable' does not mean 'makes ink'. It means repr() will not escape it."""
 
+import contextlib
+import io
 import string
 import sys
 import unicodedata
@@ -142,3 +144,38 @@ print("     show you where one element ends -- so it escapes.")
 print("     That is why wrapping a value in a list is the cheapest debugging")
 print("     trick in Python, and why 'printable' had to be defined in terms")
 print("     of repr() rather than in terms of ink.")
+
+
+def at_the_prompt(value):
+    """What >>> would show: the interpreter hands each result to sys.displayhook."""
+    shown = io.StringIO()
+    with contextlib.redirect_stdout(shown):
+        sys.displayhook(value)
+    return shown.getvalue().rstrip("\n")
+
+
+print("\n8. THE PROMPT CALLS repr() FOR YOU")
+print("     At >>> the interpreter passes each result to sys.displayhook,")
+print("     which prints repr() of it. So a function that RETURNS a repr")
+print("     arrives quoted twice. This section calls the real hook.")
+print()
+prompt_rows = [
+    ("'café'", "café"),
+    ("repr('café')", repr("café")),
+    ("ascii('café')", ascii("café")),
+    ("ascii('abcd')", ascii("abcd")),
+    ("len(ascii('café'))", len(ascii("café"))),
+    ("None", None),
+]
+print(f"     {'you type':<20} {'the prompt shows':<18} print(it) shows")
+print("     " + "-" * 56)
+for label, value in prompt_rows:
+    print(f"     {label:<20} {at_the_prompt(value) or '(nothing)':<18} {value}")
+exact = all(at_the_prompt(v) == ("" if v is None else repr(v)) for _, v in prompt_rows)
+print()
+print(f"     every row is exactly repr(value), and None prints nothing:  {exact}")
+print()
+print("     The doubled backslash is the prompt's, not ascii()'s. The string")
+print(f"     ascii('café') returns is {len(ascii('café'))} characters -- two quotes, c, a, f, ONE")
+print("     backslash, then x, e, 9 -- and the quotes are inside it, which is")
+print(f"     why len(ascii('abcd')) is {len(ascii('abcd'))} and not 4.")

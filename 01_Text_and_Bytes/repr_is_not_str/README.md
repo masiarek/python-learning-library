@@ -113,6 +113,27 @@ So this page is really about the two functions underneath. `str(x)` and `repr(x)
      That is why wrapping a value in a list is the cheapest debugging
      trick in Python, and why 'printable' had to be defined in terms
      of repr() rather than in terms of ink.
+
+8. THE PROMPT CALLS repr() FOR YOU
+     At >>> the interpreter passes each result to sys.displayhook,
+     which prints repr() of it. So a function that RETURNS a repr
+     arrives quoted twice. This section calls the real hook.
+
+     you type             the prompt shows   print(it) shows
+     --------------------------------------------------------
+     'café'               'café'             café
+     repr('café')         "'café'"           'café'
+     ascii('café')        "'caf\\xe9'"       'caf\xe9'
+     ascii('abcd')        "'abcd'"           'abcd'
+     len(ascii('café'))   9                  9
+     None                 (nothing)          None
+
+     every row is exactly repr(value), and None prints nothing:  True
+
+     The doubled backslash is the prompt's, not ascii()'s. The string
+     ascii('café') returns is 9 characters -- two quotes, c, a, f, ONE
+     backslash, then x, e, 9 -- and the quotes are inside it, which is
+     why len(ascii('abcd')) is 6 and not 4.
 ```
 <!-- /output -->
 
@@ -129,6 +150,8 @@ So this page is really about the two functions underneath. `str(x)` and `repr(x)
 **The debug specifier silently switches the conversion.** `f'{x}'` uses `str()`; `f'{x = }'` uses `repr()`. That is deliberate and it is the right default — you asked to see the value as a programmer — but it means the same expression prints two different things depending on whether you added an equals sign. `Fraction(1, 3)` shows it in one line: `1/3` becomes `Fraction(1, 3)`.
 
 **And a container always uses `repr()` on its elements.** `print(value)` gives you a tab you can only detect by the gap; `print([value])` gives you `['a\tb']`. Nothing about the string changed. This is why wrapping a value in a list is the cheapest debugging trick in Python — and it is the practical reason "printable" had to be defined in terms of `repr()` in the first place. A representation that renders a tab as a tab is not a representation.
+
+**The prompt is `repr()` too, which is why `ascii('café')` shows two backslashes at `>>>`.** The interactive interpreter hands every result to `sys.displayhook`, which prints `repr()` of it; section 8 calls the real hook and captures what it writes. So a function that *returns* a repr — `ascii()` and `repr()` both do — is quoted twice: `"'caf\\xe9'"` at the prompt, `'caf\xe9'` from `print()`. `len()` settles which one is the string: 9 characters with one backslash in them, and `len(ascii('abcd'))` is 6 because the quotes are part of the value. The one value the hook leaves alone is `None`, which is why a call to `print()` at the prompt is not followed by a `None` line. And that `\xe9` is a code point written as an escape, not a byte: [String literals](../string_literals/README.md) has its five spellings.
 
 ## The Rust view
 
@@ -150,6 +173,8 @@ Rust drew the same line and put it in the type system: `Display` is `str()` and 
 
 The second is the one that matters in practice. Python's `str()` **falls back to `repr()`** when a type has no `__str__`, so you can never be certain from the call site which one you got — that is exactly the `str(b'Zoot!')` bug, one layer down. Rust's two traits are independent, so a type that implements only `Debug` cannot be printed with `{}` at all; `println!("{}", vec![1])` is a compile error naming the missing trait. Same distinction, and one of the two languages makes you notice it before the program runs.
 
+For a `bytes` value the Rust counterpart of the `b'…'` that `repr()` and the prompt show is [`escape_ascii()` ↗](https://masiarek.github.io/rust-learning-library/19_Numbers/printing_bytes/index.html): the same inside on 254 of the 256 byte values, with the two quote characters escaped every time where Python picks a delimiter instead.
+
 The sibling library owns the formatting side of this: [the format language ↗](https://masiarek.github.io/rust-learning-library/14_Strings/the_format_language/index.html) is the `{}`/`{:?}` mini-language, which Python's `str.format` and Rust's `format!` share by descent. And because section 2 is a table lookup rather than a rule, [the table has a version ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/the_table_has_a_version/index.html) applies to all of it — the counts of unassigned and format characters move with the Unicode edition your interpreter was built against, which is why this page's program does not print them.
 
 ## If you are coming from ABAP
@@ -162,6 +187,7 @@ There is one representation, and it is the value. `WRITE` renders a field; there
 2. `repr()` carries a promise for built-in types: `eval(repr(x)) == x`. Check it for a `str`, a `bytes`, a `list` of both, and a `float` — then find the float where it is most interesting, and work out why `repr(0.1)` prints the digits it does.
 3. Write `isprintable()` yourself from `unicodedata.category`, and diff it against the real one over the whole code space. The program above already does the comparison; do it without looking, and see which exception you forget.
 4. `f'{ x  -  4  = }'` keeps every space you typed. Print it and count them. Then decide whether that is a feature — and what it implies about when the debug specifier is parsed.
+5. At a real `>>>` prompt, type `ascii('café')`, then `print(ascii('café'))`, then `len(ascii('café'))`. Count the backslashes each time, and say which of the three is telling you about the string itself.
 
 ## Practice
 
