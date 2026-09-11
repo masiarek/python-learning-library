@@ -25,6 +25,17 @@ site_dir: site
 # directory URLs would shift every page one level deeper and break them.
 use_directory_urls: false
 
+# A relative link's #fragment is checked against the ids on the page it points
+# at, but MkDocs 1.6 reports a miss at `info`, which --strict does not escalate.
+# At `warn` a dead anchor fails the build, so rewording a heading cannot silently
+# strand the links that still use its old slug. Links into the sibling libraries
+# are absolute URLs and are not checked. Write a fragment as the site slugs it
+# (Python-Markdown's toc), not as GitHub does: the two differ for a heading with
+# " — " in it, which GitHub slugs to "--" and the site to "-".
+validation:
+  links:
+    anchors: warn
+
 # MkDocs maps README.md onto index.md, so the root README and index.md collide
 # ("Excluding README.md because it conflicts with index.md" — a --strict failure).
 # Excluding it is right rather than a workaround: its content already IS the
