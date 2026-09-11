@@ -28,7 +28,7 @@ This is the chapter to read first — not because text is the most important par
 | 18 | [Normalization](normalization/README.md) | Why can `'é' == 'é'` be `False`? | stub |
 | 19 | [Sorting is not comparing](sorting_is_not_comparing/README.md) | Why does `sorted()` put `Łukasiewicz` after `Zawadzki`? | written |
 | 20 | [Opening a file](opening_a_file/README.md) | What does `open()` decide for me besides the encoding? | written |
-| 21 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does printing an emoji work in my terminal and crash in cron? | stub |
+| 21 | [Standard in, standard out, and pipes](stdin_stdout_and_pipes/README.md) | Why does piping my program into `head` raise `BrokenPipeError` — and how do I write bytes to stdout? | stub |
 | 22 | [Filenames are not text](filenames_are_not_text/README.md) | How does Python read a filename that isn't valid UTF-8? | written |
 | 23 | [What kind of file is this?](what_kind_of_file_is_this/README.md) | Which of the five APIs answers the question I actually asked? | written |
 | 24 | [The `string` module](the_string_module/README.md) | What is left in a module named `string`, and why is `capwords` not `title`? | written |

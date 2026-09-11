@@ -303,7 +303,7 @@ Three differences are worth carrying across. **There is no buffering argument an
 ## See also
 
 - [What ends a line](../what_ends_a_line/README.md) — section 5 in full: the ten boundaries `splitlines()` knows, the three a file reader knows, and the one `re` knows
-- [Standard in, standard out, and pipes](../stdin_stdout_and_pipes/README.md) — a stub for now: the other half of section 4, not *when* your output leaves but *which bytes* it is, and what `| head` does to it
+- [Standard in, standard out, and pipes](../stdin_stdout_and_pipes/README.md) — a stub for now: what `| head` does to your program, and how to write bytes to stdout on purpose
 - [What kind of file is this?](../what_kind_of_file_is_this/README.md) — the question that comes before this one, and the five APIs that answer five different versions of it
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — why `'rb'` is a different type and not just a different flag
 - [Encode and decode](../encode_and_decode/README.md) — the two doors this page's `encoding=` argument is choosing between
