@@ -128,25 +128,25 @@ On ASCII text with Unix endings they return the same list, which is why the diff
 
 Every language draws its line somewhere on the same ladder, and the rungs are worth knowing because the answer is rarely documented where you are standing. Measured here rather than remembered:
 
-```text title="Measured 2026-09-07 — one probe per language on this machine, put side by side. The entries marked (docs) were read from the specification, not run: there is no JDK here, and the .NET on this machine is 5."
+```text title="Measured 2026-09-07, the Java rows 2026-09-10 — one probe per language on this machine, put side by side. The one entry still marked (docs) was read from the specification, not run: the .NET on this machine is 5, so ReplaceLineEndings is not there to call."
   n   boundaries                              who stops there
   --  --------------------------------------  ---------------------------------------------
    1  LF                                      Python re (MULTILINE), .NET Regex (Multiline),
                                               C fgets, awk RS, Ruby String#lines, Perl split
    1  LF, and a trailing CR trimmed off       Rust str::lines, Go bufio.ScanLines
    3  LF CR CRLF                              Python text mode, Python bytes.splitlines,
-                                              .NET StringReader.ReadLine, Java String.lines (docs)
+                                              .NET StringReader.ReadLine, Java String.lines
    4  LF CR LS PS                             JavaScript — the language's own line terminators
-   6  LF CR CRLF NEL LS PS                    Java Pattern in MULTILINE mode (docs)
+   6  LF CR CRLF NEL LS PS                    Java Pattern in MULTILINE mode
    7  LF CR CRLF NEL LS PS FF                 the Unicode readline recommendation (5.8 R4);
                                               .NET 6+ ReplaceLineEndings (docs)
-   8  ... + VT                                \R in Perl, Ruby, PCRE2 and Java (docs);
+   8  ... + VT                                \R in Perl, Ruby, PCRE2 and Java;
                                               Swift Character.isNewline
   10  ... + FS GS RS                          Python str.splitlines()
 
   run with: Python 3.14.7, rustc 1.98.0, go1.25.5, node v20.20.2, ruby 2.6.10,
-            perl 5.42.0, Swift 6.3.3, .NET 5.0.5, clang 21.0.0, awk 20200816,
-            pcre2grep 10.48
+            perl 5.42.0, Swift 6.3.3, OpenJDK 25.0.4.1, .NET 5.0.5,
+            clang 21.0.0, awk 20200816, pcre2grep 10.48
 ```
 
 **Nobody else splits on `FS`, `GS` and `RS`.** Python is alone on the top rung, and the gap is not an oversight by the others — the Unicode standard's own [newline guidelines ↗](https://www.unicode.org/versions/Unicode16.0.0/core-spec/chapter-5/) (§5.8, Recommendation R4) say a readline function should stop at `LF`, `CR`, `CRLF`, `NEL`, `LS`, `FF` and `PS`, and that list is seven characters with no information separators in it. The `\R` escape adds `VT` for eight. Python adds three more on top of that, from the bidi table rather than from the newline recommendation.
@@ -159,7 +159,7 @@ Every language draws its line somewhere on the same ladder, and the rungs are wo
 
 **Swift is the only one where a line ending is a single character.** `Character.isNewline` covers the Unicode eight, and because a Swift `Character` is a grapheme cluster, `"\r\n"` is **one** `Character` — `"a\r\nb".count` is 3. Everywhere else on this page a CRLF is two units that a library has to special-case; in Swift the text model already merged them.
 
-**Java and .NET both disagree with themselves, the same way Python does.** Java's `String.lines()` recognizes three, `Pattern` in `MULTILINE` mode recognizes six, and `\R` recognizes eight — three answers in one standard library, from a language usually accused of being over-specified. .NET's `StringReader.ReadLine` recognizes three while .NET 6's `ReplaceLineEndings` recognizes seven and [says in its documentation ↗](https://learn.microsoft.com/en-us/dotnet/api/system.string.replacelineendings) exactly which Unicode recommendation it is implementing, which is the good practice the rest of this table is missing.
+**Java and .NET both disagree with themselves, the same way Python does.** Java's `String.lines()` recognizes three, `Pattern` in `MULTILINE` mode recognizes six, and `\R` recognizes eight — three answers in one standard library, from a language usually accused of being over-specified, and all three measured here rather than read off the spec. Which of the three you ask matters as much as what decoded the file, and section 5's byte shows both: decoded as latin-1, `0x85` is a `NEL` that `Pattern` and `\R` split on and `lines()` does not; decoded as windows-1252 it is an ellipsis that none of them split on. A `String` is UTF-16 by the time any of them sees it, so the decoding half was settled before they ran, and since [JEP 400 ↗](https://openjdk.org/jeps/400) the default decoder is UTF-8 rather than the platform locale's: `file.encoding` stays UTF-8 on this machine even under `LC_ALL=C`, where `native.encoding`, the locale's own answer, says US-ASCII. Before Java 18 the default was the locale's, which `-Dfile.encoding=COMPAT` still restores, so the same bytes could become a line boundary to `Pattern` on one computer and an ellipsis on another. .NET's `StringReader.ReadLine` recognizes three while .NET 6's `ReplaceLineEndings` recognizes seven and [says in its documentation ↗](https://learn.microsoft.com/en-us/dotnet/api/system.string.replacelineendings) exactly which Unicode recommendation it is implementing, which is the good practice the rest of this table is missing.
 
 So Python is not unusual for having several answers. It is unusual for its widest one being the widest anywhere, and for that width being the *default* on the friendliest-looking method of the three.
 
