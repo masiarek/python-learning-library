@@ -24,7 +24,7 @@ This page and the encodings library's [Opening a file ↗](https://masiarek.gith
 | What is a line, when you are counting them? | here |
 | How do you replace a file without a reader seeing half of it? | here |
 | **Which encoding does the default pick, on which machine?** | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
-| **What happens when that bet is wrong** — `UnicodeDecodeError`, mojibake, `sys.stdout.encoding` under `cron` | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
+| **What happens when that bet is wrong** — `UnicodeDecodeError`, mojibake, and `sys.stdout.encoding`, which makes the same bet on the way out | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
 | **How to find every unnamed `open()` in a codebase** — `EncodingWarning`, `-X warn_default_encoding` | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
 | **PEP 686, and what changes when UTF-8 mode becomes the default** | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
 
