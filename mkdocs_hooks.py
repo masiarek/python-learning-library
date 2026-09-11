@@ -105,10 +105,12 @@ NAV_ORDER: dict[str, list[str]] = {
         "the_codecs_registry",
     ],
     # The file first: every other page in this chapter is about something the
-    # file names but does not itself do.
+    # file names but does not itself do. Then the interpreter itself, starting
+    # with the smallest thing you can hand it -- one line after -c.
     "02_Projects_and_Environments": [
         "README.md",
         "pyproject_toml",
+        "dash_c_is_not_the_prompt",
     ],
 }
 

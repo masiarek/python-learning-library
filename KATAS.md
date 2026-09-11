@@ -36,6 +36,7 @@ The order is the practice order, and it is **not** the sidebar's reading order �
 | K10 | [Nine expressions, and the two that answer a name nobody wrote](01_Text_and_Bytes/the_string_module/README.md#practice) | [The `string` module](01_Text_and_Bytes/the_string_module/README.md) | 201 |
 | K11 | [Nine questions, and no two of the three answers agree](01_Text_and_Bytes/comparison_has_a_mode/README.md#practice) | [Comparison has a mode](01_Text_and_Bytes/comparison_has_a_mode/README.md) | 201 |
 | K12 | [Eight one-liners about `bin()`, and the two that were given a width](01_Text_and_Bytes/bin_is_not_the_bits/README.md#practice) | [`bin()` is not the bits](01_Text_and_Bytes/bin_is_not_the_bits/README.md) | 201 |
+| K13 | [Eight one-liners, and the only one that prints quotes](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md#practice) | [`-c` is not the prompt](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md) | 101 → 201 |
 
 **K1–K4 are one subject asked four ways** — the type boundary, the constructor, the mutable half, and the two doors between them. Doing them in order is worth more than doing any one of them twice, because the thing that does not stick is not a fact but a *habit*: asking "which of the two types am I holding?" at the moment a value arrives rather than at the moment it breaks.
 

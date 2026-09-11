@@ -1,0 +1,28 @@
+     1. python3 -c 'chr(0x20AC)'
+          stdout ''                exit 0   computed, then dropped
+     2. python3 -c 'x = chr(0x20AC); x'
+          stdout ''                exit 0   a bare name is an expression too
+     3. echo 'x = chr(0x20AC); x' | python3 -i -q
+          stdout "'€'\n"           exit 0   the prompt shows it -- as repr()
+     4. echo 'print(chr(0x20AC))' | python3 -i -q
+          stdout '€\n'             exit 0   and never shows the None print() returned
+     5. python3 -c 'import sys; print(sys.argv[1:])' -v x
+          stdout "['-v', 'x']\n"   exit 0   after the program, -v is the program's
+     6. python3 -c 'for c in "ab": print(c); print("-")'
+          stdout 'a\n-\nb\n-\n'    exit 0   both prints are the loop's body
+     7. python3 -c 'import sys; for c in "ab": print(c)'
+          SyntaxError              exit 1   a for cannot follow a ;
+     8. python3 -c 'import sys; sys.exit("bad")'
+          stdout ''                exit 1   and 'bad' went to stderr
+
+     THE RULE
+     Only lines 3 and 4 reached the prompt, and only the prompt shows a
+     value you did not print -- as repr(), which is where line 3's
+     quotes come from. It never shows None, which is why line 4 has no
+     second line. Everywhere else a bare expression is computed and
+     dropped: lines 1 and 2 print nothing, and exit 0 because nothing
+     went wrong.
+
+     THE ONE THAT LOOKS LIKE A FLAG
+     Line 5's -v comes after the program, and everything after the
+     program belongs to it. Put -v before -c and it is Python's.

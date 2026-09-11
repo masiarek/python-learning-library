@@ -17,7 +17,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 - **[Start here](00_Start_Here/README.md)** — what this is, and a four-question diagnostic
 - **[Chapter 1 — Text and bytes](01_Text_and_Bytes/README.md)** — the type boundary, encoding, counting, sorting
 - **[Chapter 2 — Projects and environments](02_Projects_and_Environments/README.md)** — the project file, and the interpreter that runs it
-- **[Katas](KATAS.md)** — the practice track: predict the answer, then run it. Eight so far, four of them on `bytes`
+- **[Katas](KATAS.md)** — the practice track: predict the answer, then run it. The first four are on `bytes`
 - **[The crosswalk](CROSSWALK.md)** — the same ideas in Rust, C and ABAP, one table per question
 - **[Roadmap](ROADMAP.md)** — what is written, what is a stub, what is next
 - **[What to write next](TODO.md)** — the questions backlog, ranked, and the five pages worth writing first
@@ -48,6 +48,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [The codecs registry](01_Text_and_Bytes/the_codecs_registry/README.md) | What is in the registry that `.encode()` cannot reach — and why does decoding a stream in chunks break? |
 | [`bin()` is not the bits](01_Text_and_Bytes/bin_is_not_the_bits/README.md) | Why is `bin(-9)` `'-0b1001'` and not eight bits — and how do I get the bits? |
 | [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md) | What is this file, who reads which part, and how do I read it myself? |
+| [`-c` is not the prompt](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md) | Why did `python3 -c 'chr(0x20AC)'` print nothing — and why did the same line without quotes never reach Python? |
 
 ## Run it
 

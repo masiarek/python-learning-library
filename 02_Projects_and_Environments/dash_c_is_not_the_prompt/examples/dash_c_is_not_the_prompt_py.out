@@ -1,0 +1,120 @@
+-c IS NOT THE PROMPT
+Each command starts a fresh python3, and the columns are what it wrote.
+(Every one also gets -E -s -X utf8, so nothing in your environment can
+change an answer. None of the three changes what -c does.)
+
+1. THE SAME LINE, FOUR WAYS IN
+     command                                stdout     exit
+     -----------------------------------------------------
+     python3 -c 'chr(0x20AC)'               ''         0
+     echo 'chr(0x20AC)' | python3 -         ''         0
+     echo 'chr(0x20AC)' | python3 -i -q     "'€'\n"    0
+     python3 -c 'print(chr(0x20AC))'        '€\n'      0
+
+     The prompt wrote its two '>>> ' to stderr, not stdout: '>>> >>> \n'
+
+     All four computed the euro sign, and only the prompt showed it
+     without being asked. -i starts the prompt even when the input is
+     a pipe; the other three ran the same line as a SCRIPT, and a
+     script does nothing with the value of a bare expression. It is
+     computed, then dropped -- exit 0, because nothing went wrong.
+     print() is the one spelling that works all four ways.
+
+     The prompt's quotes are part of what it printed: it shows repr()
+     of a value, where print() shows str().
+
+2. THE DIFFERENCE IS A COMPILE MODE
+     src = 'chr(0x20AC)'
+
+     exec(compile(src, '<string>', 'exec'))        prints   ''
+     exec(compile(src, '<string>', 'single'))      prints   "'€'\n"
+     eval(compile(src, '<string>', 'eval'))        returns  '€'
+     code.InteractiveInterpreter().runsource(src)  prints   "'€'\n"
+
+     Python compiles source in one of three modes before running it.
+     'exec' is a module: a file, the -c argument, a pipe into python3 -.
+     'eval' is one expression, and hands its value back to whoever
+     asked. 'single' is one statement typed at >>>, and it is the only
+     mode that passes the value of an expression statement to
+     sys.displayhook -- which is what prints it. The standard library's
+     own prompt, the code module, compiles in 'single' too. -c never does.
+
+3. -c IS A SCRIPT IN EVERY OTHER WAY TOO
+     python3 -c 'import sys; print(sys.argv)' a -v
+         ['-c', 'a', '-v']        '-c' stands where a script's name would
+     python3 -c 'print(__name__)'
+         __main__                 the name a script run directly gets
+     python3 -c 'print("__file__" in globals())'
+         False                    no file, so no __file__
+     python3 -c 'import sys; print(repr(sys.path[0]))'
+         ''                       the current directory, searched first
+     python3 -c 'import sys; print(sys.orig_argv[-1])'
+         import sys; print(sys.orig_argv[-1])
+                                  the program's only copy is this string
+
+     Everything after the program belongs to the program: the -v in the
+     first line went into sys.argv, not to Python's verbose flag.
+
+     The empty string in sys.path[0] is the one to remember. In a
+     folder that holds a file called json.py:
+
+         python3 -c 'import json'       '(the json.py in this folder ran)\n'
+         python3 -P -c 'import json'    ''
+         python3 -I -c 'import json'    ''
+
+     sys.path[0] is the directory you ran the command from, and it is
+     searched before the standard library. -P, new in 3.11, leaves it
+     out, and so does -I.
+
+4. ONE LINE HOLDS SIMPLE STATEMENTS ONLY
+     python3 -c 'import sys; for a in sys.argv[1:]: print(a)' x
+         exit 1, SyntaxError      a for cannot follow a ;
+     python3 -c 'for c in "xy": print(c); print("-")'
+         'x\n-\ny\n-\n'           both prints are the loop's body
+     python3 -c 'import sys⏎for a in sys.argv[1:]: print(a)' x -v
+         'x\n-v\n'                a newline where the ; was
+
+     A ; joins simple statements: an import, an assignment, a call. A
+     compound statement -- for, if, with, def -- may START the line, and
+     then everything after its colon is its body; it may not follow a ;.
+     The way out is a real newline inside the quotes, the ⏎ above.
+
+5. THE EXIT STATUS IS THE WHOLE REPORT
+     python3 -c 'chr(0x20AC)'                  exit 0   nothing printed, nothing wrong
+     python3 -c '1/0'                          exit 1   ZeroDivisionError; traceback on stderr
+     python3 -c 'import sys; sys.exit("bad")'  exit 1   stderr 'bad\n'
+     python3 -c 'raise SystemExit(3)'          exit 3   whatever number you raise
+     python3 -c                                exit 2   no program: Python refused the line
+
+     A shell sees nothing but the exit status. 0 means the program ran
+     to the end, printed or not. 1 is an uncaught exception, or
+     sys.exit() with a message. 2 comes from Python itself, before any
+     of your code has run.
+
+6. THE SHELL READS THE LINE BEFORE PYTHON DOES
+     A shell cuts the line into words before python3 starts, and -c
+     takes exactly one of them. shlex, told to treat ( and ) the way a
+     shell does, cuts the two lines like this:
+
+     python3 -c chr(0x20AC)
+         ['python3', '-c', 'chr', '(', '0x20AC', ')']
+     python3 -c 'print(chr(0x20AC))'
+         ['python3', '-c', 'print(chr(0x20AC))']
+
+     Unquoted, the parentheses are not part of any word: they are shell
+     syntax, so the shell deals with them itself and python3 never
+     starts. Quoted, the whole program is one word.
+
+     shlex.quote() writes that word for you:
+
+         print(chr(0x20AC))   ->  'print(chr(0x20AC))'    one word again: True
+         print("it's")        ->  'print("it'"'"'s")'     one word again: True
+
+     A single quote cannot appear inside single quotes, so quote()
+     closes them, writes the quote inside double quotes, and opens them
+     again. Or keep the character away from the shell altogether: in a
+     Python string \x27 is a quote and \x5c is a backslash, and single
+     quotes pass those four characters through untouched.
+
+         python3 -c 'print("it\x27s")'      "it's\n"
+         python3 -c 'print(len("\x5c"))'    '1\n'

@@ -26,6 +26,10 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **collation** — ordering text the way a language's alphabet does, as opposed to by code point. See [Sorting is not comparing](01_Text_and_Bytes/sorting_is_not_comparing/README.md).
 
+**command substitution** — the shell running a command and pasting its output into the line: `$(…)` in bash and zsh, bare `(…)` in fish. It happens before the command itself runs, which is why `python3 -c chr(0x20AC)` in fish tries to run a program called `0x20AC` and never starts Python. See [`-c` is not the prompt](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md).
+
+**compile mode** — the third argument to `compile()`: `'exec'` for a module (a file, the `-c` argument, a pipe), `'eval'` for one expression whose value is handed back, `'single'` for one statement typed at `>>>`. Only `'single'` passes the value of an expression statement to `sys.displayhook`, so only the prompt shows a value nobody printed. See [`-c` is not the prompt](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md).
+
 **dangling symlink** — a symlink whose target does not exist. `os.lstat` reads it happily and `Path.is_symlink()` is `True`, while `Path.exists()`, `Path.is_file()` and `os.stat` all behave as though nothing is there — so it is indistinguishable from an absent path unless you ask with `lstat`. See [What kind of file is this?](01_Text_and_Bytes/what_kind_of_file_is_this/README.md).
 
 **dependency group** — a named set of packages a *developer* of the project needs and a user never installs, declared in `[dependency-groups]` ([PEP 735 ↗](https://peps.python.org/pep-0735/)). Not the same as an optional dependency, which a user can ask for. See [`pyproject.toml`](02_Projects_and_Environments/pyproject_toml/README.md).
@@ -41,6 +45,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **format specification** — everything after the colon in a replacement field — `*^+12.3f` — handed as a *string* to the object's own `__format__`, which may define its own meaning for it. The standard one has nine slots in a fixed order. See [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md).
 
 **escape sequence** — a backslash and what follows it inside a literal, resolved by the **compiler**, not at run time. Python has fixed-width `\xNN`, greedy octal `\NNN`, and three code-point escapes that do not exist inside a `bytes` literal. An unrecognised one is kept. See [String literals](01_Text_and_Bytes/string_literals/README.md).
+
+**expression statement** — a line that is nothing but an expression: `chr(0x20AC)`, `x`, `print(x)`. Legal anywhere. At the `>>>` prompt its value is shown; everywhere else it is computed and dropped, and Python never warns about the dropping, because `print(x)` is an expression statement too. See [`-c` is not the prompt](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md).
 
 **General_Category** — the one-per-code-point classification (`Lu`, `Ll`, `Lo`, `Mn`, `Nd`, `No`, `Pc`…) that `unicodedata.category()` returns and that `str.isalpha()` tests. Distinct from a *property* like Alphabetic, which is derived from it and wider. See [Is it a letter?](01_Text_and_Bytes/is_it_a_letter/README.md).
 
@@ -86,7 +92,7 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **surrogateescape** — the errors policy that smuggles undecodable bytes through a `str` and restores them exactly on re-encode. How Python opens a filename that is not valid UTF-8. See [Filenames are not text](01_Text_and_Bytes/filenames_are_not_text/README.md).
 
-**sys.displayhook** — the function the `>>>` prompt hands each result to. It prints `repr()` of the value, and nothing for `None` — so a call that *returns* a repr, like `ascii('café')`, appears quoted twice with its backslash doubled, while `print()` shows the string itself. See [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md).
+**sys.displayhook** — the function the `>>>` prompt hands each result to. It prints `repr()` of the value, and nothing for `None` — so a call that *returns* a repr, like `ascii('café')`, appears quoted twice with its backslash doubled, while `print()` shows the string itself. The interpreter calls it only in the `'single'` compile mode, which is why `python3 -c` shows nothing you did not print. See [`repr` is not `str`](01_Text_and_Bytes/repr_is_not_str/README.md) and [`-c` is not the prompt](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md).
 
 **string interpolation** — building a string by substituting values into a template. Python has four spellings with different powers: an f-string (compiled from a literal, so a runtime template cannot be one), `str.format` and `format_map` (a field name may walk attributes and index), `%` (a separate, older language), and `string.Template` (a name and nothing else). Which one you may use is decided by where the template came from. See [The format mini-language](01_Text_and_Bytes/the_format_mini_language/README.md) and [The `string` module](01_Text_and_Bytes/the_string_module/README.md).
 
