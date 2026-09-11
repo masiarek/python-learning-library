@@ -81,6 +81,8 @@ len("Łódź")   # 4
 
 **Never open a page with code that does not run.** The first block on a page is the one that gets pasted.
 
+**A fence title never holds a backtick** — name code bare, as every title here does, because GitHub does not read a `` ``` `` line whose info string contains one as a fence (its closing `` ``` `` then opens a block that swallows what follows) and `mkdocs build --strict` fails on it; a `~~~` fence is the fallback if a title truly needs a backtick, since every fence-parsing tool in this repo accepts `~~~`.
+
 ## Bridges
 
 Every lesson has a section **If you are coming from ABAP** — and Rust or C where the comparison is sharp. Those are the languages this reader already thinks in, and a bridge to a language you already speak is the fastest teaching on the page. Say what transfers *and* what the new language enforces that the old one left to habit.
