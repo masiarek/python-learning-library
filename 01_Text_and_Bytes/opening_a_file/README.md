@@ -18,15 +18,15 @@ This page and the encodings library's [Opening a file ↗](https://masiarek.gith
 
 | The question | Where it is answered |
 |---|---|
-| What does `mode` do, and when does the file get emptied? | here |
-| What does `tell()` return in text mode, and what may you do with it? | here |
-| Who decides when the output leaves, and what does that reorder? | here |
-| What is a line, when you are counting them? | here |
-| How do you replace a file without a reader seeing half of it? | here |
-| **Which encoding does the default pick, on which machine?** | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
-| **What happens when that bet is wrong** — `UnicodeDecodeError`, mojibake, and `sys.stdout.encoding`, which makes the same bet on the way out | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
-| **How to find every unnamed `open()` in a codebase** — `EncodingWarning`, `-X warn_default_encoding` | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
-| **PEP 686, and what changes when UTF-8 mode becomes the default** | [the sibling ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html) |
+| What does `mode` do, and when does the file get emptied? | here, [section 2](#what-mode-does-and-when-the-file-is-emptied) |
+| What does `tell()` return in text mode, and what may you do with it? | here, [section 3](#what-tell-returns-in-text-mode) — the decoder behind the cookie is [The codecs registry](../the_codecs_registry/README.md) |
+| Who decides when the output leaves, and what does that reorder? | here, [section 4](#who-decides-when-the-output-leaves) — the terminal's side is [A pipe is not a terminal ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/pipe_is_not_a_terminal/index.html) |
+| What is a line, when you are counting them? | here, [section 5](#what-a-line-is-when-you-are-counting-them) — in full in [What ends a line](../what_ends_a_line/README.md) |
+| How do you replace a file without a reader seeing half of it? | here, [section 6](#replacing-a-file-without-a-reader-seeing-half-of-it) |
+| **Which encoding does the default pick, on which machine?** | the sibling, [What the bet is on ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html#what-the-bet-is-on) |
+| **What happens when that bet is wrong** — `UnicodeDecodeError`, mojibake, and `sys.stdout.encoding`, which makes the same bet on the way out | the sibling, [What the bet is on ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html#what-the-bet-is-on) — on the way out, [A pipe is not a terminal ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/pipe_is_not_a_terminal/index.html) |
+| **How to find every unnamed `open()` in a codebase** — `EncodingWarning`, `-X warn_default_encoding` | the sibling, [Finding these calls in code you already have ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html#finding-these-calls-in-code-you-already-have) |
+| **PEP 686, and what changes when UTF-8 mode becomes the default** | the sibling, [What PEP 686 changes, and what it quietly does not ↗](https://masiarek.github.io/encodings-learning-library/04_Python/opening_a_file/index.html#what-pep-686-changes-and-what-it-quietly-does-not) |
 
 The short version of the half that lives there, so that this page is not misleading on its own: **type `encoding="utf-8"` every time.** Not because the default is wrong, but because it is not yours — it is the machine's, and the machine changes.
 
@@ -222,15 +222,21 @@ Two names for ASCII on two machines, and a buffer that grew sixteenfold in one r
 
 ## What the run shows
 
+### What `mode` does, and when the file is emptied
+
 **`'w'` is not "write", it is "truncate now".** Section 2 opens a ten-byte file for writing, writes nothing, and looks: it is already zero bytes. The destruction is part of `open()`, not of the first `write()`, so every line between the `open()` and the last `write()` is a window in which a crash leaves you with an empty file and no copy of the old one. `'x'` is the mode that refuses instead — *create, or fail* — and it is the right answer whenever overwriting would be a bug rather than the plan.
 
 **In append mode `tell()` answers a question you did not ask.** `seek(0)` then `write()` reports position 0 and puts the byte at the end anyway. Appending is a property of the file *descriptor* (`O_APPEND`), so the kernel moves to the end before every write regardless of where you think you are.
+
+### What `tell()` returns in text mode
 
 **`tell()` in text mode is a receipt, not a position — and section 3 is the sharpest thing on this page.** For a six-byte file opened with `newline=''`, `tell()` returns `340282367000166625996085689099021713410`. That is not a corruption and not a bug: CPython packs the byte position, the decoder's internal state, how many bytes to re-feed and how many characters to skip into a single integer, because after a `\r` the decoder does not yet know whether it has seen a whole line ending or the first half of one, and a plain offset cannot hold that. That decoder is the one [the codecs registry](../the_codecs_registry/README.md) takes apart by hand: reading text mode is an incremental decode you did not ask for, its `getstate()` is the held-back bytes, and this number is that state with a file offset stapled to it. The same thing happens with a stateful codec — `iso-2022-jp` gives 27-digit cookies for an eleven-byte file — and it does *not* happen for a stateless codec with no translation to do, which is exactly why the trap is easy to miss: the numbers look like offsets right up until the day they do not.
 
 The API says so, and refuses everything that would treat the number as a position: `seek(0, 1)` and `seek(0, 2)` are allowed, `seek(1, 1)` and `seek(-2, 2)` raise `UnsupportedOperation`. The one thing it cannot refuse is a number you made up. `seek(2)` on a file whose second byte is the tail of a two-byte character starts the decoder mid-character, and the `UnicodeDecodeError` says *position 0* — because as far as the decoder is concerned it was handed a fresh file that begins with a stray byte. An error about offset 2 that reports offset 0 is a hard hour if you do not know why.
 
 **A character is not a byte, so a text file has no seekable positions of its own.** That is the whole reason for the cookie, and it is the point at which "a file is a sequence of bytes" stops being an abstraction you can lean on. If you need offsets, open in `'rb'` and do your own decoding; the offsets are then real, and so is the work.
+
+### Who decides when the output leaves
 
 **Section 4 is a bug people ship.** The same five-line child program prints `1` to stdout, `2` to stderr, `3` to stdout. Into a terminal it comes out 1, 2, 3. Into a pipe it comes out **2, 1, 3** — because stdout to a pipe is block-buffered and holds everything until exit, while stderr is line-buffered always. The program is correct, the terminal shows it correct, and the log file from the same program under `systemd`, Docker or a CI runner says the warning happened before the thing it was warning about. The fixes, in order of bluntness: `print(..., flush=True)` for one call, `sys.stdout.reconfigure(line_buffering=True)` for the process, `python3 -u` or `PYTHONUNBUFFERED=1` from outside it.
 
@@ -240,7 +246,11 @@ The same section pays a second dividend nobody asked for: the line that arrives 
 
 The encodings library runs the same fork from the terminal's side, in [A pipe is not a terminal ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/pipe_is_not_a_terminal/index.html), and measures two things this section does not. `isatty()` moves `line_buffering` and nothing else — the encoding and the error handler are identical on both roads, so on macOS and Linux a `UnicodeEncodeError` from `print()` is the locale's doing, not the pipe's. And a child that ends in `os._exit` loses its buffered output down a pipe entirely, with exit status 0 and nothing on stderr.
 
+### What a line is, when you are counting them
+
 **Five ways to count the lines in one 33-byte file give 4, 4, 3, 5 and 2.** They are not competing answers to one question — they are answers to five different questions about where a line ends, and the two that agree on the number agree on nothing else, which is [what ends a line](../what_ends_a_line/README.md) in full. Universal newlines did not merely split the file, it **rewrote** it — the lone `\r` after `beta` came back as `\n`, and so did the `\r\n` after `gamma`. Nothing in the program asked for that. It is why `csv` insists on `newline=''`, and why any code that reads a file and writes it back must too. And `splitlines()` finds a boundary no file reader will, because `U+2028` ends a line in a `str` and does not in a file.
+
+### Replacing a file without a reader seeing half of it
 
 **Replacing a file safely is four lines, and section 6 is why.** Truncating in place puts the file through states it was never meant to have — empty, then half-written — and any reader can see them; a crash makes one of them permanent. Writing beside it and calling `os.replace()` has no third state, because `rename(2)` swaps the directory entry in one step. Two details make the difference between the idiom and a cargo cult: `fsync()` before the rename is the durability half, since without it the rename can reach the disk before the bytes do; and the temporary file has to be in the **same directory**, because `rename(2)` cannot cross a filesystem and `os.replace()` raises `OSError` (`EXDEV`) if you try.
 
@@ -293,7 +303,7 @@ Three differences are worth carrying across. **There is no buffering argument an
 ## See also
 
 - [What ends a line](../what_ends_a_line/README.md) — section 5 in full: the ten boundaries `splitlines()` knows, the three a file reader knows, and the one `re` knows
-- [Standard in, standard out, and pipes](../stdin_stdout_and_pipes/README.md) — the other half of section 4: not *when* your output leaves but *which bytes* it is, and what `| head` does to it
+- [Standard in, standard out, and pipes](../stdin_stdout_and_pipes/README.md) — a stub for now: the other half of section 4, not *when* your output leaves but *which bytes* it is, and what `| head` does to it
 - [What kind of file is this?](../what_kind_of_file_is_this/README.md) — the question that comes before this one, and the five APIs that answer five different versions of it
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — why `'rb'` is a different type and not just a different flag
 - [Encode and decode](../encode_and_decode/README.md) — the two doors this page's `encoding=` argument is choosing between
