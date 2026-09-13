@@ -82,7 +82,7 @@ Four observations from that run.
 
 ## If you are coming from ABAP
 
-The two verbs are `cl_abap_conv_codepage=>create_out( )->convert( )` and `create_in( )->convert( )`, and the shape is the same: you name a code page and you get an exception when the target cannot hold the source. The difference is what happens when you *don't* name one. ABAP falls back to the system code page, so the same program gives different bytes on two systems; Python has no fallback for `.encode()` at all — the default is UTF-8, fixed, everywhere. (Not machine-checked — CI cannot run ABAP. Any specific SAP code-page number should be verified against the system.)
+The two verbs are `cl_abap_conv_codepage=>create_out( )->convert( )` and `create_in( )->convert( )`, and the shape is the same: you name a code page and you get an exception when the target cannot hold the source. The same goes for what happens when you *don't* name one. Neither verb falls back to the system code page, which is [UTF-16 on every current system ↗](https://help.sap.com/doc/abapdocu_758_index_htm/7.58/en-US/abensystem_codepage_glosry.htm): [`codepage` defaults to `UTF-8` ↗](https://help.sap.com/doc/abapdocu_758_index_htm/7.58/en-US/abencl_abap_conv_codepage.htm), the default `.encode()` and `.decode()` have too — fixed in both languages, so neither program gives different bytes on two systems. (Not machine-checked — CI cannot run ABAP. Any specific SAP code-page number should be verified against the system.)
 
 ## Try it
 
