@@ -148,7 +148,7 @@ This library exists alongside good paid material, and several pages were prompte
 
 ## Nav order
 
-Sidebar reading order lives in `NAV_ORDER` in `mkdocs_hooks.py`, keyed by folder path. **Never set order by renaming files to `01_`, `02_`** — a filename is a permanent URL.
+Sidebar reading order lives in `NAV_ORDER` in `mkdocs_hooks.py`, keyed by folder path. **Never set order by renaming files to `01_`, `02_`** — a filename is a permanent URL. A lesson's sidebar *label* is its README's `# H1` with the backticks dropped, so write the label there; `LABEL_OVERRIDES`, beside `NAV_ORDER`, holds the rare label that is deliberately not the H1.
 
 ## Before you commit
 

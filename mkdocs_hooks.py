@@ -5,8 +5,11 @@ Two jobs, both about the sidebar:
 1. **Clean chapter labels.** MkDocs derives a section label from the folder name
    on disk, so `01_Bits_and_Bytes/` reads as "01 Bits And Bytes". The numeric prefix exists
    to set reading order in a file listing; it should not be visible in the nav.
-   Only *prefixed* folders are relabelled — a lesson folder takes its label from
-   its page's own H1, which is already written the way it should read.
+   Only *prefixed* folders are relabelled from their name. A lesson folder takes
+   its README's own H1, backticks dropped: MkDocs working from the folder name
+   turned `bin_is_not_the_bits` into "Bin is not the bits" and `pyproject_toml`
+   into "Pyproject toml", and `mkdocs build --strict` passes either way.
+   `LABEL_OVERRIDES` holds the rare label that is deliberately not the H1.
 
 2. **Order the sections.** `NAV_ORDER` states the intended reading order per
    folder, keyed by folder path, listing children by their on-disk name.
@@ -50,6 +53,17 @@ FIXUPS = {
     "A": "a",
     "In": "in",
     "Of": "of",
+}
+
+# Lesson folders whose sidebar label is deliberately not their H1. Every other
+# lesson folder is labelled with its README's H1, backticks dropped -- see
+# `_visit`. Keyed by on-disk folder name -- a folder name is a permanent URL, so
+# the fix belongs here rather than in a rename. Like NAV_ORDER, an entry naming a
+# folder that no longer exists is a silent no-op.
+LABEL_OVERRIDES: dict[str, str] = {
+    # The H1 is a claim, "Four ways to find it, and four ways to fail"; in a
+    # sidebar, "it" has nothing to point at.
+    "finding_a_substring": "Finding a substring",
 }
 
 # Reading order per folder path. Children named by on-disk name; anything not
@@ -159,17 +173,39 @@ def _order_key(path: str, name: str) -> tuple[int, str]:
     return (len(listed), name.lower())
 
 
+def _readme_h1(section) -> str:
+    """The H1 of a section's own README.md, read from disk ("" if it has none).
+
+    Read from disk because MkDocs fills in a page's title only when it renders
+    the page, long after `on_nav`. Backticks are dropped: the sidebar prints
+    them as literal characters.
+    """
+    for child in section.children:
+        page_file = getattr(child, "file", None)
+        if page_file is None or page_file.src_uri.rsplit("/", 1)[-1] != "README.md":
+            continue
+        with open(page_file.abs_src_path, encoding="utf-8") as fh:
+            for line in fh:
+                if line.startswith("# "):
+                    return line[2:].strip().replace("`", "")
+    return ""
+
+
 def _visit(items: list, path: str, depth: int) -> None:
     for child in items:
         if not _is_section(child):
             continue
         name = _on_disk_name(child, depth)
-        # Only a numbered chapter folder gets relabelled. A lesson folder's
-        # section label already comes from its page H1, which is authored prose;
-        # title-casing it here would turn "Significant figures" into
-        # "Significant Figures" and fight the page it points at.
-        if PREFIX.match(name):
+        # A numbered chapter folder is relabelled from its name. A lesson folder
+        # takes its README's H1, which is authored prose, unless LABEL_OVERRIDES
+        # names a label for it. Title-casing the folder name instead would fight
+        # the page it points at ("Significant Figures").
+        if name in LABEL_OVERRIDES:
+            child.title = LABEL_OVERRIDES[name]
+        elif PREFIX.match(name):
             child.title = _label(name)
+        else:
+            child.title = _readme_h1(child) or child.title
 
     items.sort(key=lambda c: _order_key(path, _on_disk_name(c, depth)))
 
