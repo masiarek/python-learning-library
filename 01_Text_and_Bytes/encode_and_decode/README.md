@@ -164,3 +164,4 @@ Then two questions. **Which of the seven destroyed information?** And **which on
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — the two types this moves between
 - [Opening a file](../opening_a_file/README.md) — where `encoding=` gets decided for you if you don't
 - [Encode and decode are verbs ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/encode_and_decode_are_verbs/index.html) — the language-agnostic version in the encodings library
+- [Decode at the edges ↗](https://masiarek.github.io/perl-learning-library/02_Unicode_Text/decode_at_the_edges/index.html) — Perl's version, where the default `decode` substitutes `U+FFFD` and strictness is a flag

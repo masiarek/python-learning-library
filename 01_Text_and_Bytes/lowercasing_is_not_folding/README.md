@@ -256,3 +256,4 @@ The second contrast is a language refusing to guess. `str::eq_ignore_ascii_case`
 - [Preparing a string ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/preparing_a_string/index.html) — folding as one step of a normalisation pipeline, with the step order pinned
 - [The table has a version ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/the_table_has_a_version/index.html) — why every count on this page carries a Unicode version; these particular ones are stable from 14.0.0 to 16.0.0
 - [`str.casefold()` in the Python docs ↗](https://docs.python.org/3/library/stdtypes.html#str.casefold) — the definition, and the citation this page checks
+- [`fc` is how to compare without case ↗](https://masiarek.github.io/perl-learning-library/02_Unicode_Text/fc_for_caseless_comparison/index.html) — Perl's `casefold()`, on `Straße` and `ΣΑΣ`

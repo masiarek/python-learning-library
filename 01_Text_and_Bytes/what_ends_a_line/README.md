@@ -185,3 +185,5 @@ ABAP never guesses, and that is the whole difference. `SPLIT text AT cl_abap_cha
 - [Control characters ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/control_characters/index.html) — what `FS`, `GS`, `RS` and `US` were designed to do before anything split lines on them
 - [RFC 1212 — how Rust's `lines()` learned about `\r\n` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/rfc_1212_line_endings/index.html) — the same decision, argued in public, in a language that took the narrow rung
 - [`str.splitlines()` in the Python docs ↗](https://docs.python.org/3/library/stdtypes.html#str.splitlines) — the table this page is unpacking, and the source of the phrase "universal newlines"
+- [Records are not always lines ↗](https://masiarek.github.io/perl-learning-library/01_One_Liners/records_are_not_always_lines/index.html) — Perl's `$/`, the global this page says Ruby and Perl share, set four different ways
+- [`chomp` leaves the `\r` ↗](https://masiarek.github.io/perl-learning-library/04_Records_and_Fields/chomp_leaves_the_cr/index.html) — Perl's `\R` against `[\r\n]`, on a CRLF file and an LF file

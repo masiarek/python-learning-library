@@ -119,3 +119,4 @@ A **hand-written key** — rewriting each word as the positions of its letters i
 - [Counting characters](../counting_characters/README.md) — the other place code points mislead
 - [Sorting and collation ↗](https://masiarek.github.io/encodings-learning-library/07_Real_Data/sorting_and_collation/index.html) — the model this page's three approaches are all approximating: UTS #10's primary/secondary/tertiary levels, one list with five correct orders, the glibc 2.28 change that invalidated database indexes, and why a *correct* collation still has no repeatable order
 - [The crosswalk](../../CROSSWALK.md) — how Rust and ABAP order strings
+- [`sort` is not alphabetical ↗](https://masiarek.github.io/perl-learning-library/04_Records_and_Fields/sort_is_not_alphabetical/index.html) — Perl, whose core modules include the Unicode Collation Algorithm with per-language tailoring
