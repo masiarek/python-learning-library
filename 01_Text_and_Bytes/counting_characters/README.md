@@ -99,3 +99,4 @@ The sibling library has two pages on this. [Meet the `char` ↗](https://masiare
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — where the first two answers come from
 - [Normalization](../normalization/README.md) — the NFC/NFD pair, in full
 - [A code point is not a character ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/a_code_point_is_not_a_character/index.html) — the grapheme-cluster question in full: five rulers rather than four, [UAX #29 ↗](https://unicode.org/reports/tr29/)'s boundary rules named one by one, and where this page's crude approximation stops being right
+- [A `char` is a byte, not a character ↗](https://masiarek.github.io/c-learning-library/03_Strings/char_is_a_byte_not_a_character/index.html) — the C side of the same counts, where `strlen` counts bytes and an accented letter is more than one

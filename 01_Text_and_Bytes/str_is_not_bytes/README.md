@@ -141,4 +141,5 @@ Then the question the eight are really for: **which one is the dangerous one —
 - [Encode and decode](../encode_and_decode/README.md) — the two doors, and what `errors=` throws away
 - [`bytearray` is the mutable one](../bytearray_is_mutable/README.md) — the third binary type, and the one a `readinto` can write into
 - [Counting characters](../counting_characters/README.md) — four answers to "how long is this?"
+- [A string is bytes up to a NUL ↗](https://masiarek.github.io/c-learning-library/03_Strings/a_string_is_bytes_up_to_a_nul/index.html) — the far end of this row: C has one type, `char *`, for both text and data, and the string simply ends at the first zero byte
 - [The crosswalk](../../CROSSWALK.md) — the same idea in Rust, C and ABAP

@@ -212,4 +212,5 @@ buf += b"d"
 - [A byte is eight bits ↗](https://masiarek.github.io/encodings-learning-library/01_Bits_and_Bytes/a_byte_is_eight_bits/index.html) — what is actually in the buffer
 - [`Vec` ↗](https://masiarek.github.io/rust-learning-library/26_Collections/the_vec/index.html) and [array or `Vec`? ↗](https://masiarek.github.io/rust-learning-library/26_Collections/array_or_vec/index.html) — the Rust half of the table above
 - [RFC 69 — how Rust got `b'A'` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/rfc_69_byte_literals/index.html) — the byte literal Python does not have
+- [A record on the wire ↗](https://masiarek.github.io/c-learning-library/05_Bytes_on_the_Wire/a_record_on_the_wire/index.html) — where `struct.pack` meets C: the same record laid out field by field, and the padding C's `sizeof` shows that `>` leaves out
 - [The crosswalk](../../CROSSWALK.md) — the same ideas across all four languages

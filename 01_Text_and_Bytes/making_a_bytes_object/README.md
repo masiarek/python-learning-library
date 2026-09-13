@@ -222,6 +222,7 @@ Then: **exactly two of the eight are equal to each other. Which two?** And the f
 
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — the type boundary this constructor sits on
 - [Encode and decode](../encode_and_decode/README.md) — the two-argument form, done the idiomatic way, and what `errors=` throws away
+- [Text and binary are both bytes ↗](https://masiarek.github.io/c-learning-library/05_Bytes_on_the_Wire/text_and_binary_are_both_bytes/index.html) — the same bytes built in C, where a number as digits and as an int32 share none of them
 - [The crosswalk](../../CROSSWALK.md) — the same idea in Rust, C and ABAP
 - [A byte is eight bits ↗](https://masiarek.github.io/encodings-learning-library/01_Bits_and_Bytes/a_byte_is_eight_bits/index.html) — what the numbers 0–255 are, before any language names them
 - [Meet the byte ↗](https://masiarek.github.io/rust-learning-library/19_Numbers/meet_the_byte/index.html) — `u8` in Rust, where the range check is the type
