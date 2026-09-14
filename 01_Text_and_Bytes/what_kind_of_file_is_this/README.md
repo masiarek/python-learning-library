@@ -151,4 +151,5 @@ root          Path(f).is_file()  ->  True         os.stat(f)  ->  OK
 - [Opening a file](../opening_a_file/README.md) — once you have decided it is text, which encoding `open()` picks when you do not say
 - [`str` is not `bytes`](../str_is_not_bytes/README.md) — why `sniff()` above opens in `"rb"` and compares against `b"..."`
 - [File type is four questions ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/file_type_is_four_questions/index.html) — the same layering outside Python: what `file(1)` actually does, the anatomy of a magic rule, and why the desktop disagrees with it
+- [The first letter of `ls -l` is the type ↗](https://masiarek.github.io/linux-learning-library/10_Files/the_first_letter_is_the_type/index.html) — the seven values `stat.S_IFMT` can hold, as `ls -l`, `test` and `find -type` spell them on real files, and what opening a FIFO or a socket file does
 - [The first two bytes ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/the_first_two_bytes/index.html) — section 5 at full length: the invisible bytes that make a good script unrunnable
