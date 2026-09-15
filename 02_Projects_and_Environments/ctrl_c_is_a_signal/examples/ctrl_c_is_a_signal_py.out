@@ -1,0 +1,103 @@
+
+1. Before you touch anything, SIGINT already has a handler
+--------------------------------------------------------------
+signal.getsignal(signal.SIGINT) ......... <built-in function default_int_handler>
+...is signal.default_int_handler ........ True
+SIGINT's number ......................... 2
+
+It is an ordinary callable, so we can just call it ourselves:
+    it raised ........................... KeyboardInterrupt
+
+So KeyboardInterrupt is not what Ctrl-C does. It is what THIS function
+does, and this function is replaceable.
+
+2. Replacing it
+--------------------------------------------------------------
+signal.signal() returns the OLD handler . <built-in function default_int_handler>
+...which is the one from section 1 ...... True
+keep it, and you can put it back.
+
+3. A real SIGINT, delivered to ourselves
+--------------------------------------------------------------
+signal.raise_signal(signal.SIGINT) is what the terminal does when you
+press Ctrl-C, minus the terminal:
+
+    I got a SIGINT, but I am not stopping
+
+...and the next line still runs. Nothing was raised, nothing unwound.
+A handler that returns normally resumes the code it interrupted, which
+is why a `while True:` loop keeps counting.
+
+4. What the handler is handed, and the name that shadows a module
+--------------------------------------------------------------
+arg 1, signum ........................... 2 (SIGINT)
+arg 2, a frame object ................... frame
+        it was executing ................ <module>
+
+The second parameter is a FRAME: the line that was running when the
+signal arrived. Name it `time` and the module is gone inside the handler:
+
+    time.sleep(0) inside it ............. AttributeError
+
+The loop outside keeps working, because its `time` is the global one.
+The trap is local to the handler, and only springs if the handler ever
+needs the module -- to time a shutdown, say.
+
+5. A signal that arrives in the middle of time.sleep()
+--------------------------------------------------------------
+an alarm was set for 0.05s into a 0.25s sleep
+the handler ran ......................... True
+time.sleep() raised ..................... False
+the sleep still lasted its full 0.25s ... True
+
+PEP 475 (Python 3.5): a syscall interrupted by a signal is RETRIED
+with the time that was left, once the handler returns. Before 3.5 the
+sleep returned early and you had to loop around it yourself.
+
+6. Putting the default back
+--------------------------------------------------------------
+signal.signal(SIGINT, signal.default_int_handler)
+
+the same raise_signal now ............... KeyboardInterrupt
+
+Three things can go in that second argument:
+    a function of yours ................. Python calls it
+    signal.SIG_DFL ...................... the kernel's default: die
+    signal.SIG_IGN ...................... thrown away, not delivered
+
+SIG_DFL for SIGINT kills the process without a traceback and without
+running `finally:` blocks. default_int_handler is what gives you the
+traceback -- it is Python's politeness, not the kernel's.
+
+7. The counter that overwrites itself: "\r" and when it reaches the screen
+--------------------------------------------------------------
+print("\r{}".format(i), end="") rewinds to the left margin and prints
+over what is already there, so one line counts up instead of a thousand
+lines scrolling. Whether you SEE it count depends on buffering:
+
+line_buffering=True  (a terminal)
+    after writing "41" .................. b''
+    after writing "\r" .................. b'41\r'
+line_buffering=False (a pipe)
+    after writing "41" .................. b''
+    after writing "\r" .................. b''
+
+A line-buffered stream flushes on \r as well as on \n -- which is the
+only reason that counter animates without flush=True. Down a pipe there
+is no line buffering at all and the whole count arrives at exit.
+
+This run's own stdout:
+    sys.stdout.isatty() ................. False
+    sys.stdout.line_buffering ........... False
+    (the recorded key is captured, so both read False;
+     run this in a terminal and both flip to True)
+
+8. Two rules about threads
+--------------------------------------------------------------
+signal.signal() from another thread ..... ValueError
+a SIGINT raised by the worker ran in ..... MainThread
+
+Only the main thread may install a handler, and every handler runs in
+the main thread -- whichever thread the kernel happened to deliver to.
+A worker blocked on a socket does not get interrupted; the main thread
+gets the callback, and has to tell the worker itself.

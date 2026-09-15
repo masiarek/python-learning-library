@@ -69,7 +69,10 @@ BLOCK = re.compile(
     re.DOTALL,
 )
 
-SKIP_DIRS = {".git", "site", ".venv", "__pycache__", ".github"}
+# `.claude` holds this repo checked out again, once per agent worktree, so a scan
+# that walks into it sees every stem, page and link five times and reports each as
+# a duplicate of itself. Nothing under it is ever part of the library.
+SKIP_DIRS = {".git", ".claude", "site", ".venv", "__pycache__", ".github"}
 
 # A fenced code block, opened or closed. The pages that DOCUMENT this mechanism
 # (README.md, CONTRIBUTING.md) show the markers inside a fence — those are

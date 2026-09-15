@@ -56,6 +56,10 @@ The two pages behind [Filenames are not text](01_Text_and_Bytes/filenames_are_no
 - Ned Batchelder, [Pragmatic Unicode ↗](https://nedbatchelder.com/text/unipain.html) — the "unipain" talk. Still the clearest statement of the boundary discipline, and the source of the *encode on the way out, decode on the way in* framing.
 - Bob Steagall, [Fast Conversion From UTF-8 ↗](https://www.youtube.com/watch?v=5FQ87-Ecb-A) — CppCon 2018. Not Python, but the clearest visual account of how UTF-8 decoding actually works.
 
+## Courses
+
+- MIT, [The Missing Semester of Your CS Education ↗](https://missing.csail.mit.edu/) — the half of a CS degree nobody teaches: the shell, job control, version control, debugging. Its [command-line environment ↗](https://missing.csail.mit.edu/2020/command-line/) lecture prompted [Ctrl-C is a signal](02_Projects_and_Environments/ctrl_c_is_a_signal/README.md). Free, and the [lecture videos ↗](https://www.youtube.com/playlist?list=PLyzOVJj3bHQuloKGG59rS43e29ro7I57J) are on YouTube.
+
 ## The sibling libraries
 
 - [Encodings ↗](https://masiarek.github.io/encodings-learning-library/) · [Rust ↗](https://masiarek.github.io/rust-learning-library/) · [ABAP ↗](https://masiarek.github.io/abap-learning-library/) · [Ruby text ↗](https://masiarek.github.io/ruby-text-learning-library/) · [Perl ↗](https://masiarek.github.io/perl-learning-library/) — see [the crosswalk](CROSSWALK.md).

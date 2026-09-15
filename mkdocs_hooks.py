@@ -127,6 +127,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "README.md",
         "pyproject_toml",
         "dash_c_is_not_the_prompt",
+        "ctrl_c_is_a_signal",
     ],
 }
 

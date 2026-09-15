@@ -68,7 +68,10 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
-SKIP_DIRS = {".git", "site", ".venv", "__pycache__", ".github"}
+# `.claude` holds this repo checked out again, once per agent worktree, so a scan
+# that walks into it sees every stem, page and link five times and reports each as
+# a duplicate of itself. Nothing under it is ever part of the library.
+SKIP_DIRS = {".git", ".claude", "site", ".venv", "__pycache__", ".github"}
 
 FENCE = re.compile(r"^[ \t]*(```|~~~)")
 CODE_SPAN = re.compile(r"`+[^`\n]*`+")

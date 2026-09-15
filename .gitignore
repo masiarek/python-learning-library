@@ -11,3 +11,6 @@ __pycache__/
 
 # JetBrains IDEs (RustRover / PyCharm) — per-machine project config.
 .idea/
+
+# Agent worktrees: this repo checked out again, inside itself.
+.claude/worktrees/

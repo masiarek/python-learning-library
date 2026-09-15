@@ -48,6 +48,7 @@ validation:
 exclude_docs: |
   /README.md
   __pycache__/
+  .claude/
 
 # Built and linkable, but kept out of the sidebar: house conventions are for
 # someone about to write a page, not for a reader browsing lessons.

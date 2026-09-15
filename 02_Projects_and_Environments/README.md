@@ -2,13 +2,15 @@
 
 **Level:** 101 → 201 · for Python programmers
 
-Chapter 1 is about a value in memory. This chapter is about everything around it: which file says what your project is, which interpreter is running, how you hand it code, and which packages that interpreter can see. It is the part of Python that is not the language at all — no PEP describes a virtual environment's purpose, and yet nothing you write runs without one being right.
+Chapter 1 is about a value in memory. This chapter is about everything around it: which file says what your project is, which interpreter is running, how you hand it code, which packages that interpreter can see, and what the operating system is allowed to interrupt it with. It is the part of Python that is not the language at all — no PEP describes a virtual environment's purpose, and yet nothing you write runs without one being right.
 
 It is also where the answers changed most recently. `pyproject.toml` reached its current shape across three PEPs between 2016 and 2024, dependency groups landed in 2024, and the tool most people now reach for did not exist in 2021. A page written five years ago is not wrong so much as describing a different world, which is a good reason to start from the file and work outwards rather than from any one tool.
 
 | # | Lesson | The question it answers | Status |
 |---|---|---|---|
 | 1 | [`pyproject.toml`](pyproject_toml/README.md) | What is this file, who reads which part, and how do I read it myself? | written |
+| 2 | [`-c` is not the prompt](dash_c_is_not_the_prompt/README.md) | How do I hand one line to the interpreter, and why did the shell change it first? | written |
+| 3 | [Ctrl-C is a signal](ctrl_c_is_a_signal/README.md) | Who decides that Ctrl-C raises `KeyboardInterrupt`, and how do I take that decision back? | written |
 
 ## What comes next here
 
