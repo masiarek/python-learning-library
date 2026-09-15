@@ -65,6 +65,8 @@ This is one of a set. Where another already teaches something, this one links ra
 - [Encodings ↗](https://masiarek.github.io/encodings-learning-library/) — bits, bytes, characters, encodings, strings
 - [Rust ↗](https://masiarek.github.io/rust-learning-library/) — including `String`, `&str` and `char`
 - [ABAP ↗](https://masiarek.github.io/abap-learning-library/) — the SAP side
+- [Concurrency ↗](https://masiarek.github.io/concurrency-learning-library/) — `threading`, daemon threads and `concurrent.futures` measured beside Rust, Go, C, C++ and Java, and a concept map with Python's name for each primitive
+- [Go ↗](https://masiarek.github.io/go-learning-library/) — goroutines, channels and `context`, one runnable page each
 
 House conventions for adding a page: [CONTRIBUTING.md](CONTRIBUTING.md).
 
