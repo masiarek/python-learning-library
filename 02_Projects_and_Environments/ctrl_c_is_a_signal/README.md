@@ -28,7 +28,7 @@ while True:
     n += 1
 ```
 
-Run that and press Ctrl-C: the counter blinks, the message prints, and the loop carries straight on. Nothing was raised, so nothing unwound — a signal handler that returns normally **resumes** the line it interrupted. To get out, press Ctrl-\ instead, which is a different key sending a different signal that you have not taken over. (There is a way to write a program that nothing can get out of; the [Linux side of this](#see-also) is where the two signals that always work are.)
+Run that and press Ctrl-C: the counter blinks, the message prints, and the loop carries straight on. Nothing was raised, so nothing unwound — a signal handler that returns normally **resumes** the line it interrupted. To get out, press Ctrl-\ instead, which is a different key sending a different signal that you have not taken over. (There is a way to write a program that nothing can get out of, and there are exactly two signals that still work on it: [the signals you cannot catch ↗](https://masiarek.github.io/linux-learning-library/11_Signals/signals_you_cannot_catch/index.html) in the Linux library.)
 
 The rest of this page is that program taken apart, plus the two details in it that are not about signals at all: the `\r` that makes one line count up, and a parameter name that quietly deletes a module.
 
@@ -171,7 +171,9 @@ This is the API you already know, with two edges filed off. `signal(2)` in C han
 
 ## If you are coming from Rust
 
-Rust's standard library has no signal API at all — no `std::signal`, nothing in `std::process` that installs a handler. Ctrl-C therefore does what the kernel says by default: the process dies, no unwinding, no destructors. Getting Python's behaviour means either declaring `signal` from libc yourself across the C ABI, or taking a crate. The contrast is the same one as everywhere else between these two languages: Python ships a batteries-included wrapper with a global, process-wide side effect, and Rust makes you say out loud that you are reaching outside the language.
+[Rust's standard library has no signal API at all ↗](https://masiarek.github.io/rust-learning-library/09_Advanced/catching_a_signal/index.html) — no `std::signal`, nothing in `std::process` that installs a handler. Ctrl-C therefore does what the kernel says by default: the process dies, no unwinding, no destructors. Getting Python's behaviour means either declaring `signal` from libc yourself across the C ABI, or taking a crate. The contrast is the same one as everywhere else between these two languages: Python ships a batteries-included wrapper with a global, process-wide side effect, and Rust makes you say out loud that you are reaching outside the language.
+
+One further difference falls out of that, and it is the reason section 8 above matters less in Rust than it sounds. A Rust handler is the *real* C handler — it runs at an arbitrary instruction, on whichever thread the kernel picked — so it may not print, allocate or take a lock, and the idiom is an `AtomicBool` the main loop polls. Everything Python lets you do inside the handler, Rust makes you ask for by leaving a note.
 
 ## If you are coming from ABAP
 
@@ -193,6 +195,8 @@ There is no equivalent, and that is the useful sentence. An ABAP report runs ins
 - [Opening a file](../../01_Text_and_Bytes/opening_a_file/README.md) — buffering as `open()`'s own parameter, and why whether stdout is a terminal decides the order your `print()` calls come out in.
 - [What ends a line](../../01_Text_and_Bytes/what_ends_a_line/README.md) — `\r` as a line terminator, which is the same byte doing a completely different job.
 - [`-c` is not the prompt](../dash_c_is_not_the_prompt/README.md) — the other page here about handing a program to the interpreter and what the shell does before Python sees it.
+- [The signals you cannot catch ↗](https://masiarek.github.io/linux-learning-library/11_Signals/signals_you_cannot_catch/index.html) in the Linux library — the other side of the terminal: `trap`, the two signals no process can catch, exit status 128 + N, and what Ctrl-\ and Ctrl-Z actually send.
+- [Catching a signal ↗](https://masiarek.github.io/rust-learning-library/09_Advanced/catching_a_signal/index.html) in the Rust library — the same program with no standard-library help at all, and a handler that may not print.
 - [Signals ↗](https://masiarek.github.io/concurrency-learning-library/11_Concepts/communication/signals/index.html) in the concurrency library — signals as inter-process communication, and the thread-selection problem behind section 8.
 - [`signal` — set handlers for asynchronous events ↗](https://docs.python.org/3/library/signal.html) — the module. The "General rules" section at the top is short and is the part people skip.
 - [PEP 475 ↗](https://peps.python.org/pep-0475/) — retrying syscalls interrupted by a signal.
