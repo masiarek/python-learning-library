@@ -1,0 +1,75 @@
+1. MIXED NUMBERS COMPARE; A NUMBER AND A STRING DO NOT
+     1 == 1.0      True
+     7 < 7.5       True
+     True == 1     True        bool is a subclass of int
+     True + True   2
+     1 == '1'      False       == across unrelated types is just False
+     1 < '2'       TypeError   < across unrelated types refuses
+
+     Rust will not compile i32 < u16: it refuses to compare two
+     integer TYPES. Python has one int type, so that question cannot
+     be written here. The refusal it does have is between kinds of
+     value: ordering a number against a string.
+
+2. THE COMPARISON IS EXACT
+     n = 2**53 + 1 = 9007199254740993
+
+     float(n)                   9007199254740992.0   the nearest double is one less
+     n == float(n)              False                compared exactly: they differ by 1
+     float(n) == 2**53          True                 and that double IS 2**53
+     float(n) == float(2**53)   True                 convert both first, and two ints collide
+     n.__eq__(float(n))         NotImplemented       int's == does not know float
+     float(n).__eq__(n)         False                float's == does the exact work
+
+     Where the doubles run out, some ints have no double of their own:
+     n           float(n)               n == float(n)
+     2**53 - 1   9007199254740991.0     True
+     2**53       9007199254740992.0     True
+     2**53 + 1   9007199254740992.0     False
+     2**53 + 2   9007199254740994.0     True
+     2**53 + 3   9007199254740996.0     False
+
+3. PAST THE LARGEST DOUBLE, COMPARISON STILL WORKS
+     10**400 > 1e308      True
+     10**400 < math.inf   True
+     float(10**400)       OverflowError   the conversion cannot happen
+
+     The comparison never converted the int, so it has an answer
+     where the conversion has none.
+
+4. ARITHMETIC CONVERTS -- ONLY COMPARISON IS EXACT
+     n + 0.0         9007199254740992.0   the int became a float first
+     n + 0.0 == n    False                adding zero changed the number
+     10**400 + 0.0   OverflowError        and past the largest double, it cannot
+
+5. DECIMAL AND FRACTION FOLLOW THE SAME RULE
+     The literal 0.1 holds 3602879701896397 / 36028797018963968
+     -- (0.1).as_integer_ratio() -- which is not one tenth.
+
+     Decimal('0.1') == 0.1    False       a tenth is not that double
+     Decimal('0.1') < 0.1     True        the double is a little MORE than a tenth
+     Fraction(1, 10) == 0.1   False
+     Fraction(0.1) == 0.1     True        built from the double: the same number
+     Decimal(0.1) == 0.1      True        same again, in decimal
+     Decimal('0.1') + 0.1     TypeError   compares with a float, refuses to add one
+     Fraction(1, 10) + 0.1    0.2         adds, and the answer is a float
+
+6. EQUAL NUMBERS ARE ONE DICT KEY
+     len({1, 1.0, True, Fraction(1), Decimal(1)})   1             five types, one number
+     {1: 'int', 1.0: 'float', True: 'bool'}         {1: 'bool'}   first key kept, last value
+     hash(0.5) == hash(Fraction(1, 2))              True          equal, so they must hash equal
+     {n: 'found'}.get(float(n))                     None          float(n) is 2**53, not n
+     {2**53: 'found'}.get(float(n))                 'found'
+
+     A dict needs equal keys to hash equal, so hash() is defined on
+     the numeric value, whatever type is holding it.
+
+7. A WIDTH HAS TO BE ASKED FOR
+     Rust's 300_i32 as i8 is 44: the top bits are dropped. A Python
+     int has no width to drop them from, so the width is yours to name:
+
+     (300 + 128) % 256 - 128                 44              arithmetic: wrap into -128..127
+     ctypes.c_int8(300).value                44              a C type truncates, as the cast does
+     (300).to_bytes(1, 'big', signed=True)   OverflowError   refuses, like i8::try_from
+     struct.pack('b', 300)                   struct.error    refuses too
+     -1 < 1                                  True            no unsigned type for -1 to become

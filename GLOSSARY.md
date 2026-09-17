@@ -64,6 +64,8 @@ Short entries. Each links to the page that explains it properly — a definition
 
 **mojibake** — text decoded with the wrong codec, so `ó` reads as `Ã³`. See [Encode and decode](01_Text_and_Bytes/encode_and_decode/README.md) and the [encodings library's page ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/mojibake/index.html).
 
+**NaN** — "not a number", the IEEE 754 float that an invalid operation such as `inf - inf` produces. Every comparison with it is `False` except `!=`, so `nan == nan` is `False` and `math.isnan` is the test to use. Python's containers check identity before `==`, so the *same* NaN object is found in a list that holds it, while two `float('nan')` calls make two objects that are not. See [Float equality and NaN](03_Numbers/float_equality_and_nan/README.md).
+
 **normalization** — rewriting text into a canonical form (NFC, NFD, NFKC, NFKD) so that strings which render identically also compare equal. See [Normalization](01_Text_and_Bytes/normalization/README.md).
 
 **ordinal comparison** — comparing two strings by their code points, left to right, first difference wins: no alphabet, no locale, no case table, no normalization. What Python's `==`, `<`, `in`, `find`, `startswith`, `hash` and `sorted` all do, and the only mode Python has. The name is .NET's, which makes every string API take a `StringComparison`; Python's is invisible because there is nothing to choose. See [Comparison has a mode](01_Text_and_Bytes/comparison_has_a_mode/README.md).
@@ -109,6 +111,8 @@ Short entries. Each links to the page that explains it properly — a definition
 **translation table** — the argument to `str.translate()`: a mapping from a **code point number** to an `int`, a `str` of any length, or `None` to delete. `str.maketrans` builds one, and any object whose `__getitem__` accepts an `int` will do — a `dict` subclass with `__missing__` maps everything you did not list. A `LookupError` from it means *leave this character alone*, which is why passing a `str` by mistake is a silent no-op. `bytes.translate` takes a different thing entirely: a 256-byte sequence, plus a separate `delete` argument. See [`translate` is a table, keyed by ordinal](01_Text_and_Bytes/translate_is_a_table/README.md).
 
 **two's complement** — how a fixed-width integer stores a negative number: `-9` in eight bits is `11110111`. Python's bitwise operators behave as if an `int` were two's complement with infinitely many sign bits, so a negative `int` has no finite bit pattern until you mask it to a width — `-9 & 0xFF` is `247`, `0b11110111`. See [`bin()` is not the bits](01_Text_and_Bytes/bin_is_not_the_bits/README.md).
+
+**ulp** — "unit in the last place": the gap between a float and the next larger one, `math.ulp(x)`. It is `sys.float_info.epsilon` at `1.0` and grows with the magnitude, 1024 times wider at 2000, which is why an absolute epsilon tolerance stops working on large numbers. See [Float equality and NaN](03_Numbers/float_equality_and_nan/README.md).
 
 **universal newlines** — the translation Python's text mode applies on the way in: `\r\n` and `\r` both arrive as `\n`. It is why iterating a file gives three line boundaries where `splitlines()` gives ten, and why `newline=""` exists for the `csv` module. See [What ends a line](01_Text_and_Bytes/what_ends_a_line/README.md).
 

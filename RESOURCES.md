@@ -22,6 +22,9 @@ External material worth your time, by what it is good for. Everything here is so
 - [PEP 383 ↗](https://peps.python.org/pep-0383/) — `surrogateescape`, and the filename problem it was invented for.
 - [PEP 686 ↗](https://peps.python.org/pep-0686/) — making UTF-8 mode the default, and what it changes.
 - [PEP 540 ↗](https://peps.python.org/pep-0540/) — UTF-8 mode itself.
+- [Floating-point arithmetic: issues and limitations ↗](https://docs.python.org/3/tutorial/floatingpoint.html) — the tutorial's chapter on why `0.1` is not a tenth. Behind [Float equality and NaN](03_Numbers/float_equality_and_nan/README.md).
+- [PEP 485 ↗](https://peps.python.org/pep-0485/) — `math.isclose`, and the reasoning behind a relative `rel_tol` and a zero `abs_tol` by default.
+- [Value comparisons ↗](https://docs.python.org/3/reference/expressions.html#value-comparisons) — the language reference's promise that numbers compare across types without loss of precision, and its NaN rule. Behind [Comparing an `int` with a `float`](03_Numbers/comparing_int_and_float/README.md).
 
 ## Real Python
 
@@ -50,6 +53,10 @@ The two pages behind [Filenames are not text](01_Text_and_Bytes/filenames_are_no
 
 - [Display high-bit characters in Terminal on Mac ↗](https://support.apple.com/guide/terminal/display-high-bit-characters-trmlxxx/mac) — Apple. The Terminal profile's text-encoding menu and its "set locale environment variables on startup" checkbox. Read it for what the three settings *are*; the advice to change them is for a world that is no longer the default.
 - [Terminal Primer – Part 3 – Special Characters ↗](https://scriptingosx.com/2017/08/special-characters/) — Armin Briegel. Shell quoting and escaping, not encodings — but it is where the Finder `/` ↔ shell `:` swap is best explained. Written for `bash` in 2017; its `!` and single-quote rules do not hold in `fish`.
+
+## Books
+
+- Tim McNamara, [*Rust in Action* ↗](https://www.manning.com/books/rust-in-action) — Manning, 2021. A Rust book, and paid. Its §2.3.3 "Comparing numbers" prompted the whole of [chapter 3](03_Numbers/README.md): [Comparing an `int` with a `float`](03_Numbers/comparing_int_and_float/README.md) asks its question about mixed integer types of Python, and [Float equality and NaN](03_Numbers/float_equality_and_nan/README.md) re-runs its floating-point half. The topics are the book's; the examples, measurements and prose are this library's, and none of its listings are reproduced. Two findings sharpen it rather than contradict it: its 32-bit equality test passes only because both sides round to `3e99999a`, and the difference in its tolerance example is exactly zero, so that example never exercises the tolerance.
 
 ## Talks
 

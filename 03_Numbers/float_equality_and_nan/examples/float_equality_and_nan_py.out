@@ -1,0 +1,90 @@
+1. 0.1 + 0.2 IS NOT 0.3
+     0.1 + 0.2            0.30000000000000004
+     0.1 + 0.2 == 0.3     False
+     0.5 + 0.25 == 0.75   True                  halves and quarters are exact in binary
+
+                float.hex()             64 bits
+     0.1 + 0.2  0x1.3333333333334p-2    3fd3333333333334
+     0.3        0x1.3333333333333p-2    3fd3333333333333
+
+     One step apart in the last hex digit. The exact values show why:
+     0.1  is stored as 0.1000000000000000055511151231257827021181583404541015625
+     0.2  is stored as 0.200000000000000011102230246251565404236316680908203125
+     0.3  is stored as 0.299999999999999988897769753748434595763683319091796875
+     0.1 and 0.2 are each stored a little high; 0.3 a little low.
+     math.nextafter(0.3, math.inf) == 0.1 + 0.2   True
+
+2. THE SAME SUMS IN 32 BITS
+     Python has no 32-bit float. struct.pack('>f', x) rounds a double
+     to the nearest one, which is enough to replay the arithmetic.
+
+     question           left, 32 bits   right, 32 bits   in 32 bits   in 64 bits
+     0.1 + 0.2 == 0.3   3e99999a        3e99999a         True         False
+     0.1 + 0.6 == 0.7   3f333334        3f333333         False        True
+
+     The first question is True in 32 bits and False in 64; the second
+     is the other way round. Neither width is the accurate one: each
+     rounds, and each gets lucky on different numbers. (For both pairs
+     the double sum of the two 32-bit values is exact -- the program
+     asserts it with Fraction -- so rounding that sum once to 32 bits
+     is exactly what 32-bit addition does.)
+
+3. A TOLERANCE HAS TO BE RELATIVE
+     0.2 - (0.1 + 0.1)   is 0.0 in 64 bits, and 0.0 in 32
+     A difference of exactly zero passes any tolerance, and == too.
+     To test a tolerance, the two sides have to differ:
+
+     sys.float_info.epsilon                      2.220446049250313e-16    the gap between 1.0 and the next double
+     math.ulp(2000.3)                            2.2737367544323206e-13   the gap near 2000
+     math.ulp(2000.3) / sys.float_info.epsilon   1024.0
+
+     a = 1000.1 + 1000.2
+     a                                           2000.3000000000002
+     a == 2000.3                                 False
+     a - 2000.3 == math.ulp(2000.3)              True                 one gap apart: the next double up
+     abs(a - 2000.3) <= sys.float_info.epsilon   False                no two doubles near 2000 are that close
+     math.isclose(a, 2000.3)                     True                 rel_tol=1e-09 scales with the numbers
+     math.isclose(1e-20, 0.0)                    False                abs_tol defaults to 0.0
+     math.isclose(1e-20, 0.0, abs_tol=1e-12)     True                 near zero, say what close means
+
+4. EQUALITY IS NOT THE BITS
+     0.0 == -0.0   True   and the bits are 0000000000000000 and 8000000000000000
+     nan = float('nan')
+
+     nan == nan                False   every comparison with NaN is False...
+     nan != nan                True    ...except !=, which is its negation
+     nan < 1.0 or nan >= 1.0   False   not less, not greater-or-equal
+     math.isnan(nan)           True    the test that works
+
+     Containers ask 'is it the same object?' before they ask ==:
+     [nan] == [nan]                          True    one object, twice: equal
+     nan in [nan]                            True
+     {nan: 'x'}.get(nan)                     'x'
+     [float('nan')] == [float('nan')]        False   two objects: == decides, and says no
+     {float('nan'): 'x'}.get(float('nan'))   None
+     math.nan is math.nan                    True    a module constant is one object...
+     [math.nan] == [math.nan]                True    ...so this list compares equal
+
+5. WITH A NaN IN IT, THE ORDER OF THE ARGUMENTS DECIDES
+     max(nan, 1.0)                  nan                    asks 1.0 > nan: False, so nan stays
+     max(1.0, nan)                  1.0                    asks nan > 1.0: False, so 1.0 stays
+     min(nan, 1.0)                  nan
+     min(1.0, nan)                  1.0
+     sorted([3.0, nan, 1.0, 2.0])   [3.0, nan, 1.0, 2.0]   not sorted, and no error
+
+6. SOMETIMES PYTHON RAISES WHERE IEEE 754 GIVES A VALUE
+     math.sqrt(-42.0)   ValueError          IEEE 754 says NaN
+     1.0 / 0.0          ZeroDivisionError   IEEE 754 says inf
+     1.0 % 0.0          ZeroDivisionError   C's fmod says NaN
+     math.log(0.0)      ValueError          IEEE 754 says -inf
+     1e308 ** 2         OverflowError       C's pow says inf
+
+     ...and sometimes it hands the value back:
+     1e308 * 1e308               inf     the same number as 1e308 ** 2, and no error
+     1e308 * 10                  inf
+     math.inf - math.inf         nan
+     math.inf * 0                nan
+     math.isfinite(1e308 * 10)   False   the check to make before trusting a result
+
+     (-42.0) ** 0.5    a complex, imaginary part 6.480741
+     -42.0 ** 0.5      -6.480741   ** binds tighter than the minus: -(42.0 ** 0.5)

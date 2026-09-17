@@ -74,6 +74,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "00_Start_Here",
         "01_Text_and_Bytes",
         "02_Projects_and_Environments",
+        "03_Numbers",
         "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
@@ -128,6 +129,14 @@ NAV_ORDER: dict[str, list[str]] = {
         "pyproject_toml",
         "dash_c_is_not_the_prompt",
         "ctrl_c_is_a_signal",
+    ],
+    # The exact comparison first, because it is the rule the float page's
+    # surprises are measured against: when one side is an int, Python compares
+    # exactly; when both are floats, exactly is the problem.
+    "03_Numbers": [
+        "README.md",
+        "comparing_int_and_float",
+        "float_equality_and_nan",
     ],
 }
 

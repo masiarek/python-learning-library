@@ -1,0 +1,23 @@
+     expression                       result          note
+     ------------------------------------------------------------------------------------------
+     0.5 + 0.25 == 0.75               True            halves and quarters are exact in binary
+     0.1 * 3 == 0.3                   False           0.30000000000000004 is the next double up
+     math.isclose(0.1 * 3, 0.3)       True            one gap apart, far inside rel_tol=1e-09
+     math.isclose(1e-20, 0.0)         False           relative to zero is zero; abs_tol is 0.0
+     float('nan') in [float('nan')]   False           two objects, so == decides, and says no
+     min(float('nan'), 0.0)           nan             asks 0.0 < nan: False, so nan stays
+     2.0 ** 1024                      OverflowError   ** checks for overflow; * does not
+     -0.0 == 0.0                      True            different bits, equal numbers
+
+     THE ONE THAT DEPENDS ON THE ORDER
+     Line 6. Swapped, min(0.0, float('nan')) is 0.0. min() only
+     replaces its answer when a later argument compares less, and
+     every comparison against a NaN is False, so whichever argument
+     comes first is kept. A minimum should not depend on the order
+     it was asked in, and with a NaN in it, it does.
+
+     THE TWO WHERE == WAS THE RIGHT TEST
+     Lines 1 and 8. 0.5, 0.25, 0.75 and both zeros are stored exactly,
+     so == compares the numbers you wrote. Line 2 is the same shape
+     as line 1 and is False, because 0.1 and 0.3 are not stored
+     exactly -- which is the whole reason line 3 exists.
