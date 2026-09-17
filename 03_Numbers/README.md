@@ -18,8 +18,9 @@ The second page ends with a `## Practice` kata, indexed in [KATAS.md](../KATAS.m
 Named rather than stubbed, because a folder name is a permanent URL and an empty one is clutter:
 
 - **`round()` is not school rounding**: `round(2.5)` is `2`, and `round(2.675, 2)` is `2.67` for a reason that is not the rounding mode
-- **`//` and `%` floor, and C truncates**: why `-7 // 2` is `-4` in Python and `-7 / 2` is `-3` in C and Rust
-- **`Decimal` has a context**: precision, rounding and traps as process-wide state, and what that means for money
+- **`//` and `%` floor, and C truncates**: why `-7 // 2` is `-4` in Python and `-7 / 2` is `-3` in C and Rust. The Rust side is written: [three ways to divide a negative number ↗](https://masiarek.github.io/rust-learning-library/19_Numbers/other_number_types/big_integers/index.html#three-ways-to-divide-a-negative-number)
+- **`Decimal` has a context**: precision, rounding and traps as process-wide state, and what that means for money. The Rust side, where `rust_decimal` has no context, is written: [Decimals ↗](https://masiarek.github.io/rust-learning-library/19_Numbers/other_number_types/decimal_numbers/index.html)
+- **`Fraction`, `complex` and an `int` with no ceiling**: the types Python ships and Rust needs a crate for, already run side by side in the Rust library's [Other number types ↗](https://masiarek.github.io/rust-learning-library/19_Numbers/other_number_types/index.html)
 
 ## Where this sits relative to the other libraries
 
