@@ -178,3 +178,5 @@ Then: two of these lines were given a width. Which two, and what did the width c
 - [`repr` is not `str`](../repr_is_not_str/README.md) — why the prompt shows every result on this page in quotes
 - [A byte is eight bits ↗](https://masiarek.github.io/encodings-learning-library/01_Bits_and_Bytes/a_byte_is_eight_bits/index.html) — the bits themselves, and why a Python `int` is not a byte
 - [`int.bit_length()` ↗](https://docs.python.org/3/library/stdtypes.html#int.bit_length) and [bitwise operations on integers ↗](https://docs.python.org/3/library/stdtypes.html#bitwise-operations-on-integer-types) — the definition in terms of `bin()`, and the infinite sign bits
+- [Integers never overflow: `2 ** 200` is just an Integer ↗](https://masiarek.github.io/ruby-learning-library/15_Numbers/integers_are_unbounded/index.html) — the Ruby side: Ruby has one `Integer` class with no ceiling
+- [Numbers become text with `format`, `to_s(16)` and `%` ↗](https://masiarek.github.io/ruby-learning-library/15_Numbers/number_formatting/index.html) — the Ruby side: `format` speaks C's mini-language

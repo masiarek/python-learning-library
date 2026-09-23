@@ -165,3 +165,4 @@ Then two questions. **Which of the seven destroyed information?** And **which on
 - [Opening a file](../opening_a_file/README.md) — where `encoding=` gets decided for you if you don't
 - [Encode and decode are verbs ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/encode_and_decode_are_verbs/index.html) — the language-agnostic version in the encodings library
 - [Decode at the edges ↗](https://masiarek.github.io/perl-learning-library/02_Unicode_Text/decode_at_the_edges/index.html) — Perl's version, where the default `decode` substitutes `U+FFFD` and strictness is a flag
+- [Text lives in the Ruby text library ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/text_lives_in_the_text_library/index.html) — the Ruby side: a Ruby `String` is bytes plus an encoding label

@@ -143,3 +143,5 @@ Then the question the eight are really for: **which one is the dangerous one —
 - [Counting characters](../counting_characters/README.md) — four answers to "how long is this?"
 - [A string is bytes up to a NUL ↗](https://masiarek.github.io/c-learning-library/03_Strings/a_string_is_bytes_up_to_a_nul/index.html) — the far end of this row: C has one type, `char *`, for both text and data, and the string simply ends at the first zero byte
 - [The crosswalk](../../CROSSWALK.md) — the same idea in Rust, C and ABAP
+- [Strings are mutable; `<<` keeps the object ↗](https://masiarek.github.io/ruby-learning-library/01_Objects_and_Values/strings_are_mutable/index.html) — the Ruby side: A Ruby `String` is a mutable object
+- [Text lives in the Ruby text library ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/text_lives_in_the_text_library/index.html) — the Ruby side: a Ruby `String` is bytes plus an encoding label

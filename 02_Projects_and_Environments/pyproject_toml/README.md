@@ -145,3 +145,6 @@ There is no equivalent, and noticing *why* is the useful part. In ABAP the proje
 - [`str` is not `bytes`](../../01_Text_and_Bytes/str_is_not_bytes/README.md) — the same boundary, one chapter earlier
 - [The TOML specification ↗](https://toml.io/en/) — the format itself, short enough to read in one sitting
 - [The `pyproject.toml` specification ↗](https://packaging.python.org/en/latest/specifications/pyproject-toml/) — every standard key, with the versions each arrived in
+- [Gems are versioned; Bundler pins them ↗](https://masiarek.github.io/ruby-learning-library/14_Tooling_Testing_and_Gems/gems_bundler_and_gemfile/index.html) — the Ruby side: A gem is a versioned package that RubyGems can *activate* by name (`gem "x"`), some ship inside Ruby (default gems),…
+- [`JSON.parse` gives string keys; `YAML.load` is safe ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/json_yaml_and_marshal/index.html) — the Ruby side: JSON is text for everyone and loses what JSON cannot say
+- [`require` loads once; `load` runs every time ↗](https://masiarek.github.io/ruby-learning-library/14_Tooling_Testing_and_Gems/require_require_relative_and_load/index.html) — the Ruby side: `require` and `require_relative` run a file once and remember it in `$LOADED_FEATURES`; `load` runs a file every…

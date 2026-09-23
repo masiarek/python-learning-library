@@ -292,3 +292,5 @@ This is the sharpest contrast on the page, because in ABAP the padding is in the
 - [`unicodedata.east_asian_width` ↗](https://docs.python.org/3/library/unicodedata.html#unicodedata.east_asian_width) — the only cell-width data in the standard library
 - [UAX #11: East Asian Width ↗](https://www.unicode.org/reports/tr11/) — what `A` (Ambiguous) actually means, and why it is a property of the context rather than of the character
 - [The format language ↗](https://masiarek.github.io/rust-learning-library/14_Strings/the_format_language/index.html) — the same grammar in Rust
+- [Text lives in the Ruby text library ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/text_lives_in_the_text_library/index.html) — the Ruby side: a Ruby `String` is bytes plus an encoding label
+- [`#{}` calls `to_s`; `format` is printf ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/string_formatting_and_interpolation/index.html) — the Ruby side: `"#{expr}"` evaluates any expression and calls `to_s` on the result

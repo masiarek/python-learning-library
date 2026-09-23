@@ -18,3 +18,4 @@
 - [Counting characters](../counting_characters/README.md) — where the NFC/NFD length difference first shows up
 - [Sorting is not comparing](../sorting_is_not_comparing/README.md)
 - [Lowercasing is not folding](../lowercasing_is_not_folding/README.md) — the case half, written; this page owes the interaction between folding and normalizing
+- [Text lives in the Ruby text library ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/text_lives_in_the_text_library/index.html) — the Ruby side: a Ruby `String` is bytes plus an encoding label

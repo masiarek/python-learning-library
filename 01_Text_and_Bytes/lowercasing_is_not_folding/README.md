@@ -257,3 +257,4 @@ The second contrast is a language refusing to guess. `str::eq_ignore_ascii_case`
 - [The table has a version ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/the_table_has_a_version/index.html) — why every count on this page carries a Unicode version; these particular ones are stable from 14.0.0 to 16.0.0
 - [`str.casefold()` in the Python docs ↗](https://docs.python.org/3/library/stdtypes.html#str.casefold) — the definition, and the citation this page checks
 - [`fc` is how to compare without case ↗](https://masiarek.github.io/perl-learning-library/02_Unicode_Text/fc_for_caseless_comparison/index.html) — Perl's `casefold()`, on `Straße` and `ΣΑΣ`
+- [Text lives in the Ruby text library ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/text_lives_in_the_text_library/index.html) — the Ruby side: a Ruby `String` is bytes plus an encoding label

@@ -281,3 +281,8 @@ Then: **the first five are one rule. State it in a sentence that does not contai
 - [The crosswalk](../../CROSSWALK.md) — which idea lives in which library
 - [`str.isprintable()` in the Python docs ↗](https://docs.python.org/3/library/stdtypes.html#str.isprintable) — the definition this page is unpacking
 - [`string.printable` ↗](https://docs.python.org/3/library/string.html#string.printable) — and the note that says it is not printable
+- [An object can list its methods and variables ↗](https://masiarek.github.io/ruby-learning-library/10_Metaprogramming/introspection/index.html) — the Ruby side: `methods`, `instance_methods(false)`, `instance_variables`, `instance_method(:x).parameters`, `source_location`,…
+- [Instance variables are private ↗](https://masiarek.github.io/ruby-learning-library/06_Classes_and_Modules/instance_variables_are_private/index.html) — the Ruby side: An `@variable` belongs to one object and can be read or written only by that object's own methods
+- [Twenty-three Python traps for a Ruby programmer ↗](https://masiarek.github.io/ruby-learning-library/16_Idioms_and_Gotchas/gotchas_for_ruby_programmers_in_python/index.html) — the Ruby side: The twenty-three places where a Ruby reflex gives the wrong answer in Python
+- [`puts` adds a newline, `print` does not, `p` shows `inspect` ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/puts_print_p_and_pp/index.html) — the Ruby side: `puts` writes `to_s` plus a newline it does not double, flattening arrays, printing `nil` as an empty line and an…
+- [`puts` calls `to_s`, `p` calls `inspect` ↗](https://masiarek.github.io/ruby-learning-library/07_The_Object_Model/to_s_inspect_and_p/index.html) — the Ruby side: Every object answers two questions

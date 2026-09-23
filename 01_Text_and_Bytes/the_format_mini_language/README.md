@@ -348,3 +348,5 @@ And one to explain rather than predict: **`'{} and {0}'.format('spam', 'eggs')` 
 - [PEP 682 ↗](https://peps.python.org/pep-0682/) — the `z` option, and why it has to act after rounding
 - [PEP 461 ↗](https://peps.python.org/pep-0461/) — `%` on `bytes`, and the binary-protocol argument for it
 - [Locale and `LC_CTYPE` ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/locale_and_lc_ctype/index.html) — the six independent variables the `n` type reaches into
+- [Numbers become text with `format`, `to_s(16)` and `%` ↗](https://masiarek.github.io/ruby-learning-library/15_Numbers/number_formatting/index.html) — the Ruby side: `format` speaks C's mini-language
+- [`#{}` calls `to_s`; `format` is printf ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/string_formatting_and_interpolation/index.html) — the Ruby side: `"#{expr}"` evaluates any expression and calls `to_s` on the result

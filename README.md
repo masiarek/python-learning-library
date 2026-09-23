@@ -65,6 +65,7 @@ python3 tools/check_katas.py              # every kata folded, run and indexed
 
 This is one of a set. Where another already teaches something, this one links rather than repeats — see [the crosswalk](CROSSWALK.md).
 
+- [Ruby ↗](https://masiarek.github.io/ruby-learning-library/) — the twin of this library: every page there runs a Ruby program and a Python one side by side, and its [crosswalk ↗](https://masiarek.github.io/ruby-learning-library/CROSSWALK.html) maps each idea to both spellings
 - [Encodings ↗](https://masiarek.github.io/encodings-learning-library/) — bits, bytes, characters, encodings, strings
 - [Rust ↗](https://masiarek.github.io/rust-learning-library/) — including `String`, `&str` and `char`
 - [ABAP ↗](https://masiarek.github.io/abap-learning-library/) — the SAP side

@@ -354,3 +354,4 @@ Then: **lines 7 and 8 both fail on a name, and only one of them tells you.** Say
 - [Control characters ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/control_characters/index.html) — the five in `string.whitespace` that are not space
 - [Meet the `char` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/meet_the_char/index.html) — Rust's answer: predicates on the type, no constants at all
 - [`string` — Common string operations ↗](https://docs.python.org/3/library/string.html) — the module docs this page is unpacking
+- [Text lives in the Ruby text library ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/text_lives_in_the_text_library/index.html) — the Ruby side: a Ruby `String` is bytes plus an encoding label

@@ -100,3 +100,4 @@ There is no equivalent, and the absence is the lesson. `OPEN DATASET` takes a `s
 - [Counting characters](../counting_characters/README.md) — the same NFC/NFD pair as a length problem
 - [Opening a file](../opening_a_file/README.md) — the *contents* side of the same boundary
 - [Inspecting a file ↗](https://masiarek.github.io/encodings-learning-library/06_Terminal/inspecting_a_file/index.html) — the shell tools that show you the bytes a name is made of
+- [`Pathname#/` joins, and `Dir.glob` is sorted ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/pathname_dir_and_glob/index.html) — the Ruby side: `Pathname` is an object with `/`, `basename`, `extname`, `parent`, `children`, `exist?` and `read`; `Dir.glob`…

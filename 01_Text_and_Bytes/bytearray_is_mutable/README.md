@@ -214,3 +214,6 @@ buf += b"d"
 - [RFC 69 — how Rust got `b'A'` ↗](https://masiarek.github.io/rust-learning-library/14_Strings/rfc_69_byte_literals/index.html) — the byte literal Python does not have
 - [A record on the wire ↗](https://masiarek.github.io/c-learning-library/05_Bytes_on_the_Wire/a_record_on_the_wire/index.html) — where `struct.pack` meets C: the same record laid out field by field, and the padding C's `sizeof` shows that `>` leaves out
 - [The crosswalk](../../CROSSWALK.md) — the same ideas across all four languages
+- [Strings are mutable; `<<` keeps the object ↗](https://masiarek.github.io/ruby-learning-library/01_Objects_and_Values/strings_are_mutable/index.html) — the Ruby side: A Ruby `String` is a mutable object
+- [Twenty-three Python traps for a Ruby programmer ↗](https://masiarek.github.io/ruby-learning-library/16_Idioms_and_Gotchas/gotchas_for_ruby_programmers_in_python/index.html) — the Ruby side: The twenty-three places where a Ruby reflex gives the wrong answer in Python
+- [Twenty-three Ruby traps for a Python programmer ↗](https://masiarek.github.io/ruby-learning-library/16_Idioms_and_Gotchas/gotchas_for_python_programmers/index.html) — the Ruby side: The twenty-three places where a Python reflex gives the wrong answer in Ruby

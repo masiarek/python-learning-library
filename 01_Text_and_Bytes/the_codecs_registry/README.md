@@ -255,3 +255,4 @@ stateful objects, the ninth handler -- is reached through the module.
 - [Encode, decode and errors ↗](https://masiarek.github.io/encodings-learning-library/04_Python/encode_decode_and_errors/index.html) — the eight built-in handlers as a matrix, including the two that raise `TypeError` on decode
 - [Rotation is not encryption ↗](https://masiarek.github.io/encodings-learning-library/02_Characters/rotation_is_not_encryption/index.html) — why `rot13` being in the codec registry is the right filing and still not cryptography
 - [Byte order and the BOM ↗](https://masiarek.github.io/encodings-learning-library/03_Encodings/byte_order_and_bom/index.html) — the mark section 5 writes twice, and what reads it
+- [Text lives in the Ruby text library ↗](https://masiarek.github.io/ruby-learning-library/13_IO_Files_and_the_System/text_lives_in_the_text_library/index.html) — the Ruby side: a Ruby `String` is bytes plus an encoding label

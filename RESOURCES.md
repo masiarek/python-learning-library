@@ -69,4 +69,4 @@ The two pages behind [Filenames are not text](01_Text_and_Bytes/filenames_are_no
 
 ## The sibling libraries
 
-- [Encodings ↗](https://masiarek.github.io/encodings-learning-library/) · [Rust ↗](https://masiarek.github.io/rust-learning-library/) · [ABAP ↗](https://masiarek.github.io/abap-learning-library/) · [Ruby text ↗](https://masiarek.github.io/ruby-text-learning-library/) · [Perl ↗](https://masiarek.github.io/perl-learning-library/) — see [the crosswalk](CROSSWALK.md).
+- [Encodings ↗](https://masiarek.github.io/encodings-learning-library/) · [Rust ↗](https://masiarek.github.io/rust-learning-library/) · [ABAP ↗](https://masiarek.github.io/abap-learning-library/) · [Ruby ↗](https://masiarek.github.io/ruby-learning-library/) · [Ruby text ↗](https://masiarek.github.io/ruby-text-learning-library/) · [Perl ↗](https://masiarek.github.io/perl-learning-library/) — see [the crosswalk](CROSSWALK.md).

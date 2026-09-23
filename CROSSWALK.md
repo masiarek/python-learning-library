@@ -8,6 +8,8 @@ These libraries were written separately and overlap on purpose: text handling is
 
 A cell in the Python column links into this library. A cell in another column links into that library, or names the API when there is no page for it yet — an unlinked cell is a real answer with no page behind it, and often a gap worth filling. Stubs are deliberately not linked.
 
+**Ruby has a crosswalk of its own.** The [Ruby learning library ↗](https://masiarek.github.io/ruby-learning-library/) runs a Python twin beside every Ruby program, so its [crosswalk ↗](https://masiarek.github.io/ruby-learning-library/CROSSWALK.html) is the Ruby–Python table this page does not repeat: objects, blocks, collections, classes, errors, pattern matching, metaprogramming, concurrency, numbers and idioms, one row each with both spellings and a page that measures them.
+
 **The ABAP column is not machine-checked** — CI cannot run ABAP, and the ABAP library is one page long. Treat those cells as the name to search for, not as verified behaviour. Every Python, Rust and C cell either links to a page whose output is recorded, or states something checked while writing this one.
 
 ## Text and bytes
