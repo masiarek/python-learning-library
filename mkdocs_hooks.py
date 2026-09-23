@@ -80,6 +80,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "06_Iteration",
         "07_Classes_and_the_Data_Model",
         "08_Errors",
+        "09_The_Standard_Library",
         "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
@@ -200,6 +201,18 @@ NAV_ORDER: dict[str, list[str]] = {
         "finally_can_overwrite_the_return",
         "a_warning_is_not_an_exception",
         "the_traceback_is_on_the_object",
+    ],
+    # Six names and the gap between what each says and what it does: the
+    # serialiser first, because every reader meets it, then the four types
+    # whose names mislead, then the module whose shape does.
+    "09_The_Standard_Library": [
+        "README.md",
+        "json_is_not_python",
+        "a_path_is_not_a_string",
+        "an_enum_member_is_not_its_value",
+        "defaultdict_creates_on_read",
+        "lru_cache_keys_on_the_call",
+        "logging_is_a_tree",
     ],
 }
 

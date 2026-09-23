@@ -126,11 +126,23 @@ Added 2026-09-22. `except` is a filter over a class tree, and the pages are what
 | [A warning is not an exception](08_Errors/a_warning_is_not_an_exception/README.md) | **stub** | the filter table has to be measured one category per child interpreter: the once-per-location registry is per process |
 | [The traceback is on the object](08_Errors/the_traceback_is_on_the_object/README.md) | **stub** | the caret and colour rows are dated: each release prints differently |
 
+## Chapter 9 — The standard library
+
+Added 2026-09-22. Six names, and the gap between what each promises and what it does.
+
+| Lesson | Status | Notes |
+|---|---|---|
+| [`json` is not Python](09_The_Standard_Library/json_is_not_python/README.md) | written, 2026-09-22 | spellings that change on the way out and not back (a tuple to a list, an `int` key to a `str`, a tuple key `TypeError`); the four refusals and `default=str`; the numbers (`repr`, a big `int` exact both ways, `1e400` to `inf` in silence, `NaN` written and read, `allow_nan=False`, `01` a `JSONDecodeError`); `ensure_ascii` and sniffed `bytes`; a duplicate key's last value winning, insertion order and `sort_keys`; a nine-value round-trip table with the two that come back unequal |
+| [A `Path` is not a string](09_The_Standard_Library/a_path_is_not_a_string/README.md) | **stub** | an absolute path is never the same on two machines: the example builds a tree under `tempfile` and prints relative paths only |
+| [An `Enum` member is not its value](09_The_Standard_Library/an_enum_member_is_not_its_value/README.md) | **stub** | |
+| [`defaultdict` creates on read](09_The_Standard_Library/defaultdict_creates_on_read/README.md) | **stub** | |
+| [`lru_cache` keys on the call](09_The_Standard_Library/lru_cache_keys_on_the_call/README.md) | **stub** | |
+| [`logging` is a tree](09_The_Standard_Library/logging_is_a_tree/README.md) | **stub** | handlers write to `io.StringIO`, so the key holds the text and not a timestamp |
+
 ## Chapters after this one
 
-Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4 to 8 are built. Still named rather than built:
+Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4 to 9 are built. Still named rather than built:
 
-- **The standard library worth knowing** — `pathlib`, `dataclasses`, `collections`, `itertools`, `functools`
 - **Testing** — and why a recorded-output check like this library's own is not a substitute for one
 
 ## Open questions

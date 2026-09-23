@@ -1,0 +1,50 @@
+1. THE SPELLINGS CHANGE ON THE WAY OUT, AND DO NOT CHANGE BACK
+     json.dumps(True)                                     'true'                         true, not True
+     json.dumps(None)                                     'null'
+     json.dumps((1, 2))                                   '[1, 2]'                       a tuple goes out as a list
+     json.loads(json.dumps((1, 2)))                       [1, 2]                         and comes back as one
+     json.dumps({1: 'a'})                                 '{"1": "a"}'                   an int key becomes a string key
+     json.loads(json.dumps({1: 'a'}))                     {'1': 'a'}                     and stays one
+     json.dumps({True: 1, None: 2})                       '{"true": 1, "null": 2}'
+     json.dumps({(1, 2): 'a'})                            TypeError                      a tuple key has no JSON spelling at all
+
+2. NOT EVERY VALUE HAS A SPELLING
+     json.dumps(b'x')                                     TypeError                      bytes: decode first, or base64
+     json.dumps({1, 2})                                   TypeError                      a set is not a list until you make it one
+     json.dumps(Decimal('0.1'))                           TypeError
+     json.dumps(datetime.date(2026, 9, 22))               TypeError
+     json.dumps(datetime.date(2026, 9, 22), default=str)  '"2026-09-22"'                 default= is asked for anything it cannot spell
+
+3. THE NUMBERS
+     json.dumps(0.1)                                      '0.1'                          repr(): the shortest string that reads back
+     json.dumps(1e16)                                     '1e+16'
+     json.dumps(10**20)                                   '100000000000000000000'        an int of any size goes out exactly
+     json.loads('100000000000000000000')                  100000000000000000000          and reads back exactly; JavaScript rounds it
+     json.loads('1e400')                                  inf                            too big for a double: inf, and no error
+     json.dumps(float('nan'))                             'NaN'                          NaN is not JSON: RFC 8259 has no such token
+     json.dumps(float('nan'), allow_nan=False)            ValueError
+     json.loads('NaN')                                    nan                            yet the reader accepts it
+     json.loads('01')                                     JSONDecodeError                a leading zero is not a JSON number
+
+4. THE TEXT
+     json.dumps('Łódź')                                   '"\\u0141\\u00f3d\\u017a"'     ensure_ascii: every non-ASCII character escaped
+     json.dumps('Łódź', ensure_ascii=False)               '"Łódź"'
+     json.loads(json.dumps('Łódź')) == 'Łódź'             True                           both spellings read back to the same str
+     json.loads(b'[1]')                                   [1]                            bytes are accepted: the encoding is sniffed
+
+5. THE KEYS
+     json.loads('{"a": 1, "a": 2}')                       {'a': 2}                       a duplicate key: the last one wins, silently
+     json.dumps({'b': 1, 'a': 2})                         '{"b": 1, "a": 2}'             insertion order is kept
+     json.dumps({'b': 1, 'a': 2}, sort_keys=True)         '{"a": 2, "b": 1}'             unless you ask for sorted
+
+6. WHAT SURVIVES A ROUND TRIP
+     value          json.dumps(value)    json.loads(...)    equal?
+     1              1                    1                  True
+     1.0            1.0                  1.0                True
+     True           true                 True               True
+     None           null                 None               True
+     'a'            "a"                  'a'                True
+     [1]            [1]                  [1]                True
+     (1,)           [1]                  [1]                False
+     {'k': 1}       {"k": 1}             {'k': 1}           True
+     {1: 'a'}       {"1": "a"}           {'1': 'a'}         False

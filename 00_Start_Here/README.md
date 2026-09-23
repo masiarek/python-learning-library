@@ -45,5 +45,6 @@ python3 tools/run_examples.py --check
 6. [Iteration](../06_Iteration/README.md) — lazy, and used up: an iterator is a position, not a collection
 7. [Classes and the data model](../07_Classes_and_the_Data_Model/README.md) — every operator is a method: a class attribute is shared, and defining `__eq__` deletes `__hash__`
 8. [Errors](../08_Errors/README.md) — an exception is an object and `except` is a filter: `except Exception` is not `except:`
-9. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
-10. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next
+9. [The standard library](../09_The_Standard_Library/README.md) — the modules whose names promise more than they do: `json` is not Python
+10. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
+11. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next
