@@ -77,6 +77,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "03_Numbers",
         "04_Names_and_Objects",
         "05_Functions",
+        "06_Iteration",
         "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
@@ -162,6 +163,17 @@ NAV_ORDER: dict[str, list[str]] = {
         "assignment_makes_it_local",
         "a_decorator_is_a_call",
         "annotations_are_not_checked",
+    ],
+    # The protocol first, then the generator that implements it as a body,
+    # then the three quiet failures of a for loop: a zip that stops early, a
+    # groupby that groups runs, and a loop that changes what it walks.
+    "06_Iteration": [
+        "README.md",
+        "an_iterator_is_used_up",
+        "a_generator_runs_when_asked",
+        "zip_stops_at_the_shortest",
+        "groupby_groups_runs",
+        "mutating_what_you_iterate",
     ],
 }
 

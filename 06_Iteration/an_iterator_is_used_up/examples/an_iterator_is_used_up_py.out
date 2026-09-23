@@ -1,0 +1,69 @@
+1. A LIST CAN BE WALKED TWICE; ITS ITERATOR CANNOT
+     nums = [1, 2, 3]
+     sum(nums), sum(nums)                   (6, 6)                     a list starts every walk at the beginning
+     it = iter(nums)
+     sum(it), sum(it)                       (6, 0)                     the second sum found the iterator at its end
+     it = iter(nums)
+     sum(it)                                6
+     max(it)                                ValueError                 not a complaint about iterators: max of nothing
+     len(iter(nums))                        TypeError                  no length: the only way to count is to consume
+
+2. WHAT for DOES: iter() ONCE, THEN next() UNTIL StopIteration
+     it = iter([10, 20])
+     next(it)                               10
+     next(it)                               20
+     next(it)                               StopIteration              the signal that the walk is over
+     next(it, 'done')                       'done'                     a default instead of the exception
+     iter(it) is it                         True                       an iterator's iter() is itself, so for cannot rewind it
+     iter(nums) is iter(nums)               False                      a list hands out a fresh iterator every time
+
+3. WHICH BUILT-INS HAND YOU AN ITERATOR
+     pairs = zip('ab', [1, 2])
+     list(pairs)                            [('a', 1), ('b', 2)]
+     list(pairs)                            []                         zip is an iterator: used up
+     squares = map(lambda n: n * n, [1, 2, 3])
+     list(squares), list(squares)           ([1, 4, 9], [])            so is map, and filter, reversed, enumerate
+     evens = (n for n in range(10) if n % 2 == 0)
+     4 in evens                             True                       in walked the generator as far as 4
+     list(evens)                            [6, 8]                     and left it there
+     r = range(3)
+     list(r), list(r)                       ([0, 1, 2], [0, 1, 2])     range is a sequence, not an iterator
+     d = {'a': 1}
+     items = d.items()
+     list(items), list(items)               ([('a', 1)], [('a', 1)])   a dict view is a view, not an iterator
+
+4. HALF-CONSUMED BY A SHORT-CIRCUIT
+     it = iter([1, 2, 3, 4])
+     any(n > 1 for n in it)                 True                       any() stopped at 2
+     list(it)                               [3, 4]                     the rest is still there, for whoever asks next
+
+5. A GENERATOR RUNS ONLY WHEN ASKED, AND ONLY ONCE
+     def gen():
+         print('     (gen: started)')
+         yield 1
+         print('     (gen: resumed)')
+         yield 2
+         print('     (gen: finished)')
+     g = gen()
+     (gen: started)
+     next(g)                                1                          nothing ran until this call
+     (gen: resumed)
+     next(g)                                2
+     (gen: finished)
+     next(g)                                StopIteration              the body ran to its end, then signalled
+     list(g)                                []                         spent; gen() again is the only way back
+
+6. A FILE IS AN ITERATOR TOO
+     f = io.StringIO('a\nb\n')
+     len(f.readlines())                     2
+     len(f.readlines())                     0                          at the end, like any iterator
+     f.seek(0)
+     len(f.readlines())                     2                          a file has seek(); an iterator in general does not
+
+7. WALKING TWICE ON PURPOSE
+     it = iter([1, 2, 3])
+     a, b = itertools.tee(it)
+     list(a), list(b)                       ([1, 2, 3], [1, 2, 3])     tee buffers what one side has seen and the other has not
+     list(it)                               []                         and the original is spent either way
+     saved = list(iter([1, 2, 3]))
+     sum(saved), sum(saved)                 (6, 6)                     or keep a list, which is what tee is doing quietly

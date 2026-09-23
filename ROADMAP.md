@@ -89,12 +89,23 @@ Added 2026-09-22. `def` is a statement that runs, and each page is a piece of it
 | [A decorator is a call, made when `def` runs](05_Functions/a_decorator_is_a_call/README.md) | **stub** | |
 | [Annotations are not checked](05_Functions/annotations_are_not_checked/README.md) | **stub** | annotation evaluation is three regimes (eager, stringified, lazy since 3.14), so that row is a dated table; a type checker's output is a dated fence because none is in the stdlib |
 
+## Chapter 6 — Iteration
+
+Added 2026-09-22. The `for` protocol, and the four places its silence costs something.
+
+| Lesson | Status | Notes |
+|---|---|---|
+| [An iterator is used up](06_Iteration/an_iterator_is_used_up/README.md) | written, 2026-09-22 | `sum(it), sum(it)` as `(6, 0)`, then `max(it)` raising `ValueError` about emptiness, which is the shape the bug takes; the protocol by hand with `next()`, `StopIteration`, a default, and `iter(it) is it` against `iter(nums) is iter(nums)`; `zip`, `map` and a generator expression each listing once, `4 in evens` leaving `[6, 8]`, against `range` and a dict view listing twice; `any()` leaving `[3, 4]`; a generator printing from inside its body to show when it ran; `io.StringIO` read twice and after `seek(0)`; `itertools.tee` and a kept list |
+| [A generator runs when you ask](06_Iteration/a_generator_runs_when_asked/README.md) | **stub** | the memory comparison is a dated `tracemalloc` table, not a key |
+| [`zip` stops at the shortest](06_Iteration/zip_stops_at_the_shortest/README.md) | **stub** | |
+| [`groupby` groups runs, not keys](06_Iteration/groupby_groups_runs/README.md) | **stub** | |
+| [Mutating what you iterate](06_Iteration/mutating_what_you_iterate/README.md) | **stub** | the append-while-iterating case needs a bound, or the example never ends |
+
 ## Chapters after this one
 
-Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4 and 5 are built. Still named rather than built:
+Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4, 5 and 6 are built. Still named rather than built:
 
 - **The data model** — `__len__`, `__eq__`, `__hash__`: the class's half of chapter 4's `is` and `==`
-- **Sequences and iteration** — iterators, generators, and the difference between lazy and eager
 - **Errors** — exceptions as control flow, and what `except Exception` costs you
 - **The standard library worth knowing** — `pathlib`, `dataclasses`, `collections`, `itertools`, `functools`
 - **Testing** — and why a recorded-output check like this library's own is not a substitute for one
