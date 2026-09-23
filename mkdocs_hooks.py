@@ -76,6 +76,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "02_Projects_and_Environments",
         "03_Numbers",
         "04_Names_and_Objects",
+        "05_Functions",
         "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
@@ -149,6 +150,18 @@ NAV_ORDER: dict[str, list[str]] = {
         "plus_equals_is_not_plus",
         "is_is_not_equals",
         "hash_is_not_stable_across_runs",
+    ],
+    # The two things def does early -- evaluate the defaults, apply the
+    # decorators -- around the two things it leaves until the call: a
+    # closure's lookup and the compiler's decision about where a name lives.
+    # Annotations last: the work that never happens at all.
+    "05_Functions": [
+        "README.md",
+        "a_default_is_computed_once",
+        "a_closure_captures_the_variable",
+        "assignment_makes_it_local",
+        "a_decorator_is_a_call",
+        "annotations_are_not_checked",
     ],
 }
 

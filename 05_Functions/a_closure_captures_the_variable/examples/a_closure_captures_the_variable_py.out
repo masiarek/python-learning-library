@@ -1,0 +1,51 @@
+1. THREE LAMBDAS, ONE VARIABLE
+     fs = [lambda: i for i in range(3)]
+     [f() for f in fs]                            [2, 2, 2]          all three read i when called, and i ended at 2
+
+2. THE LOOKUP HAPPENS WHEN THE FUNCTION RUNS
+     x = 1
+     def f(): return x
+     x = 2
+     f()                                          2                  f reads x now, not when def ran
+     del x
+     f()                                          NameError          and if x is gone by then, it fails now
+
+3. WHAT A CLOSURE HOLDS: A CELL, WHICH CAN BE SHARED
+     def counter():
+         n = 0
+         def inc():
+             nonlocal n
+             n += 1
+             return n
+         def get():
+             return n
+         return inc, get
+     inc, get = counter()
+     inc(), inc(), get()                          (1, 2, 2)          get sees what inc did: one cell
+     inc.__closure__[0] is get.__closure__[0]     True
+     get.__closure__[0].cell_contents             2                  the cell holds the current value
+
+4. THREE WAYS TO CAPTURE THE VALUE INSTEAD
+     fs = [lambda i=i: i for i in range(3)]
+     [f() for f in fs]                            [0, 1, 2]          a default is computed once, when the lambda is made
+     fs = [functools.partial(lambda i: i, i) for i in range(3)]
+     [f() for f in fs]                            [0, 1, 2]          partial stores the argument now
+     def keep(i): return lambda: i
+     fs = [keep(i) for i in range(3)]
+     [f() for f in fs]                            [0, 1, 2]          each call to keep is a new scope, so a new cell
+
+5. THE LOOP VARIABLE OUTLIVES THE LOOP
+     for k in range(3): pass
+     k                                            2                  a for loop makes no scope of its own
+     squares = [k * k for k in range(10)]
+     k                                            2                  a comprehension does: its k never leaked
+
+6. AND ASSIGNING TO THE NAME INSIDE MAKES IT LOCAL
+     total = 0
+     def bump(): total += 1
+     bump()                                       UnboundLocalError  the += made total local to bump, so the read finds nothing
+     def bump():
+         global total
+         total += 1
+     bump()
+     total                                        1

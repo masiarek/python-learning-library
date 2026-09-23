@@ -19,6 +19,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 - **[Chapter 2 — Projects and environments](02_Projects_and_Environments/README.md)** — the project file, and the interpreter that runs it
 - **[Chapter 3 — Numbers](03_Numbers/README.md)** — what `==` means between an `int` and a `float`, between two floats, and for NaN
 - **[Chapter 4 — Names and objects](04_Names_and_Objects/README.md)** — the first advanced chapter: assignment never copies, `+=` mutates or rebinds by type, and `is` is not `==`
+- **[Chapter 5 — Functions](05_Functions/README.md)** — what happens when `def` runs: a default is computed once, and a closure captures the variable
 - **[Katas](KATAS.md)** — the practice track: predict the answer, then run it. The first four are on `bytes`
 - **[The crosswalk](CROSSWALK.md)** — the same ideas in Rust, C and ABAP, one table per question
 - **[Roadmap](ROADMAP.md)** — what is written, what is a stub, what is next
@@ -55,6 +56,8 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [Float equality and NaN](03_Numbers/float_equality_and_nan/README.md) | Why is `0.1 + 0.2 == 0.3` `False`, why does an epsilon test fail at 2000, and why is `[nan] == [nan]` `True`? |
 | [Assignment does not copy](04_Names_and_Objects/assignment_does_not_copy/README.md) | Why did a change made through `b` show up in `a` — and why is `[[0] * 3] * 3` one row three times? |
 | [`+=` is not `+`](04_Names_and_Objects/plus_equals_is_not_plus/README.md) | Why did `a += [2]` change a list I never touched — and why did `t[0] += [1]` both raise and happen? |
+| [A default is computed once](05_Functions/a_default_is_computed_once/README.md) | Why does my function remember the previous call's list — and why does `None` fix it? |
+| [A closure captures the variable, not the value](05_Functions/a_closure_captures_the_variable/README.md) | Why do three lambdas built in one loop all return the last value — and which of the three fixes should I use? |
 
 ## Run it
 

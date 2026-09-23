@@ -77,13 +77,24 @@ The first of the advanced chapters, added 2026-09-22. Everything in it is one ru
 | [`is` is not `==`](04_Names_and_Objects/is_is_not_equals/README.md) | **stub** | the small-int and interning rows are CPython behaviour, so they go in a dated table rather than a key |
 | [`hash()` is not stable across runs](04_Names_and_Objects/hash_is_not_stable_across_runs/README.md) | **stub** | the example has to spawn child interpreters under two `PYTHONHASHSEED` values: one process cannot see its own seed change |
 
+## Chapter 5 — Functions
+
+Added 2026-09-22. `def` is a statement that runs, and each page is a piece of its work that happened earlier or later than the reader thought.
+
+| Lesson | Status | Notes |
+|---|---|---|
+| [A default is computed once](05_Functions/a_default_is_computed_once/README.md) | written, 2026-09-22 | the shared list shown through `__defaults__`; a default of `next(count)` to show *when* the evaluation happens (the counter moved once, at `def`); the `None` idiom and why its test is `is None`; a tuple default shared and harmless; `@dataclass` raising `ValueError` on `items: list = []` and `field(default_factory=list)` making one list per instance; the same fact used on purpose, as `lambda i=i` and as `fib`'s `memo={}`, which holds 29 entries after `fib(30)` |
+| [A closure captures the variable, not the value](05_Functions/a_closure_captures_the_variable/README.md) | written, 2026-09-22 | `[lambda: i for i in range(3)]` giving `[2, 2, 2]`; late lookup of a global, including `NameError` after `del`; two closures sharing one cell, shown with `__closure__[0] is` and `cell_contents`; the three fixes (default argument, `functools.partial`, a factory) each giving `[0, 1, 2]`; the `for` variable outliving its loop while a comprehension's does not; `UnboundLocalError` as one row, with `global` as the fix |
+| [Assignment makes a name local](05_Functions/assignment_makes_it_local/README.md) | **stub** | the `co_varnames` / `co_freevars` / `co_names` rows are a dated table: bytecode details move between releases |
+| [A decorator is a call, made when `def` runs](05_Functions/a_decorator_is_a_call/README.md) | **stub** | |
+| [Annotations are not checked](05_Functions/annotations_are_not_checked/README.md) | **stub** | annotation evaluation is three regimes (eager, stringified, lazy since 3.14), so that row is a dated table; a type checker's output is a dated fence because none is in the stdlib |
+
 ## Chapters after this one
 
-Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapter 4 is the first. Still named rather than built:
+Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4 and 5 are built. Still named rather than built:
 
 - **The data model** — `__len__`, `__eq__`, `__hash__`: the class's half of chapter 4's `is` and `==`
 - **Sequences and iteration** — iterators, generators, and the difference between lazy and eager
-- **Functions** — arguments, closures, decorators, and the mutable-default trap
 - **Errors** — exceptions as control flow, and what `except Exception` costs you
 - **The standard library worth knowing** — `pathlib`, `dataclasses`, `collections`, `itertools`, `functools`
 - **Testing** — and why a recorded-output check like this library's own is not a substitute for one
