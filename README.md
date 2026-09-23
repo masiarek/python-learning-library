@@ -24,6 +24,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 - **[Chapter 7 — Classes and the data model](07_Classes_and_the_Data_Model/README.md)** — every operator is a method: a class attribute is shared, and defining `__eq__` deletes `__hash__`
 - **[Chapter 8 — Errors](08_Errors/README.md)** — an exception is an object and `except` is a filter: `except Exception` is not `except:`
 - **[Chapter 9 — The standard library](09_The_Standard_Library/README.md)** — the modules whose names promise more than they do: `json` is not Python
+- **[Chapter 10 — Testing](10_Testing/README.md)** — what a passing run proves: `assert` disappears under `-O`
 - **[Katas](KATAS.md)** — the practice track: predict the answer, then run it. The first four are on `bytes`
 - **[The crosswalk](CROSSWALK.md)** — the same ideas in Rust, C and ABAP, one table per question
 - **[Roadmap](ROADMAP.md)** — what is written, what is a stub, what is next
@@ -67,6 +68,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [Defining `__eq__` deletes `__hash__`](07_Classes_and_the_Data_Model/defining_eq_deletes_hash/README.md) | Why did my class stop working as a dict key the moment I gave it `__eq__` — and why is my `@dataclass` unhashable? |
 | [`except Exception` is not `except:`](08_Errors/except_exception_is_not_except/README.md) | Why does my worker loop ignore Ctrl-C — and why did `sys.exit()` not exit? |
 | [`json` is not Python](09_The_Standard_Library/json_is_not_python/README.md) | Why did my tuple come back a list, my `int` key a `str`, and my Polish text as `\u0141` — and why did none of that raise? |
+| [`assert` disappears under `-O`](10_Testing/assert_disappears_under_dash_o/README.md) | Why did the withdrawal of `-5` go through in production when the `assert` stopped it on my machine? |
 
 ## Run it
 

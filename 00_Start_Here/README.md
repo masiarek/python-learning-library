@@ -46,5 +46,6 @@ python3 tools/run_examples.py --check
 7. [Classes and the data model](../07_Classes_and_the_Data_Model/README.md) — every operator is a method: a class attribute is shared, and defining `__eq__` deletes `__hash__`
 8. [Errors](../08_Errors/README.md) — an exception is an object and `except` is a filter: `except Exception` is not `except:`
 9. [The standard library](../09_The_Standard_Library/README.md) — the modules whose names promise more than they do: `json` is not Python
-10. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
-11. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next
+10. [Testing](../10_Testing/README.md) — what a passing run proves: `assert` disappears under `-O`
+11. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
+12. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next

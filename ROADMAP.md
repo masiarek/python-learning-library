@@ -139,11 +139,19 @@ Added 2026-09-22. Six names, and the gap between what each promises and what it 
 | [`lru_cache` keys on the call](09_The_Standard_Library/lru_cache_keys_on_the_call/README.md) | **stub** | |
 | [`logging` is a tree](09_The_Standard_Library/logging_is_a_tree/README.md) | **stub** | handlers write to `io.StringIO`, so the key holds the text and not a timestamp |
 
+## Chapter 10 — Testing
+
+Added 2026-09-22. What a passing run proves, and the three ways a check passes while the code is wrong.
+
+| Lesson | Status | Notes |
+|---|---|---|
+| [`assert` disappears under `-O`](10_Testing/assert_disappears_under_dash_o/README.md) | written, 2026-09-22 | child interpreters with and without `-O`; `PYTHONOPTIMIZE` with and without `-I`, because isolated mode ignores it, which the first draft had missed: the variable looked broken until the child stopped being isolated, and the row that shows why stayed in; `__debug__` blocks; `-OO` and docstrings; the tuple assert with its `SyntaxWarning` reported from the child's stderr by kind only; validation by `assert` against by `raise`; `unittest`'s `assertEqual` under `-O` |
+| [A recorded output is not a test](10_Testing/a_recorded_output_is_not_a_test/README.md) | **stub** | the `Ran N tests in 0.001s` line cannot be keyed: the example runs the suite through a `TextTestRunner` writing to `io.StringIO` and prints counts |
+| [`patch` where it is looked up](10_Testing/patch_where_it_is_looked_up/README.md) | **stub** | |
+
 ## Chapters after this one
 
-Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4 to 9 are built. Still named rather than built:
-
-- **Testing** — and why a recorded-output check like this library's own is not a substitute for one
+Until 2026-09-22 this section named six chapters and kept them deliberately out of the tree, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so the six became chapters 4 to 10 the same day, each with at least one written lesson and the rest as stubs that carry their questions; an empty folder is still not allowed, and sidebar order still lives in `NAV_ORDER`. The data model became two chapters, [Names and objects](04_Names_and_Objects/README.md) and [Classes and the data model](07_Classes_and_the_Data_Model/README.md), because the identity half and the `__eq__` half are different readers' questions. Nothing is named here now that is not a folder; the questions that do not yet have a page are in [TODO.md](TODO.md).
 
 ## Open questions
 

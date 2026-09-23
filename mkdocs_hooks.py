@@ -81,6 +81,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "07_Classes_and_the_Data_Model",
         "08_Errors",
         "09_The_Standard_Library",
+        "10_Testing",
         "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
@@ -213,6 +214,14 @@ NAV_ORDER: dict[str, list[str]] = {
         "defaultdict_creates_on_read",
         "lru_cache_keys_on_the_call",
         "logging_is_a_tree",
+    ],
+    # Three ways a check passes while the code is wrong, the one that is a
+    # language feature first.
+    "10_Testing": [
+        "README.md",
+        "assert_disappears_under_dash_o",
+        "a_recorded_output_is_not_a_test",
+        "patch_where_it_is_looked_up",
     ],
 }
 

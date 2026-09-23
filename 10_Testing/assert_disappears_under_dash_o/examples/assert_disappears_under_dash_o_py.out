@@ -1,0 +1,25 @@
+1. THE SAME LINE, WITH AND WITHOUT -O
+     python3                exit 1   stdout ''                           stderr AssertionError   the assert fired and the program died
+     python3 -O             exit 0   stdout 'reached the end'            stderr -                the assert is not there
+     PYTHONOPTIMIZE=1       exit 0   stdout 'reached the end'            stderr -                the environment can switch it on for you
+     PYTHONOPTIMIZE=1 -I    exit 1   stdout ''                           stderr AssertionError   unless -I: isolated mode ignores PYTHON* variables
+
+2. WHAT -O REMOVES: assert, AND EVERY `if __debug__:` BLOCK
+     python3                exit 0   stdout 'True\ndebug block'          stderr -
+     python3 -O             exit 0   stdout 'False'                      stderr -
+
+3. -OO ALSO REMOVES DOCSTRINGS
+     python3 -O             exit 0   stdout 'the doc'                    stderr -                still there
+     python3 -OO            exit 0   stdout 'None'                       stderr -                gone: help() and doctest see None
+
+4. THE ASSERT THAT IS ALWAYS TRUE
+     python3                exit 0   stdout 'passed'                     stderr SyntaxWarning    a non-empty tuple is true; the compiler warns
+
+5. AN assert IS NOT VALIDATION
+     assert, python3        exit 1   stdout ''                           stderr AssertionError
+     assert, python3 -O     exit 0   stdout '-5'                         stderr -                the check went with the flag: -5 withdrawn
+     raise, python3         exit 1   stdout ''                           stderr ValueError
+     raise, python3 -O      exit 1   stdout ''                           stderr ValueError       an if and a raise are not optional
+
+6. unittest's assertEqual IS A METHOD, NOT THE STATEMENT
+     python3 -O             exit 0   stdout 'assertEqual still raises'   stderr -                so a test suite survives -O; its bare asserts do not
