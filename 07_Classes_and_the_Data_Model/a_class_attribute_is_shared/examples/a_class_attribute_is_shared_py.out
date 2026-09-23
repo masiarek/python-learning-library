@@ -1,0 +1,67 @@
+1. ONE LIST ON THE CLASS, SEEN THROUGH EVERY INSTANCE
+     class Team:
+         members = []
+         def join(self, name):
+             self.members.append(name)
+     a, b = Team(), Team()
+     a.join('ada')
+     b.members                        ['ada']            nobody joined b: the list belongs to the class
+     a.members is Team.members        True
+     vars(a)                          {}                 the instance holds nothing of its own
+
+2. A READ FALLS THROUGH TO THE CLASS; A WRITE DOES NOT
+     class Counter:
+         count = 0
+     c = Counter()
+     c.count                          0                  not on c, so found on the class
+     c.count = 1
+     Counter.count                    0                  the write went to c, not through to the class
+     vars(c)                          {'count': 1}
+     c.count                          1                  and now the read stops at c
+     del c.count
+     c.count                          0                  delete c's own, and the class's shows again
+     c.count += 1
+     (Counter.count, vars(c))         (0, {'count': 1})  += reads through, then writes to c
+
+3. THE FIX: MAKE THE OBJECT IN __init__
+     class Team:
+         def __init__(self):
+             self.members = []
+         def join(self, name):
+             self.members.append(name)
+     a, b = Team(), Team()
+     a.join('ada')
+     b.members                        []                 each __init__ ran self.members = [] once, for its own instance
+     a.members is b.members           False
+
+4. WHEN SHARING IS THE POINT
+     class Node:
+         made = 0
+         def __init__(self):
+             Node.made += 1
+     for _ in range(3): Node()
+     Node.made                        3                  written through the class name, so it is one counter
+     vars(Node())                     {}                 and no instance ever gets its own copy
+
+5. A DATACLASS FIELD IS PER INSTANCE; AN UNANNOTATED NAME IS NOT
+     @dataclass                       ValueError
+     class Bag:
+         items: list = []
+     @dataclass
+     class Bag:
+         items = []
+     x, y = Bag(), Bag()
+     x.items.append(1)
+     y.items                          [1]                no annotation, so not a field: a plain class attribute
+     fields(Bag)                      ()                 the dataclass machinery never saw it
+
+6. __slots__: A NAMESPACE THAT IS NOT A DICT
+     class P:
+         __slots__ = ('x',)
+     p = P()
+     p.x = 1
+     p.y = 2                          AttributeError
+     vars(p)                          TypeError          no __dict__ to hold a stray attribute
+     class Q:                         ValueError
+         __slots__ = ('x',)
+         x = 0

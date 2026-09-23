@@ -21,6 +21,7 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 - **[Chapter 4 — Names and objects](04_Names_and_Objects/README.md)** — the first advanced chapter: assignment never copies, `+=` mutates or rebinds by type, and `is` is not `==`
 - **[Chapter 5 — Functions](05_Functions/README.md)** — what happens when `def` runs: a default is computed once, and a closure captures the variable
 - **[Chapter 6 — Iteration](06_Iteration/README.md)** — lazy, and used up: an iterator is a position, not a collection
+- **[Chapter 7 — Classes and the data model](07_Classes_and_the_Data_Model/README.md)** — every operator is a method: a class attribute is shared, and defining `__eq__` deletes `__hash__`
 - **[Katas](KATAS.md)** — the practice track: predict the answer, then run it. The first four are on `bytes`
 - **[The crosswalk](CROSSWALK.md)** — the same ideas in Rust, C and ABAP, one table per question
 - **[Roadmap](ROADMAP.md)** — what is written, what is a stub, what is next
@@ -60,6 +61,8 @@ It begins with **text and bytes** rather than with syntax. That is where a wrong
 | [A default is computed once](05_Functions/a_default_is_computed_once/README.md) | Why does my function remember the previous call's list — and why does `None` fix it? |
 | [A closure captures the variable, not the value](05_Functions/a_closure_captures_the_variable/README.md) | Why do three lambdas built in one loop all return the last value — and which of the three fixes should I use? |
 | [An iterator is used up](06_Iteration/an_iterator_is_used_up/README.md) | Why did the second loop over my `zip` run zero times — and why did `4 in evens` move the position? |
+| [A class attribute is shared](07_Classes_and_the_Data_Model/a_class_attribute_is_shared/README.md) | Why did every instance see the item I appended through one — and why did `c.count = 1` not change `Counter.count`? |
+| [Defining `__eq__` deletes `__hash__`](07_Classes_and_the_Data_Model/defining_eq_deletes_hash/README.md) | Why did my class stop working as a dict key the moment I gave it `__eq__` — and why is my `@dataclass` unhashable? |
 
 ## Run it
 

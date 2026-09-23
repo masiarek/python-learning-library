@@ -4,7 +4,7 @@
 
 Every assignment in Python points a name at an object and copies nothing. C copies the bytes, ABAP copies the value and Rust moves the ownership; Python does none of those, and almost every surprise in this chapter is that one rule meeting an object that can change: a second name that sees the change, a `+=` that changes the object for everyone who holds it, a "copy" that still shares its insides, and a comparison that answers a different question from the one you asked.
 
-This is the first of the advanced chapters, and it goes first because the others stand on it. A default argument is one object shared by every call, a class attribute is one object shared by every instance, and an iterator is one object that is used up; the chapters that follow take those one at a time.
+This is the first of the advanced chapters, and it goes first because the others stand on it. [A default argument is one object shared by every call](../05_Functions/a_default_is_computed_once/README.md), [a class attribute is one object shared by every instance](../07_Classes_and_the_Data_Model/a_class_attribute_is_shared/README.md), and [an iterator is one object that is used up](../06_Iteration/an_iterator_is_used_up/README.md).
 
 | # | Lesson | The question it answers | Status |
 |---|---|---|---|

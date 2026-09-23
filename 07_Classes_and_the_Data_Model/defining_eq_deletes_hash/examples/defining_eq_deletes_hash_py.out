@@ -1,0 +1,79 @@
+1. A CLASS WITH NEITHER METHOD: IDENTITY ANSWERS BOTH
+     class Point:
+         def __init__(self, x, y):
+             self.x, self.y = x, y
+     p, q = Point(1, 2), Point(1, 2)
+     p == q                             False          no __eq__, so == falls back to is
+     len({p, q})                        2              and each hashes by identity
+
+2. DEFINE __eq__, AND __hash__ IS GONE
+     class Point:
+         def __init__(self, x, y):
+             self.x, self.y = x, y
+         def __eq__(self, other):
+             return (self.x, self.y) == (other.x, other.y)
+     p, q = Point(1, 2), Point(1, 2)
+     p == q                             True
+     Point.__hash__                     None           defining __eq__ set __hash__ to None
+     hash(p)                            TypeError
+     {p, q}                             TypeError      unhashable: no set member, no dict key
+
+3. WHY: EQUAL OBJECTS MUST HASH EQUAL
+     class Bad(Point):
+         __hash__ = object.__hash__
+     p, q = Bad(1, 2), Bad(1, 2)
+     p == q                             True
+     len({p, q})                        2              equal, yet two members: the contract is broken
+     q in {p}                           False          a lookup for q looks where q's hash points
+
+4. THE FIX: HASH THE SAME FIELDS == COMPARES
+     class Point:
+         def __init__(self, x, y):
+             self.x, self.y = x, y
+         def __eq__(self, other):
+             return (self.x, self.y) == (other.x, other.y)
+         def __hash__(self):
+             return hash((self.x, self.y))
+     p, q = Point(1, 2), Point(1, 2)
+     len({p, q})                        1
+     q in {p}                           True
+     {p: 'here'}[q]                     'here'         q finds p's entry: equal, and hashed alike
+
+5. CHANGE A KEY'S FIELDS, AND THE SET LOSES IT
+     s = {p}
+     p.x = 99
+     p in s                             False          the set looks where the new hash points; p is not there
+     p in list(s)                       True           a list uses ==, and finds it
+     p.x = 1
+     p in s                             True           put the field back, and it is found again
+
+6. WHAT @dataclass DECIDES FOR YOU
+     @dataclass
+     class D:
+         x: int
+         y: int
+     D(1, 2) == D(1, 2)                 True
+     D.__hash__                         None           eq=True and not frozen: unhashable, on purpose
+     @dataclass(frozen=True)
+     class F:
+         x: int
+         y: int
+     len({F(1, 2), F(1, 2)})            1              frozen: the fields cannot change, so hashing them is safe
+     @dataclass(eq=False)
+     class I:
+         x: int
+     I(1) == I(1)                       False          eq=False keeps identity for both
+     I.__hash__ is object.__hash__      True
+
+7. == IS TWO QUESTIONS, AND NotImplemented PASSES THE FIRST
+     class Metres:
+         def __init__(self, v):
+             self.v = v
+         def __eq__(self, other):
+             if not isinstance(other, Metres):
+                 return NotImplemented
+             return self.v == other.v
+     Metres(1) == Metres(1)             True
+     Metres(1) != Metres(1)             False          __ne__ is derived from __eq__
+     Metres(1) == 1                     False          NotImplemented from both sides: falls back to is
+     1 == Metres(1)                     False          int declines first, then Metres is asked

@@ -104,7 +104,7 @@ That fork has two consequences worth a page. The first is that `+=` on a list is
 
 **Section 4: the tuple trap.** `t[0] += [1]` is three steps: read `t[0]`, call its `__iadd__`, and store the result back into `t[0]`. The first two succeed, so the list grows. The third is an assignment into a tuple, which raises `TypeError`. The exception is real and so is the change: `t` is `([1], 'x')` afterwards. `t2[0] = t2[0] + [1]` raises the same exception with nothing changed, because `+` built a new list rather than touching the old one, and the failing store was the first thing that touched `t2`. `t3[0].extend([1])` does the same work as the first statement with no store into the tuple at all, so it raises nothing.
 
-**Section 5: through an instance, `+=` on a class attribute.** `c.count += 1` reads `count`, finds it on the class, adds one, and stores the result *on the instance*, because a store through `c.` always writes to `c`'s own namespace. The class still says `0`; `vars(c)` says `1`. With the list the read finds the class's list and `+=` grows it in place, so `Log.lines` changes for every instance, and then the store still makes an instance attribute, which names that same list. Both halves of this section are the class-attribute rule, which the classes chapter will own, seen through one operator.
+**Section 5: through an instance, `+=` on a class attribute.** `c.count += 1` reads `count`, finds it on the class, adds one, and stores the result *on the instance*, because a store through `c.` always writes to `c`'s own namespace. The class still says `0`; `vars(c)` says `1`. With the list the read finds the class's list and `+=` grows it in place, so `Log.lines` changes for every instance, and then the store still makes an instance attribute, which names that same list. Both halves of this section are [A class attribute is shared](../../07_Classes_and_the_Data_Model/a_class_attribute_is_shared/README.md) seen through one operator.
 
 **Section 6: the same split for `*=`.** Every augmented operator has an in-place method, `__imul__`, `__ior__` and so on, and each falls back the same way. `a *= 2` doubles the one list in place; `s *= 2` rebinds.
 
@@ -132,6 +132,7 @@ ABAP's calculation assignments, `lv_a += 1` and the rest, exist since release 7.
 
 - [Assignment does not copy](../assignment_does_not_copy/README.md): why a second name sees the change at all
 - [`bytearray` is the mutable one](../../01_Text_and_Bytes/bytearray_is_mutable/README.md): its kata, K3, is this page's section 1 on the binary types
+- [A class attribute is shared](../../07_Classes_and_the_Data_Model/a_class_attribute_is_shared/README.md): section 5 in full
 - [Operators are traits ↗](https://masiarek.github.io/rust-learning-library/12_Traits/operators_are_traits/index.html) in the Rust library
 - [Augmented assignment statements ↗](https://docs.python.org/3/reference/simple_stmts.html#augmented-assignment-statements) in the language reference, and [`object.__iadd__` ↗](https://docs.python.org/3/reference/datamodel.html#object.__iadd__)
 - The Python FAQ on section 4: [Why does `a_tuple[i] += ['item']` raise an exception when the addition works? ↗](https://docs.python.org/3/faq/programming.html#why-does-a-tuple-i-item-raise-an-exception-when-the-addition-works)

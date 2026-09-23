@@ -43,5 +43,6 @@ python3 tools/run_examples.py --check
 4. [Names and objects](../04_Names_and_Objects/README.md) — the first advanced chapter: assignment never copies, and `+=` mutates or rebinds by type
 5. [Functions](../05_Functions/README.md) — what happens when `def` runs: a default is computed once, and a closure captures the variable
 6. [Iteration](../06_Iteration/README.md) — lazy, and used up: an iterator is a position, not a collection
-7. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
-8. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next
+7. [Classes and the data model](../07_Classes_and_the_Data_Model/README.md) — every operator is a method: a class attribute is shared, and defining `__eq__` deletes `__hash__`
+8. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
+9. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next

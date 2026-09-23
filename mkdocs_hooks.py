@@ -78,6 +78,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "04_Names_and_Objects",
         "05_Functions",
         "06_Iteration",
+        "07_Classes_and_the_Data_Model",
         "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
@@ -174,6 +175,20 @@ NAV_ORDER: dict[str, list[str]] = {
         "zip_stops_at_the_shortest",
         "groupby_groups_runs",
         "mutating_what_you_iterate",
+    ],
+    # The namespace first (a class attribute is one object), then how a
+    # lookup walks it, then the order the bases are walked in, then how the
+    # namespace is made at all; after that the protocol methods -- equality
+    # and hash, truth -- and last the decorator that writes them for you.
+    "07_Classes_and_the_Data_Model": [
+        "README.md",
+        "a_class_attribute_is_shared",
+        "attribute_lookup_is_a_search",
+        "super_is_not_the_parent",
+        "class_is_a_call",
+        "defining_eq_deletes_hash",
+        "if_x_calls_a_method",
+        "dataclass_writes_the_methods",
     ],
 }
 

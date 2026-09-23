@@ -9,7 +9,7 @@
 ## What the finished page has to answer
 
 - What `a == b` runs: `type(a).__eq__(a, b)`, then the reflected `type(b).__eq__(b, a)` when the first returns `NotImplemented`, then the identity fallback, which is why `1 == '1'` is `False` rather than an error while `1 < '1'` raises. [Comparing an `int` with a `float`](../../03_Numbers/comparing_int_and_float/README.md) already shows the `NotImplemented` step for numbers.
-- What `a is b` runs: nothing you can override. Two names, one object. `id()` as the number behind it, and why printing an `id()` on a page would tie the answer key to one run.
+- What `a is b` runs: nothing you can override. [Defining `__eq__` deletes `__hash__`](../../07_Classes_and_the_Data_Model/defining_eq_deletes_hash/README.md) measures the `NotImplemented` step for a class of your own. Two names, one object. `id()` as the number behind it, and why printing an `id()` on a page would tie the answer key to one run.
 - The singletons: `None`, `True`, `False`, `NotImplemented`, `Ellipsis`. Why `x is None` and `x == None` can differ for a class with its own `__eq__`, and why linters insist on `is`.
 - The implementation detail people mistake for a rule: CPython keeps one object for each small integer and interns some strings, so `int('256') is int('256')` is `True` and `int('257') is int('257')` is `False` on the same machine. Measured and dated on the page, not keyed, because it is not a promise of the language.
 - The warning: since 3.8, `x is 1` and `x is 'a'` raise a `SyntaxWarning`, because they ask a question whose answer depends on the interpreter.

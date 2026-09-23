@@ -101,11 +101,24 @@ Added 2026-09-22. The `for` protocol, and the four places its silence costs some
 | [`groupby` groups runs, not keys](06_Iteration/groupby_groups_runs/README.md) | **stub** | |
 | [Mutating what you iterate](06_Iteration/mutating_what_you_iterate/README.md) | **stub** | the append-while-iterating case needs a bound, or the example never ends |
 
+## Chapter 7 — Classes and the data model
+
+Added 2026-09-22. A class is made by running its body, an instance is a namespace that falls through to it, and every operator is a method the class may define.
+
+| Lesson | Status | Notes |
+|---|---|---|
+| [A class attribute is shared](07_Classes_and_the_Data_Model/a_class_attribute_is_shared/README.md) | written, 2026-09-22 | one list on the class seen through two instances, with `vars(a)` empty; a read falling through to the class and a write landing on the instance, then `del` and `+=`; the `__init__` fix; sharing on purpose with a counter written through the class name; a `@dataclass` refusing `items: list = []` and then accepting an unannotated `items = []` as a plain shared class attribute, `fields(Bag)` being `()`; `__slots__` refusing a stray attribute, `vars()`, and a class attribute of the same name |
+| [Defining `__eq__` deletes `__hash__`](07_Classes_and_the_Data_Model/defining_eq_deletes_hash/README.md) | written, 2026-09-22 | identity for both with neither method; `Point.__hash__` becoming `None` on defining `__eq__`; the broken contract shown with `__hash__ = object.__hash__` (two equal members in one set, `q in {p}` false); the field-tuple fix; a key whose field changes vanishing from its set and reappearing when changed back; the three `@dataclass` settings measured; `NotImplemented` and the identity fallback |
+| [`super()` is not the parent](07_Classes_and_the_Data_Model/super_is_not_the_parent/README.md) | **stub** | |
+| [`obj.x` is a search](07_Classes_and_the_Data_Model/attribute_lookup_is_a_search/README.md) | **stub** | |
+| [`class` is a call](07_Classes_and_the_Data_Model/class_is_a_call/README.md) | **stub** | |
+| [`if x` calls a method](07_Classes_and_the_Data_Model/if_x_calls_a_method/README.md) | **stub** | the `datetime.time(0)` row is dated: it changed in 3.5 |
+| [`@dataclass` writes the methods](07_Classes_and_the_Data_Model/dataclass_writes_the_methods/README.md) | **stub** | `inspect.signature` output is stable enough to key; `vars(C)` is not, since the generated names differ by release |
+
 ## Chapters after this one
 
-Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4, 5 and 6 are built. Still named rather than built:
+Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4 to 7 are built. Still named rather than built:
 
-- **The data model** — `__len__`, `__eq__`, `__hash__`: the class's half of chapter 4's `is` and `==`
 - **Errors** — exceptions as control flow, and what `except Exception` costs you
 - **The standard library worth knowing** — `pathlib`, `dataclasses`, `collections`, `itertools`, `functools`
 - **Testing** — and why a recorded-output check like this library's own is not a substitute for one

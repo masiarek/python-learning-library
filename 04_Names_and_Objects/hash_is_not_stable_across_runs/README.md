@@ -12,9 +12,10 @@
 - What it changes and what it leaves alone. A `dict` iterates in insertion order, so it is unaffected; a `set` iterates in table order, so `set('abc')` prints differently from one run to the next. The example has to spawn child interpreters with `PYTHONHASHSEED=0` and `=1` to show the two orders side by side, because a single process cannot see its own seed change.
 - Why `hash(-1)` is `-2`: the C function returns `-1` to signal an error, so the value is displaced by one. Why `hash(2**61)` is `1`: integers hash modulo `2**61 - 1`. Why `hash(1) == hash(1.0) == hash(True) == hash(Fraction(1))`, which [Comparing an `int` with a `float`](../../03_Numbers/comparing_int_and_float/README.md) needs for a dict to work.
 - Where it bites: a doctest or an answer key that prints a set of strings, a JSON file written from a set, a "stable" ordering that held on one machine. This library's own runner would catch the first case, and the page should say how.
-- The contract with `__eq__`, which the classes chapter will own: equal objects must hash equal, and an object whose hash changes while it is in a set is lost.
+- The contract with `__eq__`, which [Defining `__eq__` deletes `__hash__`](../../07_Classes_and_the_Data_Model/defining_eq_deletes_hash/README.md) owns: equal objects must hash equal, and an object whose hash changes while it is in a set is lost.
 
 ## See also
 
 - [Comparing an `int` with a `float`](../../03_Numbers/comparing_int_and_float/README.md): section 6, equal numbers are one dict key
+- [Defining `__eq__` deletes `__hash__`](../../07_Classes_and_the_Data_Model/defining_eq_deletes_hash/README.md): the contract from the class's side
 - [`hash()` ↗](https://docs.python.org/3/library/functions.html#hash) and [`PYTHONHASHSEED` ↗](https://docs.python.org/3/using/cmdline.html#envvar-PYTHONHASHSEED) in the Python docs, and [PEP 456 ↗](https://peps.python.org/pep-0456/)
