@@ -115,11 +115,21 @@ Added 2026-09-22. A class is made by running its body, an instance is a namespac
 | [`if x` calls a method](07_Classes_and_the_Data_Model/if_x_calls_a_method/README.md) | **stub** | the `datetime.time(0)` row is dated: it changed in 3.5 |
 | [`@dataclass` writes the methods](07_Classes_and_the_Data_Model/dataclass_writes_the_methods/README.md) | **stub** | `inspect.signature` output is stable enough to key; `vars(C)` is not, since the generated names differ by release |
 
+## Chapter 8 — Errors
+
+Added 2026-09-22. `except` is a filter over a class tree, and the pages are what it lets through, what it drops, and what it does to the object it caught.
+
+| Lesson | Status | Notes |
+|---|---|---|
+| [`except Exception` is not `except:`](08_Errors/except_exception_is_not_except/README.md) | written, 2026-09-22 | the harness catches `BaseException` on purpose and prints `escaped:` beside a block that let one through. The MRO lists; `KeyboardInterrupt` past `except Exception`, caught by a bare `except` and by `BaseException`; `sys.exit(3)` as a `SystemExit` with `.code`, swallowed by a bare `except`; the first matching clause winning; the `as`-name deleted; `__cause__`, `__context__` and `from None` measured on the object; `else` and `finally`; `except*` slicing an `ExceptionGroup`, and a plain `except ValueError` not catching one |
+| [`finally` can overwrite the return](08_Errors/finally_can_overwrite_the_return/README.md) | **stub** | PEP 765's `SyntaxWarning` is 3.14-only, so the example compiles the function from a string under `warnings.catch_warnings` |
+| [A warning is not an exception](08_Errors/a_warning_is_not_an_exception/README.md) | **stub** | the filter table has to be measured one category per child interpreter: the once-per-location registry is per process |
+| [The traceback is on the object](08_Errors/the_traceback_is_on_the_object/README.md) | **stub** | the caret and colour rows are dated: each release prints differently |
+
 ## Chapters after this one
 
-Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4 to 7 are built. Still named rather than built:
+Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapters 4 to 8 are built. Still named rather than built:
 
-- **Errors** — exceptions as control flow, and what `except Exception` costs you
 - **The standard library worth knowing** — `pathlib`, `dataclasses`, `collections`, `itertools`, `functools`
 - **Testing** — and why a recorded-output check like this library's own is not a substitute for one
 

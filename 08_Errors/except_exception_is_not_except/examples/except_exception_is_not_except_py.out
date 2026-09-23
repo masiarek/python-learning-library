@@ -1,0 +1,112 @@
+1. THE TREE HAS A ROOT ABOVE Exception
+     [c.__name__ for c in ValueError.__mro__]         ['ValueError', 'Exception', 'BaseException', 'object']
+     [c.__name__ for c in KeyboardInterrupt.__mro__]  ['KeyboardInterrupt', 'BaseException', 'object'] no Exception on the way up
+     issubclass(KeyboardInterrupt, Exception)         False
+     issubclass(SystemExit, Exception)                False                            sys.exit() raises this one
+     issubclass(GeneratorExit, Exception)             False                            and a closed generator gets this one
+
+2. except Exception LETS Ctrl-C THROUGH; A BARE except DOES NOT
+     try:                                             escaped: KeyboardInterrupt
+         raise KeyboardInterrupt
+     except Exception:
+         outcome = 'caught'
+     try:
+         raise KeyboardInterrupt
+     except:
+         outcome = 'a bare except caught it'
+     outcome                                          'a bare except caught it'
+     try:
+         raise KeyboardInterrupt
+     except BaseException:
+         outcome = 'so does BaseException, by name'
+     outcome                                          'so does BaseException, by name'
+
+3. sys.exit() IS AN EXCEPTION, AND A BARE except CANCELS THE EXIT
+     try:
+         sys.exit(3)
+     except SystemExit as e:
+         code = e.code
+     code                                             3                                sys.exit() raised; nothing exited
+     try:
+         sys.exit(3)
+     except:
+         swallowed = True
+     swallowed                                        True                             the program that meant to stop is still running
+
+4. THE FIRST MATCHING CLAUSE WINS
+     try:
+         int('x')
+     except Exception:
+         handler = 'Exception'
+     except ValueError:
+         handler = 'ValueError'
+     handler                                          'Exception'                      the specific clause below it can never run
+     issubclass(ValueError, Exception)                True                             because this is true
+
+5. THE as-NAME IS DELETED WHEN THE BLOCK ENDS
+     try:
+         1 / 0
+     except ZeroDivisionError as err:
+         kind = type(err).__name__
+     kind                                             'ZeroDivisionError'
+     err                                              NameError                        unbound: the block deleted it on the way out
+     try:
+         1 / 0
+     except ZeroDivisionError as err:
+         saved = err
+     type(saved).__name__                             'ZeroDivisionError'              keep it by binding another name
+
+6. AN EXCEPTION IS AN OBJECT, AND raise from IS A LINK
+     try:
+         try:
+             {}['k']
+         except KeyError as e:
+             raise ValueError('bad config') from e
+     except ValueError as v:
+         chain = (type(v).__name__, type(v.__cause__).__name__)
+     chain                                            ('ValueError', 'KeyError')       from e: the cause is on the new exception
+     try:
+         try:
+             {}['k']
+         except KeyError:
+             int('x')
+     except ValueError as v:
+         ctx = (type(v.__context__).__name__, v.__cause__)
+     ctx                                              ('KeyError', None)               raised while handling: linked as __context__, not __cause__
+     try:
+         try:
+             {}['k']
+         except KeyError:
+             raise ValueError('bad config') from None
+     except ValueError as v:
+         hidden = (v.__context__ is not None, v.__suppress_context__)
+     hidden                                           (True, True)                     from None keeps the context and hides it from the traceback
+
+7. else RUNS WHEN NOTHING WAS RAISED; finally RUNS REGARDLESS
+     def probe(text):
+         log = []
+         try:
+             log.append(int(text))
+         except ValueError:
+             log.append('except')
+         else:
+             log.append('else')
+         finally:
+             log.append('finally')
+         return log
+     probe('1')                                       [1, 'else', 'finally']
+     probe('x')                                       ['except', 'finally']
+
+8. A GROUP IS CAUGHT IN PIECES, AND NOT BY A PLAIN except
+     try:
+         raise ExceptionGroup('two', [ValueError('a'), TypeError('b')])
+     except* ValueError as eg:
+         got_v = [type(e).__name__ for e in eg.exceptions]
+     except* TypeError as eg:
+         got_t = [type(e).__name__ for e in eg.exceptions]
+     got_v, got_t                                     (['ValueError'], ['TypeError'])  each except* clause got its slice of the group
+     try:                                             escaped: ExceptionGroup
+         raise ExceptionGroup('one', [ValueError('a')])
+     except ValueError:
+         pass
+     issubclass(ExceptionGroup, ValueError)           False                            a group is not any of its members

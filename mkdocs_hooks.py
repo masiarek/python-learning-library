@@ -79,6 +79,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "05_Functions",
         "06_Iteration",
         "07_Classes_and_the_Data_Model",
+        "08_Errors",
         "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
@@ -189,6 +190,16 @@ NAV_ORDER: dict[str, list[str]] = {
         "defining_eq_deletes_hash",
         "if_x_calls_a_method",
         "dataclass_writes_the_methods",
+    ],
+    # The filter first, then the three things it does to the object it
+    # caught or did not: a finally that replaces the answer, a warning that
+    # was never raised, and the traceback the object carries.
+    "08_Errors": [
+        "README.md",
+        "except_exception_is_not_except",
+        "finally_can_overwrite_the_return",
+        "a_warning_is_not_an_exception",
+        "the_traceback_is_on_the_object",
     ],
 }
 

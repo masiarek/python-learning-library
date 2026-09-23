@@ -44,5 +44,6 @@ python3 tools/run_examples.py --check
 5. [Functions](../05_Functions/README.md) — what happens when `def` runs: a default is computed once, and a closure captures the variable
 6. [Iteration](../06_Iteration/README.md) — lazy, and used up: an iterator is a position, not a collection
 7. [Classes and the data model](../07_Classes_and_the_Data_Model/README.md) — every operator is a method: a class attribute is shared, and defining `__eq__` deletes `__hash__`
-8. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
-9. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next
+8. [Errors](../08_Errors/README.md) — an exception is an object and `except` is a filter: `except Exception` is not `except:`
+9. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
+10. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next
