@@ -75,6 +75,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "01_Text_and_Bytes",
         "02_Projects_and_Environments",
         "03_Numbers",
+        "04_Names_and_Objects",
         "KATAS.md",
         "CROSSWALK.md",
         "GLOSSARY.md",
@@ -137,6 +138,17 @@ NAV_ORDER: dict[str, list[str]] = {
         "README.md",
         "comparing_int_and_float",
         "float_equality_and_nan",
+    ],
+    # The rule first -- assignment binds and never copies -- then the one
+    # operator that mutates or rebinds depending on the type, then the two
+    # comparisons that answer different questions, then the hash that a set
+    # is ordered by.
+    "04_Names_and_Objects": [
+        "README.md",
+        "assignment_does_not_copy",
+        "plus_equals_is_not_plus",
+        "is_is_not_equals",
+        "hash_is_not_stable_across_runs",
     ],
 }
 

@@ -1,0 +1,68 @@
+1. ON A LIST, += CHANGES THE OBJECT
+     a = [1]
+     b = a
+     a += [2]
+     b                                [1, 2]           b saw it: += grew the one list in place
+     a is b                           True
+     a = a + [3]
+     b                                [1, 2]           + built a new list and bound a to it; b kept the old one
+     a is b                           False
+
+2. ON A TUPLE, A STRING OR AN INT, += REBINDS
+     t = (1,)
+     u = t
+     t += (2,)
+     u                                (1,)             a tuple cannot change, so t was rebound
+     t is u                           False
+     s = 'ab'
+     r = s
+     s += 'c'
+     r                                'ab'
+     n = 1
+     m = n
+     n += 1
+     m                                1
+
+3. THE METHOD THAT DECIDES
+     hasattr(list, '__iadd__')        True             list can change itself, so += calls this
+     hasattr(tuple, '__iadd__')       False            no __iadd__: += falls back to __add__, then assigns
+     hasattr(str, '__iadd__')         False
+     hasattr(int, '__iadd__')         False
+     hasattr(bytearray, '__iadd__')   True             the same split as list against tuple
+     hasattr(bytes, '__iadd__')       False
+     a = [1]
+     a.__iadd__([2]) is a             True             the in-place method returns the object it changed
+
+4. THE TUPLE TRAP: IT RAISES, AND IT ALSO HAPPENED
+     t = ([], 'x')
+     t[0] += [1]                      TypeError
+     t                                ([1], 'x')       the list grew, then the store back into the tuple failed
+     t2 = ([], 'x')
+     t2[0] = t2[0] + [1]              TypeError
+     t2                               ([], 'x')        with +, nothing had happened when the store failed
+     t3 = ([], 'x')
+     t3[0].extend([1])
+     t3                               ([1], 'x')       no store into the tuple, so no error
+
+5. THROUGH AN INSTANCE, += ON A CLASS ATTRIBUTE
+     class Counter: count = 0
+     c = Counter()
+     c.count += 1
+     Counter.count                    0                the read found the class attribute
+     vars(c)                          {'count': 1}     the store made an instance attribute
+     class Log: lines = []
+     lg = Log()
+     lg.lines += ['a']
+     Log.lines                        ['a']            a list: the read found the class's list and += grew it
+     vars(lg)                         {'lines': ['a']} and the store still made an instance attribute
+     lg.lines is Log.lines            True             which names the same, now shared, list
+
+6. THE SAME SPLIT FOR *=
+     a = [0]
+     b = a
+     a *= 2
+     b                                [0, 0]           in place
+     s = 'ab'
+     r = s
+     s *= 2
+     r                                'ab'             rebound

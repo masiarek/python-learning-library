@@ -1,0 +1,65 @@
+1. TWO NAMES, ONE LIST
+     a = [1, 2]
+     b = a
+     b.append(3)
+     a                              [1, 2, 3]                            the change made through b is visible through a
+     a is b                         True                                 because there is one list, with two names
+
+2. REBINDING IS NOT MUTATING
+     b = b + [4]
+     a                              [1, 2, 3]                            unchanged: + built a new list
+     b                              [1, 2, 3, 4]                         and b now names that new list
+     a is b                         False
+     n = 1
+     m = n
+     m += 1
+     n                              1                                    an int cannot change, so two names never trap you
+
+3. THE GRID THAT IS ONE ROW, THREE TIMES
+     grid = [[0] * 3] * 3
+     grid[0][0] = 1
+     grid                           [[1, 0, 0], [1, 0, 0], [1, 0, 0]]    every row changed
+     grid[0] is grid[1]             True                                 * repeated the reference, not the row
+     rows = [[0] * 3 for _ in range(3)]
+     rows[0][0] = 1
+     rows                           [[1, 0, 0], [0, 0, 0], [0, 0, 0]]    the comprehension ran [0] * 3 three times
+     rows[0] is rows[1]             False
+
+4. A COPY IS ONE LEVEL DEEP
+     a = [[1], [2]]
+     b = a[:]
+     a is b                         False                                the outer list is new
+     a[0] is b[0]                   True                                 the inner lists are the same ones
+     b[0].append(9)
+     a                              [[1, 9], [2]]                        so a changed through the copy
+
+     Every way of copying a list is shallow, except one:
+     a[:][0] is a[0]                True
+     list(a)[0] is a[0]             True
+     a.copy()[0] is a[0]            True
+     copy.copy(a)[0] is a[0]        True
+     sorted(a)[0] is a[0]           True
+     (a * 2)[0] is a[0]             True
+     [*a][0] is a[0]                True
+     copy.deepcopy(a)[0] is a[0]    False                                deepcopy is the one that copies the inside
+
+     d = {'k': [1]}
+     e = dict(d)
+     e['k'].append(2)
+     d                              {'k': [1, 2]}                        dict(d) and d.copy() are shallow too
+
+5. A CALL IS AN ASSIGNMENT
+     def grow(lst): lst.append(0)
+     def regrow(lst): lst = lst + [0]
+     data = [1]
+     grow(data)
+     data                           [1, 0]                               the parameter named the caller's list, and mutated it
+     regrow(data)
+     data                           [1, 0]                               the parameter was rebound; the caller's name was not
+
+6. AN IMMUTABLE CONTAINER, WITH MUTABLE CONTENTS
+     t = ([], 'x')
+     t[0].append(1)
+     t                              ([1], 'x')                           the tuple did not change: it holds the same list, which did
+     t[1] = 'y'                     TypeError
+     hash(t)                        TypeError                            and a tuple holding a list cannot be a dict key

@@ -40,5 +40,6 @@ python3 tools/run_examples.py --check
 1. [Text and bytes](../01_Text_and_Bytes/README.md) — the whole of chapter 1
 2. [Projects and environments](../02_Projects_and_Environments/README.md) — the project file, and the interpreter that runs it
 3. [Numbers](../03_Numbers/README.md) — comparing an `int` with a `float`, float equality, and NaN
-4. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
-5. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next
+4. [Names and objects](../04_Names_and_Objects/README.md) — the first advanced chapter: assignment never copies, and `+=` mutates or rebinds by type
+5. [The crosswalk](../CROSSWALK.md) — the same ideas in Rust, C and ABAP
+6. [Roadmap](../ROADMAP.md) — what is written, what is a stub, and what is next

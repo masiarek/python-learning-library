@@ -66,11 +66,22 @@ Planned, and deliberately not yet folders: the virtual environment, `sys.path` a
 
 Planned, and deliberately not yet folders: `round()` and banker's rounding, floor division against C's truncation, and the `Decimal` context. See the [chapter page](03_Numbers/README.md).
 
+## Chapter 4 — Names and objects
+
+The first of the advanced chapters, added 2026-09-22. Everything in it is one rule, assignment binds a name and never copies, meeting an object that can change.
+
+| Lesson | Status | Notes |
+|---|---|---|
+| [Assignment does not copy](04_Names_and_Objects/assignment_does_not_copy/README.md) | written, 2026-09-22 | every statement in the run is `exec`'d and every expression `eval`'d, so the label printed is the code that ran. Two names on one list; rebinding against mutating, with the `int` rows for why the rule is met late; `[[0] * 3] * 3` as one row three times against a comprehension; seven copying idioms shown shallow with `is` and `deepcopy` the one that is not; a call as an assignment (`grow` against `regrow`); a tuple whose list changed, and `hash(t)` raising for it |
+| [`+=` is not `+`](04_Names_and_Objects/plus_equals_is_not_plus/README.md) | written, 2026-09-22 | `__iadd__` when the type has it, `__add__` and a rebinding when it does not, shown with `hasattr` over `list`, `tuple`, `str`, `int`, `bytearray` and `bytes`; the tuple trap measured (`t[0] += [1]` raises `TypeError` and `t` is `([1], 'x')` afterwards, where `t[0] = t[0] + [1]` raises with nothing changed); `+=` through an instance on a class attribute, once with an `int` and once with a list; `*=` the same way |
+| [`is` is not `==`](04_Names_and_Objects/is_is_not_equals/README.md) | **stub** | the small-int and interning rows are CPython behaviour, so they go in a dated table rather than a key |
+| [`hash()` is not stable across runs](04_Names_and_Objects/hash_is_not_stable_across_runs/README.md) | **stub** | the example has to spawn child interpreters under two `PYTHONHASHSEED` values: one process cannot see its own seed change |
+
 ## Chapters after this one
 
-Not yet folders, deliberately — a directory of empty stubs is clutter, and every folder name is a permanent URL. Named here so the shape is visible:
+Until 2026-09-22 these were named here and deliberately not folders, on the argument that a directory of empty stubs is clutter and every folder name is a permanent URL. Adam asked that day for the advanced topics to be reachable from the sidebar, so each is becoming a chapter whose pages are either written or a stub with its questions written down; an empty folder is still not allowed. Chapter 4 is the first. Still named rather than built:
 
-- **The data model** — `__len__`, `__eq__`, `__hash__`, and why `==` and `is` are different questions
+- **The data model** — `__len__`, `__eq__`, `__hash__`: the class's half of chapter 4's `is` and `==`
 - **Sequences and iteration** — iterators, generators, and the difference between lazy and eager
 - **Functions** — arguments, closures, decorators, and the mutable-default trap
 - **Errors** — exceptions as control flow, and what `except Exception` costs you
