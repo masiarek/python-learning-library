@@ -39,6 +39,7 @@ The order is the practice order, and it is **not** the sidebar's reading order �
 | K13 | [Eight one-liners, and the only one that prints quotes](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md#practice) | [`-c` is not the prompt](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md) | 101 → 201 |
 | K14 | [Eight one-liners, and the one that depends on the order](03_Numbers/float_equality_and_nan/README.md#practice) | [Float equality and NaN](03_Numbers/float_equality_and_nan/README.md) | 201 |
 | K15 | [Eleven lines, and the notes that got three of them wrong](04_Names_and_Objects/a_set_is_a_hash_table/README.md#practice) | [A set is a hash table](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | 101 → 201 |
+| K16 | [Eight lines, and the one that keeps the last spelling](04_Names_and_Objects/which_duplicate_survives/README.md#practice) | [Which duplicate survives](04_Names_and_Objects/which_duplicate_survives/README.md) | 201 |
 
 **K1–K4 are one subject asked four ways** — the type boundary, the constructor, the mutable half, and the two doors between them. Doing them in order is worth more than doing any one of them twice, because the thing that does not stick is not a fact but a *habit*: asking "which of the two types am I holding?" at the moment a value arrives rather than at the moment it breaks.
 

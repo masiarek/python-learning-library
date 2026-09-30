@@ -1,0 +1,8 @@
+1. sorted(set(names))                               ['ANN', 'Ann', 'Bob', 'ann', 'bob', 'cy']
+2. list(dict.fromkeys(names))                       ['ann', 'Bob', 'ANN', 'bob', 'cy', 'Ann']
+3. list(dict.fromkeys(n.lower() for n in names))    ['ann', 'bob', 'cy']
+4. list({n.lower(): n for n in names}.values())     ['Ann', 'bob', 'cy']
+5. [k for k, _ in groupby(['b', 'a', 'a', 'b', 'b'])] ['b', 'a', 'b']
+6. list(dict.fromkeys([1, 1.0, True]))              [1]
+7. list(dict.fromkeys([True, 1.0, 1]))              [True]
+8. len(set([0, 0.0, False, '', None]))              3

@@ -156,6 +156,7 @@ NAV_ORDER: dict[str, list[str]] = {
         "is_is_not_equals",
         "hash_is_not_stable_across_runs",
         "a_set_is_a_hash_table",
+        "which_duplicate_survives",
     ],
     # The two things def does early -- evaluate the defaults, apply the
     # decorators -- around the two things it leaves until the call: a

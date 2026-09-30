@@ -1,0 +1,37 @@
+1. THE LIST, AND WHAT 'THE SAME' MEANS
+   words = ['Pear', 'fig', 'pear', 'Fig', 'apple', 'PEAR']
+   Exact duplicates: none. Duplicates ignoring case: pear x3, fig x2.
+
+2. EXACT DUPLICATES: FIVE IDIOMS, FOUR ORDERS
+   nums = [3, 1, 3, 2, 1, 3]
+   list(set(nums))                [1, 2, 3]          hash order: here it looks sorted, by luck
+   sorted(set(nums))              [1, 2, 3]          sorted, on purpose
+   list(dict.fromkeys(nums))      [3, 1, 2]          first-seen order
+   seen-set loop                  [3, 1, 2]          first-seen order, the long way
+   [k for k, _ in groupby(nums)]  [3, 1, 3, 2, 1, 3] adjacent repeats only
+   groupby, like Rust's dedup and ABAP's DELETE ADJACENT DUPLICATES,
+   only merges neighbours: sort first, or it removes nothing useful.
+
+3. DUPLICATES BY A KEY: WHICH SPELLING SURVIVES?
+   {w.lower(): w for w in words}.values()   ['PEAR', 'Fig', 'apple']
+     keys keep their FIRST position, values are overwritten by the LAST:
+     'PEAR' sits where 'Pear' was. Nobody chose that combination.
+   d.setdefault(w.lower(), w)               ['Pear', 'fig', 'apple']
+     setdefault never overwrites, so the first spelling wins, in first place.
+   sort by key, then groupby, take first     ['apple', 'fig', 'Pear']
+     sorted order, and the first of each run: sorted() is stable, so that
+     is also the first seen. ABAP's SORT ... STABLE + DELETE ADJACENT
+     DUPLICATES COMPARING and Rust's sort_by_key + dedup_by_key do the same.
+
+4. EQUAL IS NOT IDENTICAL: THE SURVIVOR KEEPS ITS TYPE
+   set(mixed)                             {1.0, 2}
+   list(dict.fromkeys(mixed))             [1.0, 2]
+   list(dict.fromkeys(reversed(mixed)))   [2, True]
+   mixed = [1.0, 1, True, 2]: 1.0, 1 and True are equal and hash alike, so they are
+   one member, and whichever arrives first is the one you keep.
+
+5. UNHASHABLE ITEMS
+   set([[1, 2], [3], [1, 2]]) -> TypeError
+   list(dict.fromkeys(map(tuple, rows)))  -> [(1, 2), (3,)]   hash a frozen copy
+   'if r not in out: out.append(r)'        -> [[1, 2], [3]]   works on anything, but
+   each 'in' scans the list: fine for ten items, quadratic for a million.

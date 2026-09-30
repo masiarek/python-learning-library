@@ -311,7 +311,7 @@ Every set is a subset of itself but not a *proper* subset; that is the whole dif
 
 `remove(x)` raises `KeyError` when x is absent and `discard(x)` does not; `pop()` removes an arbitrary member and raises on an empty set; `clear()` empties it.
 
-`list(set(L))` removes duplicates and may reorder. With small integers the result often *looks* sorted, `[1, 2, 3, 4, 5]`, only because an integer's hash is itself, so it lands in slot n modulo the table size; `list(set([10, 3, 8]))` is `[8, 10, 3]`. With strings the order changes from one run of Python to the next. To remove duplicates and keep the first-seen order, use `list(dict.fromkeys(L))`. A set cannot be sorted, but `sorted(s)` returns a sorted list, and a set of mixed ints and strings needs a key such as `(isinstance(x, str), x)`, because Python 3 will not compare an int with a str.
+`list(set(L))` removes duplicates and may reorder. With small integers the result often *looks* sorted, `[1, 2, 3, 4, 5]`, only because an integer's hash is itself, so it lands in slot n modulo the table size; `list(set([10, 3, 8]))` is `[8, 10, 3]`. With strings the order changes from one run of Python to the next. To remove duplicates and keep the first-seen order, use `list(dict.fromkeys(L))`. Which copy survives, and why a dict comprehension keeps the wrong one, is [Which duplicate survives](../which_duplicate_survives/README.md). A set cannot be sorted, but `sorted(s)` returns a sorted list, and a set of mixed ints and strings needs a key such as `(isinstance(x, str), x)`, because Python 3 will not compare an int with a str.
 
 ### What sets are for (section 11)
 

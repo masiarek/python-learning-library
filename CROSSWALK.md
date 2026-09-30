@@ -256,6 +256,7 @@ Cargo and `uv` look alike because one copied the other, and the vocabulary is wo
 | Union, intersection, difference, symmetric difference | [`\|` `&` `-` `^` need two sets; `.union()` etc. take any iterable](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | `&a \| &b` etc. allocate a new set; `a.union(&b)` is a lazy iterator | hand-written loops | [The algebra of sets ↗](https://masiarek.github.io/math-learning-library/04_Sets/algebra_of_sets/index.html) |
 | Two sets are equal | [`==`, whatever the order](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | `==` | compare sorted arrays | [extensionality ↗](https://masiarek.github.io/math-learning-library/04_Sets/what_is_a_set/index.html) |
 | Sorting sets | [`sorted()` uses `<`, a partial order, and returns nonsense](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | `BTreeSet` is ordered by `Ord`, a total order | — | [⊆ is a partial order ↗](https://masiarek.github.io/math-learning-library/04_Sets/algebra_of_sets/index.html) |
+| Removing duplicates | [`dict.fromkeys` keeps first-seen order; `{k(x): x}` keeps the last copy in the first place](04_Names_and_Objects/which_duplicate_survives/README.md) | [`sort` + `dedup` (adjacent only), or a `seen.insert` filter ↗](https://masiarek.github.io/rust-learning-library/26_Collections/set_operations/index.html) | `qsort` then skip equal neighbours | [a set has no copies ↗](https://masiarek.github.io/math-learning-library/04_Sets/what_is_a_set/index.html) |
 
 ## Where each library goes deeper
 
