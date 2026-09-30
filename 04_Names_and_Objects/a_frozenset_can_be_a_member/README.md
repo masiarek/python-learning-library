@@ -63,7 +63,7 @@ What that buys is exactly what mathematics does with sets all the time: sets who
 
 ## The Rust view
 
-Rust has no frozenset, because it does not need one. Mutability belongs to the *binding*, `let` against `let mut`, not to the type, so one `HashSet` type serves both; and the borrow checker never hands out a `&mut` to an element stored in a set, so a member cannot change while it is filed. What Rust does refuse is `HashSet<HashSet<T>>`: `HashSet` does not implement `Hash`. The ordered `BTreeSet` does, so a set of sets is written with `BTreeSet` as the element type, and collecting into a `BTreeSet` is Rust's "freeze" step. See the Rust library's [sets of sets ↗](https://masiarek.github.io/rust-learning-library/26_Collections/sets_of_sets/index.html).
+Rust has no frozenset, because it does not need one. Mutability belongs to the *binding*, `let` against `let mut`, not to the type, so one `HashSet` type serves both; and the borrow checker never hands out a `&mut` to an element stored in a set, so an ordinary member cannot change while it is filed. The exception is interior mutability: `Cell` and `RefCell` are not `Hash`, but they are `Ord`, so a `BTreeSet<Cell<i32>>` compiles, a member can be changed through `&`, and the set then fails to find a value it still holds. The compiler allows it; Clippy's `mutable_key_type` lint warns. What Rust does refuse is `HashSet<HashSet<T>>`: `HashSet` does not implement `Hash`. The ordered `BTreeSet` does, so a set of sets is written with `BTreeSet` as the element type, and collecting into a `BTreeSet` is Rust's "freeze" step. See the Rust library's [sets of sets ↗](https://masiarek.github.io/rust-learning-library/26_Collections/sets_of_sets/index.html).
 
 ## If you are coming from ABAP
 
