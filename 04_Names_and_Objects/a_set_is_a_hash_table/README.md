@@ -333,7 +333,7 @@ A set forgets how many times something occurred; `collections.Counter` remembers
 
 ## The Rust view
 
-Rust's `HashSet` is the same hash table with the rules enforced at compile time. The element type must implement `Eq + Hash`, so `HashSet<f64>` does not compile at all, where Python quietly lets `1`, `1.0` and `True` collapse into one member. `insert` returns a `bool`, `false` for a duplicate, so the silent repeat of section 2 becomes a value you can check. The operators exist on references, `&a | &b`, `&a & &b`, `&a - &b` and `&a ^ &b`, and the methods `union`, `intersection`, `difference` and `symmetric_difference` return lazy iterators instead of new sets. Iteration order is randomised per process, like Python's for strings, and `BTreeSet` is the ordered alternative. See the Rust library's [a first HashSet ↗](https://masiarek.github.io/rust-learning-library/26_Collections/a_first_hashset/index.html).
+Rust's `HashSet` is the same hash table with the rules enforced at compile time. The element type must implement `Eq + Hash`, so `HashSet<f64>` does not compile at all, where Python quietly lets `1`, `1.0` and `True` collapse into one member. `insert` returns a `bool`, `false` for a duplicate, so the silent repeat of section 2 becomes a value you can check. The operators exist on references, `&a | &b`, `&a & &b`, `&a - &b` and `&a ^ &b`, and the methods `union`, `intersection`, `difference` and `symmetric_difference` return lazy iterators instead of new sets. Iteration order is randomised per process, like Python's for strings, and `BTreeSet` is the ordered alternative. See the Rust library's [set operations ↗](https://masiarek.github.io/rust-learning-library/26_Collections/set_operations/index.html).
 
 ## If you are coming from ABAP
 
