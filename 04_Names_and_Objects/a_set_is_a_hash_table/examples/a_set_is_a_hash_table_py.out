@@ -1,0 +1,189 @@
+1. CREATING A SET: WHICH OF THESE IS {'a', 'b', 'c'}?
+   set('abc')               yes  set {'a', 'b', 'c'}
+   set(['a', 'b', 'c'])     yes  set {'a', 'b', 'c'}
+   set('a', 'b', 'c')       no   TypeError
+   {'a', 'b', 'c'}          yes  set {'a', 'b', 'c'}
+   {('a', 'b', 'c')}        no   set {('a', 'b', 'c')}
+   set(x) takes ONE iterable and adds each thing it yields;
+   braces take each thing written between them, whole.
+   set('foo') = {'f', 'o'}      {'foo'} = {'foo'}
+   type({}) = dict         type(set()) = set      the empty set has no literal
+   built by add(), one at a time:  {'CP0140.1', 'EF3616.3', 'XJ8113.5'}
+   comprehension {2*x for x in [1, 2, 3]} = {2, 4, 6}
+
+2. MEMBERSHIP IS DECIDED BY hash AND ==
+   {True, 1, 1.0, '1', (1,)} has 3 members, not 5:
+   True == 1 == 1.0 is True, and hash(True) == hash(1) == hash(1.0) is True
+   so the three are one member; the first one written is the one kept.
+   {[1, 2]}               -> TypeError
+   {tuple([1, 2, 1])}     -> set {(1, 2, 1)}
+   {frozenset({1, 2})}    -> set {frozenset({1, 2})}
+   {(1, [2])}             -> TypeError
+   s1.add(s2)             -> TypeError
+   s1.update(s2)          -> s1 is now {'a', 'b', 'c', 'd', 'e'}
+   s1.add(frozenset(s2))  -> 4 members: 3 letters and 1 frozenset
+   add() puts in ONE member; update() puts in every member of an iterable.
+   A set can hold a frozenset, never a set: a set can change, so its
+   hash could change after it was filed, and it would be lost.
+
+3. OPERATOR OR METHOD: THE SAME ANSWER, DIFFERENT MANNERS
+   a = {1, 2, 3, 4}   b = {3, 4, 5}
+   operation             operator  method                     result
+   union                 a | b     a.union(b)                 {1, 2, 3, 4, 5}
+   intersection          a & b     a.intersection(b)          {3, 4}
+   difference            a - b     a.difference(b)            {1, 2}
+   symmetric difference  a ^ b     a.symmetric_difference(b)  {1, 2, 5}
+   subset                a <= b    a.issubset(b)              False
+   superset              a >= b    a.issuperset(b)            False
+   proper subset         a < b     (none)                     False
+   disjoint              (none)    a.isdisjoint(b)            False
+   membership            3 in a    a.__contains__(3)          True
+   Every row with both forms gives the same result for two sets.
+   In words, with engineers = {'ann', 'bob', 'sue', 'vic'}, managers = {'sue', 'tom'}:
+     'bob' in engineers                               True                                 is bob an engineer?
+     engineers & managers                             {'sue'}                              who is both?
+     engineers | managers                             {'ann', 'bob', 'sue', 'tom', 'vic'}  who is either?
+     engineers - managers                             {'ann', 'bob', 'vic'}                engineers who are not managers
+     managers - engineers                             {'tom'}                              managers who are not engineers
+     engineers >= managers                            False                                is every manager an engineer?
+     {'bob', 'sue'} < engineers                       True                                 are both engineers, and not all of them?
+     engineers ^ managers                             {'ann', 'bob', 'tom', 'vic'}         who is in exactly one of the two?
+     (engineers | managers) - (engineers ^ managers)  {'sue'}                              either, minus exactly one: both
+   The difference is what they accept. A tuple on the right:
+     a | t                        -> TypeError
+     a.union(t)                   -> set {1, 2, 3, 4, 5}
+     a <= t                       -> TypeError
+     a.issubset(t)                -> False
+     a.union([9], 'x', range(2))  -> set {0, 1, 2, 3, 4, 9, 'x'}
+   Operators need a set (or frozenset) on both sides; methods take any
+   iterable, and several of them at once.
+
+4. CLAIMS FROM THE NOTES, CHECKED
+   claim:  'in' works but .__contains__() cannot be used
+           x1.__contains__('a') = True: it is what 'in' calls. False.
+   claim:  '-' has no corresponding method
+           x1.difference({'a'}) = {'b', 'c'}. False.
+   claim:  issubset and issuperset have no operator (N/A)
+           <= and >= are those operators; {'a'} <= x1 is True. False.
+   claim:  isdisjoint has no operator
+           True; the nearest is 'not (a & b)', which builds a set first.
+   claim:  the + operator is not supported for sets
+           TypeError. True; use |.
+   claim:  s1.add(s2) fails, use update()
+           True, section 2: a set is unhashable.
+   claim:  an empty set is falsy
+           bool(set()) = False. True.
+   claim:  issubset() of an empty iterable returns False
+           set().issubset([]) = True; only a non-empty set gives False. False.
+   claim:  {0,1,2,3,4} & {0,2,3,4} & {0,2,5}: the only common element is {2}
+           it is {0, 2}; 0 is in all three. False.
+   claim:  union takes several sets at once, and so does symmetric_difference
+           a.union(b, c) works; TypeError. Half true.
+
+5. CHAINING: LEFT TO RIGHT, AND WHAT ^ OF THREE MEANS
+   s1 = {0, 1, 2, 3, 4}   s2 = {2, 3, 4}   s3 = {2, 5}
+   s1 | s2 | s3 = {0, 1, 2, 3, 4, 5}
+   s1 & s2 & s3 = {2}
+   s1 ^ s2      = {0, 1}
+   s1 ^ s2 ^ s3 = {0, 1, 2, 5}   = (s1 ^ s2) ^ s3 = {0, 1} ^ {2, 5}
+   in how many of the three sets each element is:
+     0:1  1:1  2:3  3:2  4:2  5:1
+   elements in an odd number of them:  {0, 1, 2, 5}   same set: True
+   So ^ over many sets keeps what appears an odd number of times,
+   not 'what is in exactly one'. 2 is in all three and survives.
+   s1 - s2 - s3 = {0, 1}  = (s1 - s2) - s3;  s1 - (s2 - s3) = {0, 1, 2}
+   | & ^ are associative, so grouping never matters for them; - is not.
+   s4 = s2 | s1 | s3;  s4 |= {11, 22}  ->  {0, 1, 2, 3, 4, 5, 11, 22}
+   Every operator has an in-place form: |= &= -= ^= change the left set.
+
+6. EQUALITY: == ASKS ABOUT MEMBERS, AND NOTHING ELSE DOES
+   p = {1, 9}   q = {9, 1}   list(p) = [1, 9]   list(q) = [9, 1]
+   p == q                          True      the right test
+   list(p) == list(q)              False     order of iteration is not membership
+   {1}.difference({1, 2}) == set() True      only says {1} <= {1, 2}
+   {1} == {1, 2}                  False
+   not (p ^ q)                     True      also right: no member on one side only
+   Equality of sets is extensionality run as code: same members, equal.
+   Iteration order depends on how the set was built, so comparing lists
+   of two equal sets can say False; a one-sided difference checks only <=.
+
+7. FROZENSET: THE SET THAT CANNOT CHANGE, SO IT CAN BE A MEMBER
+   fs.add(3)          -> AttributeError
+   fs.union([3, 4])   -> frozenset {1, 2, 3, 4}   a new one; fs is unchanged
+   {1} | frozenset({2}) -> set;   frozenset({2}) | {1} -> frozenset   the left operand decides
+   frozenset({1, 2}) == {1, 2}  True   equality is still only about members
+
+8. SUBSET, PROPER SUBSET, DISJOINT, EMPTY
+   s <= {1, 2}                True
+   s < {1, 2}                 False
+   s < {1, 2, 3}              True
+   set() <= s                 True
+   set() < set()              False
+   s.isdisjoint({3, 4})       True
+   s.isdisjoint({2, 3})       False
+   set().isdisjoint(set())    True
+   Every set is a subset of itself, but not a proper one. The empty set
+   is a subset of every set, and disjoint from every set, itself included.
+   if (s <= t, u):   runs, because (s <= t, u) = (True, {5}) is a non-empty tuple
+   s <= t and s <= u = False   is what was meant
+   the notes' version: s1 = {0, 1, 2, 3, 4}, s2 = {0, 2, 3, 4}, s3 = {0, 2, 5}
+     if (s1 <= s2, s3):          always taken, tuple (False, {0, 2, 5})
+     s1 <= s2 and s1 <= s3       False   1 is in s1 and in neither of the others
+     s2 < = s1                   SyntaxError   <= is one token, no space inside
+
+9. REMOVING: WHICH ONES RAISE
+   s.remove(9)      -> KeyError
+   s.discard(9)     -> None
+   set().pop()      -> KeyError
+   remove() insists the member is there; discard() does not care.
+   pop() takes an arbitrary member: a set has no 'first' to take.
+
+10. ORDER IS NOT PART OF A SET
+   list(set([1, 2, 1, 3, 2, 4, 5])) = [1, 2, 3, 4, 5]   looks sorted, by luck:
+   list(set([10, 3, 8]))      = [8, 10, 3]   small ints land in slot n % table size
+   words              = ['pear', 'fig', 'apple', 'fig', 'pear', 'kiwi']
+   sorted(set(words)) = ['apple', 'fig', 'kiwi', 'pear']   a list: sets cannot be sorted
+   list(dict.fromkeys(words)) = ['pear', 'fig', 'apple', 'kiwi']
+   To drop duplicates AND keep first-seen order, use a dict: its keys
+   are a set that remembers insertion order. list(set(words)) comes back
+   in hash order, which for strings changes from one run to the next.
+   sorted({3, 1, 'apple', ...})  -> TypeError: Python 3 will not order an int against a str
+   key=lambda x: (isinstance(x, str), x)  -> [1, 3, 5, 'apple', 'banana', 'orange']
+   numbers first, since False < True, and no int is compared with a str.
+
+11. WHAT SETS ARE FOR: MEMBERSHIP, DEDUPLICATION, VISITED NODES
+   graph with cycles A->C->A and B->D->B:  {'A': ['B', 'C'], 'B': ['D'], 'C': ['D', 'A'], 'D': ['B', 'E'], 'E': []}
+   breadth-first from A, skipping nodes already in 'visited': A -> B -> C -> D -> E
+   Without the set the walk loops forever. With a list, each 'in' test
+   scans the list; with a set it is one hash lookup, whatever the size.
+   customers = {'C001', 'C002', 'C003', 'C004'}   invoiced = {'C001', 'C002', 'C004', 'C009'}
+   inner join keys     customers & invoiced = {'C001', 'C002', 'C004'}
+   outer join keys     customers | invoiced = {'C001', 'C002', 'C003', 'C004', 'C009'}
+   left anti-join      customers - invoiced = {'C003'}   never invoiced
+   orphans             invoiced - customers = {'C009'}   no such customer
+   mismatches          customers ^ invoiced = {'C003', 'C009'}
+   The keys a join keeps are a set operation on the two key columns;
+   pandas' merge(how='inner'/'outer'/'left') is the same algebra with rows attached.
+
+12. DICT VIEWS: A DICT'S KEYS ARE ALREADY A SET
+   stock = {'apple': 3, 'fig': 0, 'kiwi': 5}
+   order = {'fig': 2, 'kiwi': 1, 'plum': 4}
+   stock.keys() & order.keys() = {'fig', 'kiwi'}   type: set
+   order.keys() - stock.keys() = {'plum'}   ordered but never stocked
+   stock.keys() | ['pear']      = {'apple', 'fig', 'kiwi', 'pear'}   a keys view takes any iterable
+   stock.keys() <= set(stock)   = True
+   stock.items() & {'fig': 0, 'kiwi': 9}.items() = {'fig': 0}   same key AND same value
+   stock.values() & {0}        -> TypeError
+   values can repeat and need not be hashable, so their view is not a set.
+   {1, 2}.update({1: 'a', 5: 'e'}) -> {1, 2, 5}   iterating a dict yields its keys
+   set({'x': 1, 'y': 2}) = {'x', 'y'}
+
+13. A MULTISET IS A Counter, AND ITS SYMMETRIC DIFFERENCE COUNTS COPIES
+   l1 = ['a', 'a', 'b', 'c', 'd']   l2 = ['a', 'b', 'c', 'f']
+   set(l1) ^ set(l2)                   = {'d', 'f'}   copies dropped first, so 'a' is in both
+   c1 - c2 = {'a': 1, 'd': 1}   c2 - c1 = {'f': 1}
+   sorted((c1 - c2 | c2 - c1).elements()) = ['a', 'd', 'f']
+   l1 has two 'a' and l2 one, so one 'a' is left over: the multiset
+   difference counts copies. '-' binds tighter than '|', so the line
+   is (c1 - c2) | (c2 - c1), and | on Counters keeps the larger count.
+   c1 ^ c2  -> TypeError   Counter has no ^; build it from two differences
