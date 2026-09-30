@@ -303,7 +303,7 @@ Union, intersection and symmetric difference are associative, so the brackets ne
 
 `a == b` is extensionality run as code: same members, equal, whatever order they were added in. The alternatives in the notes each test something else. `list(a) == list(b)` compares iteration orders, and the program shows two equal sets, `{1, 9}` and `{9, 1}`, whose lists differ. `a.difference(b) == set()` checks only that a ⊆ b, so it says `{1}` "equals" `{1, 2}`. `not (a ^ b)` is correct, and `==` is simpler.
 
-A `frozenset` is a set that cannot change after it is made, so it is hashable and can be a member of a set or a key of a dict. It has no `add`; "adding" builds a new one, `fs.union([3, 4])`. When a set and a frozenset are combined, the left operand decides the type of the result, and `frozenset({1, 2}) == {1, 2}` is True, because equality still looks only at members.
+A `frozenset` is a set that cannot change after it is made, so it is hashable and can be a member of a set or a key of a dict. Its own page, [A frozenset can be a member](../a_frozenset_can_be_a_member/README.md), has the rest, including why `{1, 2} in set_of_frozensets` works when a dict lookup does not. It has no `add`; "adding" builds a new one, `fs.union([3, 4])`. When a set and a frozenset are combined, the left operand decides the type of the result, and `frozenset({1, 2}) == {1, 2}` is True, because equality still looks only at members.
 
 ### Subsets, removal, order (sections 8 to 10)
 

@@ -14,6 +14,7 @@ This is the first of the advanced chapters, and it goes first because the others
 | 4 | [`hash()` is not stable across runs](hash_is_not_stable_across_runs/README.md) | Why does my set of strings come out in a different order on every run — and why is `hash(-1)` `-2`? | stub |
 | 5 | [A set is a hash table](a_set_is_a_hash_table/README.md) | Why is `{True, 1, 1.0}` one member, why does `a \| (1, 2)` fail when `a.union((1, 2))` works, and why does `a ^ b ^ c` keep what is in all three? | written |
 | 6 | [Which duplicate survives](which_duplicate_survives/README.md) | Why did `{k(x): x for x in items}` keep the last spelling in the first place, and why does `list(set(words))` change order between runs? | written |
+| 7 | [A frozenset can be a member](a_frozenset_can_be_a_member/README.md) | Why are there two set types, why does `{1, 2} in set_of_frozensets` work when `d[{1, 2}]` does not, and why does `\|=` on a frozenset leave the other name unchanged? | written |
 
 ## Where this sits relative to the other libraries
 
