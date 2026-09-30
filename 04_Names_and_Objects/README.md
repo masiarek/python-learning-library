@@ -12,6 +12,7 @@ This is the first of the advanced chapters, and it goes first because the others
 | 2 | [`+=` is not `+`](plus_equals_is_not_plus/README.md) | Why did `a += [2]` change a list I never touched — and why did `t[0] += [1]` both raise and happen? | written |
 | 3 | [`is` is not `==`](is_is_not_equals/README.md) | Which of the two comparisons did I mean — and why is `int('257') is int('257')` a question about CPython, not Python? | stub |
 | 4 | [`hash()` is not stable across runs](hash_is_not_stable_across_runs/README.md) | Why does my set of strings come out in a different order on every run — and why is `hash(-1)` `-2`? | stub |
+| 5 | [A set is a hash table](a_set_is_a_hash_table/README.md) | Why is `{True, 1, 1.0}` one member, why does `a \| (1, 2)` fail when `a.union((1, 2))` works, and why does `a ^ b ^ c` keep what is in all three? | written |
 
 ## Where this sits relative to the other libraries
 

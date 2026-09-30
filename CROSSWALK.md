@@ -247,6 +247,16 @@ The last five rows are the types Rust's standard library leaves out. Python ship
 
 Cargo and `uv` look alike because one copied the other, and the vocabulary is worth learning once: *manifest*, *lock*, *workspace*, *feature*. The row that does not translate is the fifth — Python has one version of a package per environment and a conflict is a hard error, while Cargo will happily link two majors of the same crate and let you discover it when a type from one will not go where the other's is expected.
 
+## Sets
+
+| The idea | Python | Rust | C | Where the idea itself lives |
+|---|---|---|---|---|
+| A collection with no order and no repeats | [`set`, a hash table: members must be hashable](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | [`HashSet<T>`, `T: Eq + Hash`; `BTreeSet` when order matters ↗](https://masiarek.github.io/rust-learning-library/26_Collections/a_first_hashset/index.html) | no set type: a sorted array with `bsearch`, or a bitset | [What is a set? ↗](https://masiarek.github.io/math-learning-library/04_Sets/what_is_a_set/index.html) |
+| Adding a member that is already there | [silently ignored](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | `insert` returns `false` | up to the code | [extensionality ↗](https://masiarek.github.io/math-learning-library/04_Sets/what_is_a_set/index.html) |
+| Union, intersection, difference, symmetric difference | [`\|` `&` `-` `^` need two sets; `.union()` etc. take any iterable](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | `&a \| &b` etc. allocate a new set; `a.union(&b)` is a lazy iterator | hand-written loops | [The algebra of sets ↗](https://masiarek.github.io/math-learning-library/04_Sets/algebra_of_sets/index.html) |
+| Two sets are equal | [`==`, whatever the order](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | `==` | compare sorted arrays | [extensionality ↗](https://masiarek.github.io/math-learning-library/04_Sets/what_is_a_set/index.html) |
+| Sorting sets | [`sorted()` uses `<`, a partial order, and returns nonsense](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | `BTreeSet` is ordered by `Ord`, a total order | — | [⊆ is a partial order ↗](https://masiarek.github.io/math-learning-library/04_Sets/algebra_of_sets/index.html) |
+
 ## Where each library goes deeper
 
 - **[Encodings library ↗](https://masiarek.github.io/encodings-learning-library/)** — the subject itself: what a code point is, how UTF-8 encodes one, byte order and the BOM, overlong sequences, mojibake, and the terminal tools (`od`, `xxd`, `iconv`) that show you the bytes. Read it when the question is *what is actually in the file*.
