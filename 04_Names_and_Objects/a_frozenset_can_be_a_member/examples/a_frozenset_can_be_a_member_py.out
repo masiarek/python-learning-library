@@ -1,0 +1,32 @@
+1. A SET CANNOT BE A MEMBER; A FROZENSET CAN
+   {{1, 2}, {3}}                      -> TypeError
+   {frozenset({1, 2}), frozenset({3})} -> {{3}, {1, 2}}
+   every subset of {1, 2, 3}, as a set of frozensets: 8 members
+     {{}, {1}, {2}, {3}, {1, 2}, {1, 3}, {2, 3}, {1, 2, 3}}
+   The set of all subsets needs sets as members, and so needs frozenset.
+
+2. SAME MEMBERS, SAME HASH, WHATEVER THE ORDER
+   frozenset([1, 2, 3]) == frozenset([3, 2, 1])            True
+   hash(frozenset([1, 2, 3])) == hash(frozenset([3, 2, 1])) True
+   frozenset({1, 2}) == {1, 2}                           True
+   counting unordered pairs with frozenset keys:
+     {1, 2}   seen 3 times
+     {1, 3}   seen 2 times
+   A pair and its reverse are one key: that is what an unordered pair is.
+
+3. WHAT IT COSTS: NOTHING THAT CHANGES IT
+   f.add(3)             -> AttributeError
+   f.union([3])         -> {1, 2, 3}   a new frozenset; f is still {1, 2}
+   f.copy() is f        -> True   no copy needed for something that cannot change
+   t = frozenset({1}); u = t; t |= {2}  ->  t = {1, 2}, u = {1}, t is u: False
+   |= on a frozenset builds a new object and rebinds t; u still sees the old one.
+   type(frozenset({1}) | {2}) = frozenset,  type({2} | frozenset({1})) = set   the left operand decides
+
+4. THE ONE PLACE PYTHON FREEZES A SET FOR YOU
+   {1, 2} in sets                 -> True
+   sets.remove({3})               -> leaves {{1, 2}}
+   set membership, remove and discard accept a set argument and look it up
+   as if it were frozen, although {1, 2} itself is unhashable.
+   d = {frozenset({1, 2}): 'pair'};  d[{1, 2}]  -> TypeError
+   d[frozenset({2, 1})]           -> 'pair'
+   A dict does not do the conversion: freeze the key yourself.

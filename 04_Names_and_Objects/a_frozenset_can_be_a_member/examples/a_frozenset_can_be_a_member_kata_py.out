@@ -1,0 +1,8 @@
+1. len({frozenset({1, 2}), frozenset({2, 1})}) 1
+2. frozenset({1, 2}) == {2, 1}                True
+3. {1, 2} in {frozenset({1, 2})}              True
+4. {frozenset({1, 2}): 'x'}[{1, 2}]           TypeError
+5. type(frozenset({1}) & {1, 2}).__name__     'frozenset'
+6. type({1, 2} & frozenset({1})).__name__     'set'
+7. len({frozenset(), frozenset(set())})       1
+8. frozenset('abca') == frozenset('cab')      True
