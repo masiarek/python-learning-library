@@ -299,6 +299,8 @@ The symmetric difference of two sets is "in exactly one of them". Chained over t
 
 Union, intersection and symmetric difference are associative, so the brackets never matter for them. Difference is not: `s1 - s2 - s3` means `(s1 - s2) - s3`, and `s1 - (s2 - s3)` is a different set. That is the "left to right" in the notes' summary, and it only matters for `-`.
 
+Between *different* operators the brackets matter more, and Python's order is C's, tightest first: `-`, then `&`, then `^`, then `|`, with `<=`, `==` and `in` after all four. So `a - b & c` is `(a - b) & c`, `a | b & c` is `a | (b & c)`, and `a - b <= c` is `(a - b) <= c`, where C would compare first. The `&` before `|` rung is the convention mathematics borrowed from logic, ∩ before ∪, but no textbook gives ∖ or △ a place at all, so bracket them in anything a reader will check by hand. The math library's [Reading a set expression ↗](https://masiarek.github.io/math-learning-library/04_Sets/reading_set_expressions/index.html) asks Python's parser how it brackets each form and compares Lean and Isabelle, and its [set katas ↗](https://masiarek.github.io/math-learning-library/04_Sets/set_katas/index.html#precedence-katas-four-pasted-katas-and-whether-each-tests-anything) try four katas on the ladder under every bracketing; lines 12 to 15 of the kata below are those four, repaired, because two of them as first written passed under the readings they claimed to rule out.
+
 ### Equality and frozenset (sections 6 and 7)
 
 `a == b` is extensionality run as code: same members, equal, whatever order they were added in. The alternatives in the notes each test something else. `list(a) == list(b)` compares iteration orders, and the program shows two equal sets, `{1, 9}` and `{9, 1}`, whose lists differ. `a.difference(b) == set()` checks only that a ⊆ b, so it says `{1}` "equals" `{1, 2}`. `not (a ^ b)` is correct, and `==` is simpler.
@@ -348,7 +350,7 @@ ABAP has no set type. A set is an internal table with a **unique key**, `SORTED`
 
 ## Practice
 
-**Eleven lines, and the notes that got three of them wrong.** Write down what each prints before running any of them. `s1 = {'a', 'b', 'c'}` and `s2 = {'c', 'd', 'e'}`.
+**Fifteen lines, the notes that got three of them wrong, and two katas that had tested nothing.** Write down what each prints before running any of them. `s1 = {'a', 'b', 'c'}` and `s2 = {'c', 'd', 'e'}`. Lines 12 to 15 are four katas on the order of `-`, `&`, `^` and `|`, as repaired by the math library's [set katas ↗](https://masiarek.github.io/math-learning-library/04_Sets/set_katas/index.html#precedence-katas-four-pasted-katas-and-whether-each-tests-anything); write the steps, not only the set.
 
 1. `s1 | s2`
 2. `s1.intersection(s2)`
@@ -361,8 +363,12 @@ ABAP has no set type. A set is an internal table with a **unique key**, `SORTED`
 9. `s1.union(['z'])`
 10. `set().issubset([])`
 11. `type({})`
+12. `{1, 2, 3} | {3, 4, 5} & {5, 6, 7}`
+13. `{1, 2, 3, 4} - {3, 4, 5} & {4, 5, 6}`
+14. `{1, 2} | {2, 3} ^ {1, 2} & {2, 4}`
+15. `{1, 2} | {2, 3} ^ {1, 3} - {3, 4} & {1, 4}`
 
-Then: say why line 7 is not the empty set, and what line 6 would be if chained `^` meant "in exactly one of the sets".
+Then: say why line 7 is not the empty set, and what line 6 would be if chained `^` meant "in exactly one of the sets". For line 15, say which operator Python applies first and the order of the other three. For line 14, say why a reader who had `^` and `&` the wrong way round would still have got it right if the last set were `{3, 4}` instead of `{2, 4}`.
 
 <details markdown="1">
 <summary><strong>Answers</strong></summary>
@@ -382,10 +388,31 @@ Then: say why line 7 is not the empty set, and what line 6 would be if chained `
  9. s1.union(['z'])                                    {'a', 'b', 'c', 'z'}
 10. set().issubset([])                                 True
 11. type({})                                           <class 'dict'>
+12. {1, 2, 3} | {3, 4, 5} & {5, 6, 7}                  {1, 2, 3, 5}
+13. {1, 2, 3, 4} - {3, 4, 5} & {4, 5, 6}               set()
+14. {1, 2} | {2, 3} ^ {1, 2} & {2, 4}                  {1, 2, 3}
+15. {1, 2} | {2, 3} ^ {1, 3} - {3, 4} & {1, 4}         {1, 2, 3}
+
+Lines 14 and 15 under every bracketing; Python's is marked.
+Line 14 as A | B ^ A & C with A = {1, 2}, B = {2, 3}, C = {2, 4}:
+   (A | (B ^ (A & C)))      {1, 2, 3}     Python: & first, then ^, then |
+   (A | ((B ^ A) & C))      {1, 2}
+   ((A | B) ^ (A & C))      {1, 3}
+   ((A | (B ^ A)) & C)      {2}
+   (((A | B) ^ A) & C)      set()
+   1 of 5 bracketings gives {1, 2, 3}; with C = {3, 4}, 3 of 5 do, because
+   A & C is then set() and B ^ set() is B: the ^ step does nothing.
+Line 15 as A | B ^ C - D & E with A = {1, 2}, B = {2, 3}, C = {1, 3}, D = {3, 4}, E = {1, 4}:
+   Python reads (A | (B ^ ((C - D) & E))) = {1, 2, 3}: - first, then &, then ^, then |
+   1 of 14 bracketings gives {1, 2, 3}; as first written, A | B ^ C - A & D with
+   C = {3, 4} and D = {2, 4}, 2 of 14 did: (C - A) & D is disjoint from A, and then
+   (A | B) ^ X == A | (B ^ X), so ^ against | could never show.
 ```
 <!-- /output -->
 
 Line 7 is `{1}` because `^` keeps what is in an odd number of the sets, and 1 is in three. Line 6 happens to agree with "exactly one" only because every shared element there is in exactly two sets.
+
+Lines 12 to 15 are Python's ladder, tightest first `-`, `&`, `^`, `|`, which is C's. An answer that matches is not yet a test of the order: line 14 with `{3, 4}` at the end has an empty `&` step, so three readings of five give the same set, and the kata as first written, `A | B ^ C - A & D`, could not separate `^` from `|` for any choice of sets, because `(C - A) & D` is disjoint from `A`. The second part of the answer counts the bracketings that agree, which is the check that an `assert` on the final set skips.
 
 </details>
 
@@ -397,4 +424,7 @@ Line 7 is `{1}` because `^` keeps what is in an odd number of the sets, and 1 is
 - [`hash()` is not stable across runs](../hash_is_not_stable_across_runs/README.md) — why a set of strings comes out in a different order on every run
 - [Defining `__eq__` deletes `__hash__`](../../07_Classes_and_the_Data_Model/defining_eq_deletes_hash/README.md) — the hash contract, and a member lost from its set when its fields change
 - [`strip` is a set, not a prefix](../../01_Text_and_Bytes/strip_is_a_set/README.md) — a set of characters where a prefix was meant
+- [Reading a set expression ↗](https://masiarek.github.io/math-learning-library/04_Sets/reading_set_expressions/index.html) — the math library: what A ∪ B ∩ C means without brackets, and where Python, Lean and Isabelle put ∖
+- [Set katas ↗](https://masiarek.github.io/math-learning-library/04_Sets/set_katas/index.html#precedence-katas-four-pasted-katas-and-whether-each-tests-anything) — the math library: the four precedence katas of lines 12 to 15 under every bracketing, and why two of them had tested nothing
 - [Set types ↗](https://docs.python.org/3/library/stdtypes.html#set-types-set-frozenset) — the Python documentation
+- [Operator precedence ↗](https://docs.python.org/3/reference/expressions.html#operator-precedence) — the Python reference: the full table, `-` above `&` above `^` above `|` above the comparisons

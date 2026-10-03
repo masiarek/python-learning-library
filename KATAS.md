@@ -38,7 +38,7 @@ The order is the practice order, and it is **not** the sidebar's reading order �
 | K12 | [Eight one-liners about `bin()`, and the two that were given a width](01_Text_and_Bytes/bin_is_not_the_bits/README.md#practice) | [`bin()` is not the bits](01_Text_and_Bytes/bin_is_not_the_bits/README.md) | 201 |
 | K13 | [Eight one-liners, and the only one that prints quotes](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md#practice) | [`-c` is not the prompt](02_Projects_and_Environments/dash_c_is_not_the_prompt/README.md) | 101 → 201 |
 | K14 | [Eight one-liners, and the one that depends on the order](03_Numbers/float_equality_and_nan/README.md#practice) | [Float equality and NaN](03_Numbers/float_equality_and_nan/README.md) | 201 |
-| K15 | [Eleven lines, and the notes that got three of them wrong](04_Names_and_Objects/a_set_is_a_hash_table/README.md#practice) | [A set is a hash table](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | 101 → 201 |
+| K15 | [Fifteen lines, the notes that got three of them wrong, and two katas that had tested nothing](04_Names_and_Objects/a_set_is_a_hash_table/README.md#practice) | [A set is a hash table](04_Names_and_Objects/a_set_is_a_hash_table/README.md) | 101 → 201 |
 | K16 | [Eight lines, and the one that keeps the last spelling](04_Names_and_Objects/which_duplicate_survives/README.md#practice) | [Which duplicate survives](04_Names_and_Objects/which_duplicate_survives/README.md) | 201 |
 | K17 | [Eight lines, and the lookup that works for a set but not for a dict](04_Names_and_Objects/a_frozenset_can_be_a_member/README.md#practice) | [A frozenset can be a member](04_Names_and_Objects/a_frozenset_can_be_a_member/README.md) | 201 |
 
